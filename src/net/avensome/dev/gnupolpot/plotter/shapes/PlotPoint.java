@@ -1,4 +1,4 @@
-package net.avensome.dev.gnupolpot.shapes;
+package net.avensome.dev.gnupolpot.plotter.shapes;
 
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.geometry.Point;

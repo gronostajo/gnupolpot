@@ -1,9 +1,13 @@
 package net.avensome.dev.gnupolpot;
 
+import com.google.common.collect.ImmutableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.paint.Color;
-import net.avensome.dev.gnupolpot.shapes.PlotPoint;
+import net.avensome.dev.gnupolpot.plotter.Plotter;
+import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
+import net.avensome.dev.gnupolpot.plotter.shapes.Polygon;
+import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
 import java.net.URL;
 import java.util.List;
@@ -21,7 +25,20 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         List<PlotPoint> points = plotter.getPoints();
+        List<Shape> shapes = plotter.getShapes();
+
         points.add(new PlotPoint(0, 0));
         points.add(new PlotPoint(5, 5, Color.RED));
+
+        List<PlotPoint> shapePoints = ImmutableList.of(
+                new PlotPoint(30, 20),
+                new PlotPoint(40, 30),
+                new PlotPoint(35, 50),
+                new PlotPoint(20, 50),
+                new PlotPoint(15, 40)
+        );
+
+        points.addAll(shapePoints);
+        shapes.add(new Polygon(shapePoints, Color.GRAY));
     }
 }

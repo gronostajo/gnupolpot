@@ -1,4 +1,4 @@
-package net.avensome.dev.gnupolpot;
+package net.avensome.dev.gnupolpot.plotter;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -6,16 +6,18 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.geometry.Point;
 import net.avensome.dev.gnupolpot.geometry.Rect;
-import net.avensome.dev.gnupolpot.painters.BackgroundPainter;
-import net.avensome.dev.gnupolpot.painters.Painter;
-import net.avensome.dev.gnupolpot.painters.PointPainter;
-import net.avensome.dev.gnupolpot.shapes.PlotPoint;
-import net.avensome.dev.gnupolpot.shapes.Shape;
+import net.avensome.dev.gnupolpot.plotter.painters.BackgroundPainter;
+import net.avensome.dev.gnupolpot.plotter.painters.Painter;
+import net.avensome.dev.gnupolpot.plotter.painters.PointPainter;
+import net.avensome.dev.gnupolpot.plotter.painters.ShapePainter;
+import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
+import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -64,6 +66,8 @@ public class Plotter extends Pane {
     }
 
     private void handleMouseDragged(MouseEvent mouseEvent) {
+        if (!mouseEvent.isPrimaryButtonDown() || mouseEvent.isSecondaryButtonDown() || mouseEvent.isMetaDown())
+
         mouseState = MouseState.PANNING;
         canvas.setCursor(Cursor.CLOSED_HAND);
 
@@ -82,10 +86,15 @@ public class Plotter extends Pane {
     }
 
     private void createPaintingPipeline() {
-        BackgroundPainter backgroundPainter = new BackgroundPainter(canvas.getGraphicsContext2D(), Color.WHITE);
+        GraphicsContext ctx = canvas.getGraphicsContext2D();
+
+        BackgroundPainter backgroundPainter = new BackgroundPainter(ctx, Color.WHITE);
         painters.add(backgroundPainter);
 
-        PointPainter pointPainter = new PointPainter(canvas.getGraphicsContext2D(), points);
+        ShapePainter shapePainter = new ShapePainter(ctx, shapes);
+        painters.add(shapePainter);
+
+        PointPainter pointPainter = new PointPainter(ctx, points);
         painters.add(pointPainter);
     }
 

@@ -26,7 +26,7 @@ public final class Point {
         return new Point(x - point.getX(), y - point.getY());
     }
 
-    public Point scale(double s) {
+    public Point scaled(double s) {
         return new Point(x * s, y * s);
     }
 }

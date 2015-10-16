@@ -1,4 +1,4 @@
-package net.avensome.dev.gnupolpot.painters;
+package net.avensome.dev.gnupolpot.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;

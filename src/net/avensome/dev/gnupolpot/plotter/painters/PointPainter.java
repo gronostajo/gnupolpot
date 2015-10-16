@@ -1,9 +1,9 @@
-package net.avensome.dev.gnupolpot.painters;
+package net.avensome.dev.gnupolpot.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
 import net.avensome.dev.gnupolpot.geometry.Point;
 import net.avensome.dev.gnupolpot.geometry.Rect;
-import net.avensome.dev.gnupolpot.shapes.PlotPoint;
+import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class PointPainter extends Painter {
         Point topLeftCorner = viewportRect.getTopLeftCorner();
         List<PlotPoint> pointsInViewport = points.stream()
                 .filter(plotPoint -> viewportRect.contains(plotPoint.getX(), plotPoint.getY()))
-                .map(plotPoint -> plotPoint.movedBy(topLeftCorner.scale(-1)))
+                .map(plotPoint -> plotPoint.movedBy(topLeftCorner.scaled(-1)))
                 .collect(Collectors.toList());
 
         for (PlotPoint point : pointsInViewport) {
