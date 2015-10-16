@@ -4,9 +4,12 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import net.avensome.dev.gnupolpot.geometry.Point;
 import net.avensome.dev.gnupolpot.geometry.Rect;
 import net.avensome.dev.gnupolpot.painters.BackgroundPainter;
 import net.avensome.dev.gnupolpot.painters.Painter;
@@ -28,6 +31,9 @@ public class Plotter extends Pane {
 
     private List<Painter> painters = new LinkedList<>();
 
+    private MouseState mouseState = MouseState.NOT_INTERACTING;
+    private Point mouseAnchor;
+
     public Plotter() {
         super();
 
@@ -36,17 +42,43 @@ public class Plotter extends Pane {
         canvas.widthProperty().bind(widthProperty());
         canvas.heightProperty().bind(heightProperty());
 
-        viewportRect.set(new Rect(0, 0, widthProperty().doubleValue(), heightProperty().doubleValue()));
+        viewportRect.set(new Rect(0, 0, getWidth(), getHeight()));
 
         ChangeListener<Number> resizeListener = (observable, oldValue, newValue) -> {
-            viewportRect.set(new Rect(0, 0, widthProperty().doubleValue(), heightProperty().doubleValue()));
+            viewportRect.set(new Rect(0, 0, getWidth(), getHeight()));
             requestRepaint();
         };
         widthProperty().addListener(resizeListener);
         heightProperty().addListener(resizeListener);
 
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePressed);
+        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged);
+        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased);
+
         createPaintingPipeline();
         repaint();
+    }
+
+    private void handleMousePressed(MouseEvent mouseEvent) {
+        mouseAnchor = new Point(mouseEvent.getX(), mouseEvent.getY());
+    }
+
+    private void handleMouseDragged(MouseEvent mouseEvent) {
+        mouseState = MouseState.PANNING;
+        canvas.setCursor(Cursor.CLOSED_HAND);
+
+        Point newAnchor = new Point(mouseEvent.getX(), mouseEvent.getY());
+        Point delta = mouseAnchor.minus(newAnchor);
+
+        viewportRect.set(viewportRect.get().movedBy(delta.getX(), delta.getY()));
+        requestRepaint();
+        mouseAnchor = newAnchor;
+    }
+
+    private void handleMouseReleased(MouseEvent mouseEvent) {
+        mouseState = MouseState.NOT_INTERACTING;
+        canvas.setCursor(Cursor.DEFAULT);
+        mouseAnchor = null;
     }
 
     private void createPaintingPipeline() {
@@ -80,6 +112,7 @@ public class Plotter extends Pane {
     public void clear() {
         shapes.clear();
         points.clear();
+        viewportRect.set(new Rect(0, 0, getWidth(), getHeight()));
         requestRepaint();
     }
 
@@ -89,5 +122,10 @@ public class Plotter extends Pane {
 
     public List<Shape> getShapes() {
         return shapes;
+    }
+
+    private enum MouseState {
+        NOT_INTERACTING,
+        PANNING
     }
 }
