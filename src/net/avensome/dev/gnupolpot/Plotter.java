@@ -7,11 +7,11 @@ import javafx.collections.FXCollections;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import net.avensome.dev.gnupolpot.geometry.Point;
 import net.avensome.dev.gnupolpot.geometry.Rect;
 import net.avensome.dev.gnupolpot.painters.BackgroundPainter;
 import net.avensome.dev.gnupolpot.painters.Painter;
-import net.avensome.dev.gnupolpot.painters.PlaceholderPainter;
+import net.avensome.dev.gnupolpot.painters.PointPainter;
+import net.avensome.dev.gnupolpot.shapes.PlotPoint;
 import net.avensome.dev.gnupolpot.shapes.Shape;
 
 import java.util.LinkedList;
@@ -21,7 +21,7 @@ public class Plotter extends Pane {
     private final Canvas canvas = new Canvas();
     private boolean requiresRepaint;
 
-    private List<Point> points = FXCollections.observableArrayList();
+    private List<PlotPoint> points = FXCollections.observableArrayList();
     private List<Shape> shapes = FXCollections.observableArrayList();
 
     private SimpleObjectProperty<Rect> viewportRect = new SimpleObjectProperty<>();
@@ -53,8 +53,8 @@ public class Plotter extends Pane {
         BackgroundPainter backgroundPainter = new BackgroundPainter(canvas.getGraphicsContext2D(), Color.WHITE);
         painters.add(backgroundPainter);
 
-        PlaceholderPainter placeholderPainter = new PlaceholderPainter(canvas.getGraphicsContext2D());
-        painters.add(placeholderPainter);
+        PointPainter pointPainter = new PointPainter(canvas.getGraphicsContext2D(), points);
+        painters.add(pointPainter);
     }
 
     private void requestRepaint() {
@@ -83,7 +83,7 @@ public class Plotter extends Pane {
         requestRepaint();
     }
 
-    public List<Point> getPoints() {
+    public List<PlotPoint> getPoints() {
         return points;
     }
 

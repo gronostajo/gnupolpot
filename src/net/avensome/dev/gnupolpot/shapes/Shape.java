@@ -18,8 +18,8 @@ public abstract class Shape {
             y = new double[length];
             for (int i = 0; i < length; i++) {
                 Point point = points.get(i);
-                x[i] = point.x;
-                y[i] = point.y;
+                x[i] = point.getX();
+                y[i] = point.getY();
             }
         }
 
