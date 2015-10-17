@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -128,6 +129,10 @@ public class Plotter extends Pane {
     public void importPoints(List<PlotPoint> importedPoints) throws DataFormatException {
         points.addAll(importedPoints);
         requestRepaint();
+    }
+
+    public WritableImage snapshot() {
+        return canvas.snapshot(null, null);
     }
 
     public List<PlotPoint> getPoints() {

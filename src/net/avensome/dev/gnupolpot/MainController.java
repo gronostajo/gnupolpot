@@ -1,12 +1,14 @@
 package net.avensome.dev.gnupolpot;
 
 import com.google.common.collect.ImmutableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -16,9 +18,12 @@ import net.avensome.dev.gnupolpot.plotter.PointImporter;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -69,14 +74,39 @@ public class MainController implements Initializable {
             plotter.importPoints(importedPoints);
             statusLabel.setText(String.format("Imported %d points", importedPoints.size()));
         } catch (FileNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
-            alert.showAndWait();
+            Alert error = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
+            error.showAndWait();
         } catch (DataFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
-            alert.setHeaderText("Invalid line in data file");
-            alert.showAndWait();
+            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            error.setHeaderText("Invalid line in data file");
+            error.showAndWait();
         }
 
+    }
+
+    @FXML
+    private void snapshotClicked() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save snapshot");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PNG image", "*.png"),
+                new FileChooser.ExtensionFilter("All files", "*.*")
+        );
+
+        File file = fileChooser.showSaveDialog(primaryStage);
+        if (file == null) {
+            return;
+        }
+
+        WritableImage image = plotter.snapshot();
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        try {
+            ImageIO.write(bufferedImage, "png", file);
+        } catch (IOException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            error.setHeaderText("Saving snapshot failed");
+            error.showAndWait();
+        }
     }
 
     @Override
