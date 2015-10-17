@@ -6,7 +6,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.plotter.Plotter;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
-import net.avensome.dev.gnupolpot.plotter.shapes.Polygon;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
 import java.net.URL;
@@ -37,8 +36,14 @@ public class MainController implements Initializable {
                 new PlotPoint(20, 50),
                 new PlotPoint(15, 40)
         );
-
         points.addAll(shapePoints);
-        shapes.add(new Polygon(shapePoints, Color.GRAY));
+        shapes.add(new Shape(shapePoints, Color.GREEN));
+
+        ImmutableList<PlotPoint> linePoints = ImmutableList.of(
+                new PlotPoint(60, 70),
+                new PlotPoint(70, 90)
+        );
+        points.addAll(linePoints);
+        shapes.add(new Shape(linePoints, Color.PINK));
     }
 }

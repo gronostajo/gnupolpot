@@ -1,7 +1,6 @@
 package net.avensome.dev.gnupolpot.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.geometry.Point;
 import net.avensome.dev.gnupolpot.geometry.Rect;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
@@ -26,11 +25,7 @@ public class ShapePainter extends Painter {
 
         ctx.setLineWidth(2);
         for (Shape shape : movedShapes) {
-            Shape.PointSequence sequence = shape.getSequence();
-            ctx.setFill(shape.getColor().interpolate(Color.TRANSPARENT, 0.8));
-            ctx.setStroke(shape.getColor().interpolate(Color.TRANSPARENT, 0.6));
-            ctx.fillPolygon(sequence.getX(), sequence.getY(), sequence.getLength());
-            ctx.strokePolygon(sequence.getX(), sequence.getY(), sequence.getLength());
+            shape.paint(ctx);
         }
     }
 }

@@ -1,14 +1,20 @@
 package net.avensome.dev.gnupolpot.plotter.shapes;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.geometry.Point;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-public abstract class Shape {
-    protected final Color color;
+public class Shape {
+    public static final double OPACITY_STROKE = 0.8;
+    public static final double OPACITY_FILL = 0.5;
+    private final List<PlotPoint> points;
+    private final Color color;
 
-    public Shape(Color color) {
+    public Shape(List<PlotPoint> points, Color color) {
+        this.points = points;
         this.color = color;
     }
 
@@ -16,37 +22,44 @@ public abstract class Shape {
         return color;
     }
 
-    public abstract PointSequence getSequence();
+    public Shape movedBy(Point delta) {
+        List<PlotPoint> newPoints = points.stream()
+                .map(plotPoint -> plotPoint.movedBy(delta))
+                .collect(Collectors.toList());
+        return new Shape(newPoints, color);
+    }
 
-    public abstract Shape movedBy(Point delta);
+    public void paint(GraphicsContext ctx) {
+        ctx.setFill(applyOpacity(color, OPACITY_FILL));
+        ctx.setStroke(applyOpacity(color, OPACITY_STROKE));
 
-    public class PointSequence {
-        private final double[] x;
-        private final double[] y;
+        if (points.size() > 2) {
+            paintPolygon(ctx);
+        } else {
+            paintLine(ctx);
+        }
+    }
 
-        private final int length;
-
-        protected PointSequence(List<PlotPoint> points) {
-            length = points.size();
-            x = new double[length];
-            y = new double[length];
-            for (int i = 0; i < length; i++) {
-                PlotPoint point = points.get(i);
-                x[i] = point.getX();
-                y[i] = point.getY();
-            }
+    private void paintPolygon(GraphicsContext ctx) {
+        double[] x = new double[points.size()];
+        double[] y = new double[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            PlotPoint point = points.get(i);
+            x[i] = point.getX();
+            y[i] = point.getY();
         }
 
-        public double[] getX() {
-            return x;
-        }
+        ctx.fillPolygon(x, y, points.size());
+        ctx.strokePolygon(x, y, points.size());
+    }
 
-        public double[] getY() {
-            return y;
-        }
+    private void paintLine(GraphicsContext ctx) {
+        PlotPoint a = points.get(0);
+        PlotPoint b = points.get(1);
+        ctx.strokeLine(a.getX(), a.getY(), b.getX(), b.getY());
+    }
 
-        public int getLength() {
-            return length;
-        }
+    private Color applyOpacity(Color color, double opacity) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity * color.getOpacity());
     }
 }
