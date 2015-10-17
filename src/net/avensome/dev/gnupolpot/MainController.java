@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
@@ -11,6 +12,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.avensome.dev.gnupolpot.plotter.DataFormatException;
 import net.avensome.dev.gnupolpot.plotter.Plotter;
+import net.avensome.dev.gnupolpot.plotter.PointImporter;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
@@ -19,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -38,6 +41,19 @@ public class MainController implements Initializable {
 
     @FXML
     private void importPointsClicked() {
+        Alert clearPrompt = new Alert(Alert.AlertType.NONE, "Replace current plot or add new points?");
+        clearPrompt.setTitle("gnupolpot");
+        clearPrompt.setHeaderText(null);
+        ButtonType replaceType = new ButtonType("Replace", ButtonBar.ButtonData.YES);
+        ButtonType addType = new ButtonType("Add", ButtonBar.ButtonData.NO);
+        ButtonType cancelType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        clearPrompt.getButtonTypes().setAll(replaceType, addType, cancelType);
+
+        Optional<ButtonType> result = clearPrompt.showAndWait();
+        if (result.get() == cancelType) {
+            return;
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import points");
         File file = fileChooser.showOpenDialog(primaryStage);
@@ -46,8 +62,12 @@ public class MainController implements Initializable {
         }
 
         try {
-            int countImported = plotter.importPlot(new FileInputStream(file));
-            statusLabel.setText(String.format("Imported %d points", countImported));
+            List<PlotPoint> importedPoints = PointImporter.fromStream(new FileInputStream(file));
+            if (result.get() == replaceType) {
+                plotter.clear();
+            }
+            plotter.importPoints(importedPoints);
+            statusLabel.setText(String.format("Imported %d points", importedPoints.size()));
         } catch (FileNotFoundException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
             alert.showAndWait();

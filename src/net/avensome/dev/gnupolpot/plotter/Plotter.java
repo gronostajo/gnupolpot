@@ -19,7 +19,6 @@ import net.avensome.dev.gnupolpot.plotter.painters.ShapePainter;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -126,12 +125,9 @@ public class Plotter extends Pane {
         requestRepaint();
     }
 
-    public int importPlot(InputStream dataStream) throws DataFormatException {
-        clear();
-        List<PlotPoint> importedPoints = PlotImport.pointsFromStream(dataStream);
+    public void importPoints(List<PlotPoint> importedPoints) throws DataFormatException {
         points.addAll(importedPoints);
         requestRepaint();
-        return importedPoints.size();
     }
 
     public List<PlotPoint> getPoints() {
