@@ -19,6 +19,7 @@ import net.avensome.dev.gnupolpot.plotter.painters.ShapePainter;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class Plotter extends Pane {
     private void handleMouseDragged(MouseEvent mouseEvent) {
         if (!mouseEvent.isPrimaryButtonDown() || mouseEvent.isSecondaryButtonDown() || mouseEvent.isMetaDown())
 
-        mouseState = MouseState.PANNING;
+            mouseState = MouseState.PANNING;
         canvas.setCursor(Cursor.CLOSED_HAND);
 
         Point newAnchor = new Point(mouseEvent.getX(), mouseEvent.getY());
@@ -119,10 +120,18 @@ public class Plotter extends Pane {
     }
 
     public void clear() {
-        shapes.clear();
         points.clear();
+        shapes.clear();
         viewportRect.set(new Rect(0, 0, getWidth(), getHeight()));
         requestRepaint();
+    }
+
+    public int importPlot(InputStream dataStream) throws DataFormatException {
+        clear();
+        List<PlotPoint> importedPoints = PlotImport.pointsFromStream(dataStream);
+        points.addAll(importedPoints);
+        requestRepaint();
+        return importedPoints.size();
     }
 
     public List<PlotPoint> getPoints() {
