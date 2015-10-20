@@ -1,35 +1,36 @@
 package net.avensome.dev.gnupolpot.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
-import net.avensome.dev.gnupolpot.geometry.Point;
 import net.avensome.dev.gnupolpot.geometry.Rect;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
+import net.avensome.dev.gnupolpot.plotter.util.GeometryTools;
+import net.avensome.dev.gnupolpot.plotter.util.Wrapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class PointPainter extends Painter {
     public static final double POINT_RADIUS = 1.5;
+    public static final double POINT_RADIUS_FOCUSED = 3;
     private final GraphicsContext ctx;
     private final List<PlotPoint> points;
+    private final Wrapper<PlotPoint> focusedPoint;
 
-    public PointPainter(GraphicsContext ctx, List<PlotPoint> points) {
+    public PointPainter(GraphicsContext ctx, List<PlotPoint> points, Wrapper<PlotPoint> focusedPoint) {
         super(ctx);
         this.ctx = ctx;
         this.points = points;
+        this.focusedPoint = focusedPoint;
     }
 
     @Override
     public void paint(Rect viewportRect) {
-        Point topLeftCorner = viewportRect.getTopLeftCorner();
-        List<PlotPoint> pointsInViewport = points.stream()
-                .filter(plotPoint -> viewportRect.contains(plotPoint.getX(), plotPoint.getY()))
-                .map(plotPoint -> plotPoint.movedBy(topLeftCorner.scaled(-1)))
-                .collect(Collectors.toList());
+        List<PlotPoint> pointsInViewport = GeometryTools.pointsRelativeToRect(points, viewportRect);
+        PlotPoint focusedPoint = this.focusedPoint.get();
 
         for (PlotPoint point : pointsInViewport) {
             ctx.setFill(point.getColor());
-            ctx.fillOval(point.getX() - POINT_RADIUS, point.getY() - POINT_RADIUS, POINT_RADIUS * 2, POINT_RADIUS * 2);
+            double radius = point.hasEqualPoint(focusedPoint) ? POINT_RADIUS_FOCUSED : POINT_RADIUS;
+            ctx.fillOval(point.getX() - radius, point.getY() - radius, radius * 2, radius * 2);
         }
     }
 }

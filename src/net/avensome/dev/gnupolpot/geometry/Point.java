@@ -1,5 +1,8 @@
 package net.avensome.dev.gnupolpot.geometry;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public final class Point {
     private final double x;
     private final double y;
@@ -28,5 +31,28 @@ public final class Point {
 
     public Point scaled(double s) {
         return new Point(x * s, y * s);
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(x)
+                .append(y)
+                .build();
+    }
+
+    @Override
+    public boolean equals(Object another) {
+        if (!(another instanceof Point)) {
+            return false;
+        } else if (another == this) {
+            return true;
+        }
+
+        Point that = (Point) another;
+        return new EqualsBuilder()
+                .append(this.x, that.x)
+                .append(this.y, that.y)
+                .build();
     }
 }

@@ -36,4 +36,14 @@ public class PlotPoint {
     public PlotPoint movedBy(Point delta) {
         return new PlotPoint(getX() + delta.getX(), getY() + delta.getY(), color);
     }
+
+    public double distanceFrom(double x, double y) {
+        double dX = Math.abs(point.getX() - x);
+        double dY = Math.abs(point.getY() - y);
+        return Math.sqrt(dX * dX + dY * dY);
+    }
+
+    public boolean hasEqualPoint(PlotPoint another) {
+        return (another != null) && point.equals(another.point);
+    }
 }
