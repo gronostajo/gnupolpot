@@ -1,6 +1,7 @@
 package net.avensome.dev.gnupolpot.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
+import net.avensome.dev.gnupolpot.geometry.Point;
 import net.avensome.dev.gnupolpot.geometry.Rect;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
 import net.avensome.dev.gnupolpot.plotter.util.GeometryTools;
@@ -24,13 +25,15 @@ public class PointPainter extends Painter {
 
     @Override
     public void paint(Rect viewportRect) {
-        List<PlotPoint> pointsInViewport = GeometryTools.pointsRelativeToRect(points, viewportRect);
+        List<PlotPoint> pointsInViewport = GeometryTools.pointsInRect(points, viewportRect);
+        Point viewportDelta = viewportRect.getTopLeftCorner().scaled(-1);
         PlotPoint focusedPoint = this.focusedPoint.get();
 
         for (PlotPoint point : pointsInViewport) {
             ctx.setFill(point.getColor());
             double radius = point.hasEqualPoint(focusedPoint) ? POINT_RADIUS_FOCUSED : POINT_RADIUS;
-            ctx.fillOval(point.getX() - radius, point.getY() - radius, radius * 2, radius * 2);
+            PlotPoint movedPoint = point.movedBy(viewportDelta);
+            ctx.fillOval(movedPoint.getX() - radius, movedPoint.getY() - radius, radius * 2, radius * 2);
         }
     }
 }

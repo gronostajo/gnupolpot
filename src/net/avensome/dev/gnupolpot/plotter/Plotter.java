@@ -70,10 +70,10 @@ public class Plotter extends Pane {
     }
 
     private void handleMouseMoved(MouseEvent mouseEvent) {
-        double x = mouseEvent.getX();
-        double y = mouseEvent.getY();
+        double x = mouseEvent.getX() + viewportRect.get().getLeft();
+        double y = mouseEvent.getY() + viewportRect.get().getTop();
         PlotPoint focusedPoint = GeometryTools
-                .pointsRelativeToRect(points, viewportRect.get()).stream()
+                .pointsInRect(points, viewportRect.get()).stream()
                 .filter(point -> point.distanceFrom(x, y) < POINT_FOCUS_RADIUS)
                 .sorted((o1, o2) -> Double.compare(o1.distanceFrom(x, y), o2.distanceFrom(x, y)))
                 .reduce(null, (point1, point2) -> point1 == null ? point2 : point1);
