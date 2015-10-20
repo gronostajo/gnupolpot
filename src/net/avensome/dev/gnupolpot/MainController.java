@@ -46,15 +46,21 @@ public class MainController implements Initializable {
 
     @FXML
     private void importPointsClicked() {
-        Alert clearPrompt = new Alert(Alert.AlertType.NONE, "Replace current plot or add new points?");
-        clearPrompt.setTitle("gnupolpot");
-        clearPrompt.setHeaderText(null);
         ButtonType replaceType = new ButtonType("Replace", ButtonBar.ButtonData.YES);
         ButtonType addType = new ButtonType("Add", ButtonBar.ButtonData.NO);
         ButtonType cancelType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        clearPrompt.getButtonTypes().setAll(replaceType, addType, cancelType);
 
-        Optional<ButtonType> result = clearPrompt.showAndWait();
+        Optional<ButtonType> result;
+        if (plotter.getPoints().size() > 0) {
+            Alert clearPrompt = new Alert(Alert.AlertType.NONE, "Replace current plot or add new points?");
+            clearPrompt.setTitle("gnupolpot");
+            clearPrompt.setHeaderText(null);
+            clearPrompt.getButtonTypes().setAll(replaceType, addType, cancelType);
+            result = clearPrompt.showAndWait();
+        } else {
+            result = Optional.of(addType);
+        }
+
         if (result.get() == cancelType) {
             return;
         }
