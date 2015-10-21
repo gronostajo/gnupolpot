@@ -37,6 +37,12 @@ public class PlotPoint {
         return new PlotPoint(getX() + delta.getX(), getY() + delta.getY(), color);
     }
 
+    public PlotPoint zoomed(Point offset, double factor) {
+        double x = getX() + offset.getX();
+        double y = getY() + offset.getY();
+        return new PlotPoint(x * factor, y * factor);
+    }
+
     public double distanceFrom(double x, double y) {
         double dX = Math.abs(point.getX() - x);
         double dY = Math.abs(point.getY() - y);

@@ -1,7 +1,6 @@
 package net.avensome.dev.gnupolpot.plotter;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Cursor;
@@ -9,10 +8,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.geometry.Point;
-import net.avensome.dev.gnupolpot.geometry.Rect;
+import net.avensome.dev.gnupolpot.geometry.Viewport;
 import net.avensome.dev.gnupolpot.plotter.mouse.EventButtons;
 import net.avensome.dev.gnupolpot.plotter.mouse.EventButtonsBuilder;
 import net.avensome.dev.gnupolpot.plotter.painters.BackgroundPainter;
@@ -35,7 +35,7 @@ public class Plotter extends Pane {
     private List<PlotPoint> points = FXCollections.observableArrayList();
     private List<Shape> shapes = FXCollections.observableArrayList();
 
-    private SimpleObjectProperty<Rect> viewportRect = new SimpleObjectProperty<>();
+    private Viewport viewport;
 
     private List<Painter> painters = new LinkedList<>();
 
@@ -51,10 +51,10 @@ public class Plotter extends Pane {
         canvas.widthProperty().bind(widthProperty());
         canvas.heightProperty().bind(heightProperty());
 
-        viewportRect.set(new Rect(0, 0, getWidth(), getHeight()));
+        viewport = new Viewport(0, 0, getWidth(), getHeight(), 1);
 
         ChangeListener<Number> resizeListener = (observable, oldValue, newValue) -> {
-            viewportRect.set(new Rect(0, 0, getWidth(), getHeight()));
+            viewport.resize(getWidth(), getHeight());
             requestRepaint();
         };
         widthProperty().addListener(resizeListener);
@@ -64,16 +64,17 @@ public class Plotter extends Pane {
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, this::handleMousePressed);
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, this::handleMouseDragged);
         canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, this::handleMouseReleased);
+        canvas.addEventHandler(ScrollEvent.SCROLL, this::handleScrolling);
 
         createPaintingPipeline();
-        repaint();
+        requestRepaint();
     }
 
     private void handleMouseMoved(MouseEvent mouseEvent) {
-        double x = mouseEvent.getX() + viewportRect.get().getLeft();
-        double y = mouseEvent.getY() + viewportRect.get().getTop();
+        double x = mouseEvent.getX() + viewport.getLeft();
+        double y = mouseEvent.getY() + viewport.getTop();
         PlotPoint focusedPoint = GeometryTools
-                .pointsInRect(points, viewportRect.get()).stream()
+                .pointsInRect(points, viewport).stream()
                 .filter(point -> point.distanceFrom(x, y) < POINT_FOCUS_RADIUS)
                 .sorted((o1, o2) -> Double.compare(o1.distanceFrom(x, y), o2.distanceFrom(x, y)))
                 .reduce(null, (point1, point2) -> point1 == null ? point2 : point1);
@@ -99,7 +100,7 @@ public class Plotter extends Pane {
             Point newAnchor = new Point(mouseEvent.getX(), mouseEvent.getY());
             Point delta = mouseAnchor.minus(newAnchor);
 
-            viewportRect.set(viewportRect.get().movedBy(delta.getX(), delta.getY()));
+            viewport.moveBy(delta.getX(), delta.getY());
             requestRepaint();
             mouseAnchor = newAnchor;
 
@@ -111,6 +112,18 @@ public class Plotter extends Pane {
         mouseState = MouseState.NOT_INTERACTING;
         canvas.setCursor(Cursor.DEFAULT);
         mouseAnchor = null;
+    }
+
+    private void handleScrolling(ScrollEvent scrollEvent) {
+        if (scrollEvent.getDeltaY() < 0) {
+            viewport.zoom(0.5);
+        } else if (scrollEvent.getDeltaY() > 0) {
+            viewport.zoom(2);
+        } else {
+            return;
+        }
+
+        requestRepaint();
     }
 
     private void createPaintingPipeline() {
@@ -142,14 +155,13 @@ public class Plotter extends Pane {
 
     private void repaint() {
         for (Painter painter : painters) {
-            painter.paint(viewportRect.get());
+            painter.paint(viewport);
         }
     }
 
     public void clear() {
         points.clear();
         shapes.clear();
-        viewportRect.set(new Rect(0, 0, getWidth(), getHeight()));
         requestRepaint();
     }
 

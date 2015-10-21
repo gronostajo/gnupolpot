@@ -29,6 +29,13 @@ public class Shape {
         return new Shape(newPoints, color);
     }
 
+    public Shape zoomed(Point offset, double factor) {
+        List<PlotPoint> newPoints = points.stream()
+                .map(plotPoint -> plotPoint.zoomed(offset, factor))
+                .collect(Collectors.toList());
+        return new Shape(newPoints, color);
+    }
+
     public void paint(GraphicsContext ctx) {
         ctx.setFill(applyOpacity(color, OPACITY_FILL));
         ctx.setStroke(applyOpacity(color, OPACITY_STROKE));

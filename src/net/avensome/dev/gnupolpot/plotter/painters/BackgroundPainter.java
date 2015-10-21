@@ -2,7 +2,7 @@ package net.avensome.dev.gnupolpot.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
-import net.avensome.dev.gnupolpot.geometry.Rect;
+import net.avensome.dev.gnupolpot.geometry.Viewport;
 
 public class BackgroundPainter extends Painter {
     private final Paint backgroundColor;
@@ -16,7 +16,7 @@ public class BackgroundPainter extends Painter {
     }
 
     @Override
-    public void paint(Rect viewportRect) {
+    public void paint(Viewport viewport) {
         ctx.setFill(backgroundColor);
         ctx.fillRect(0, 0, ctx.getCanvas().getWidth(), ctx.getCanvas().getHeight());
     }

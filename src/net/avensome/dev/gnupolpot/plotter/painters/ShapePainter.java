@@ -2,7 +2,7 @@ package net.avensome.dev.gnupolpot.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
 import net.avensome.dev.gnupolpot.geometry.Point;
-import net.avensome.dev.gnupolpot.geometry.Rect;
+import net.avensome.dev.gnupolpot.geometry.Viewport;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
 import java.util.List;
@@ -17,10 +17,10 @@ public class ShapePainter extends Painter {
     }
 
     @Override
-    public void paint(Rect viewportRect) {
-        Point topLeftCorner = viewportRect.getTopLeftCorner();
+    public void paint(Viewport viewport) {
+        Point topLeftCorner = viewport.applyScale().getTopLeftCorner();
         List<Shape> movedShapes = shapes.stream()
-                .map(shape -> shape.movedBy(topLeftCorner.scaled(-1)))
+                .map(shape -> shape.zoomed(topLeftCorner.scaled(-1), viewport.getScale()))
                 .collect(Collectors.toList());
 
         ctx.setLineWidth(2);
