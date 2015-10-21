@@ -18,7 +18,7 @@ public class PointImporter {
             String line = scanner.nextLine().trim();
 
             Pattern doublePattern = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
-            Pattern colorPattern = Pattern.compile("#[0-9a-f]{3}");
+            Pattern colorPattern = Pattern.compile("#[0-9a-f]{6}|#[0-9a-f]{3}", Pattern.CASE_INSENSITIVE);
 
             if (line.matches("#.*") || line.isEmpty()) {
                 continue;   // It's a comment or empty line, ignore it
