@@ -15,6 +15,7 @@
             <items>
                 <Button mnemonicParsing="false" onAction="#resetPlotClicked" text="Reset plot"/>
                 <Button mnemonicParsing="false" onAction="#importPointsClicked" text="Import points"/>
+                <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false" text="Import again"/>
                 <Button mnemonicParsing="false" onAction="#snapshotClicked" text="Snapshot"/>
                 <Label fx:id="statusLabel"/>
             </items>

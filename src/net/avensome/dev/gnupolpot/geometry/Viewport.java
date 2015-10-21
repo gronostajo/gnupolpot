@@ -60,7 +60,6 @@ public class Viewport {
 
     public void zoom(double factor) {
         scale *= factor;
-        System.out.println(scale);
     }
 
     public Viewport applyScale() {

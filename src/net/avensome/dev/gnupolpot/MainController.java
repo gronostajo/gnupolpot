@@ -4,10 +4,7 @@ import com.google.common.collect.ImmutableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -32,11 +29,16 @@ import java.util.ResourceBundle;
 public class MainController implements Initializable {
     private Stage primaryStage;
 
+    private File lastImportedFile;
+
     @FXML
     private Plotter plotter;
 
     @FXML
     private Label statusLabel;
+
+    @FXML
+    private Button importAgainButton;
 
     @FXML
     private void resetPlotClicked() {
@@ -58,7 +60,7 @@ public class MainController implements Initializable {
             clearPrompt.getButtonTypes().setAll(replaceType, addType, cancelType);
             result = clearPrompt.showAndWait();
         } else {
-            result = Optional.of(addType);
+            result = Optional.of(replaceType);
         }
 
         if (result.get() == cancelType) {
@@ -72,22 +74,13 @@ public class MainController implements Initializable {
             return;
         }
 
-        try {
-            List<PlotPoint> importedPoints = PointImporter.fromStream(new FileInputStream(file));
-            if (result.get() == replaceType) {
-                plotter.clear();
-            }
-            plotter.importPoints(importedPoints);
-            statusLabel.setText(String.format("Imported %d points", importedPoints.size()));
-        } catch (FileNotFoundException e) {
-            Alert error = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
-            error.showAndWait();
-        } catch (DataFormatException e) {
-            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
-            error.setHeaderText("Invalid line in data file");
-            error.showAndWait();
-        }
+        importPointsFromFile(file, result.get() == replaceType);
+        lastImportedFile = file;
+    }
 
+    @FXML
+    private void importAgainClicked() {
+        importPointsFromFile(lastImportedFile, true);
     }
 
     @FXML
@@ -143,5 +136,24 @@ public class MainController implements Initializable {
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
+    }
+
+    private void importPointsFromFile(File file, boolean replacePlot) {
+        try {
+            List<PlotPoint> importedPoints = PointImporter.fromStream(new FileInputStream(file));
+            if (replacePlot) {
+                plotter.clear();
+            }
+            plotter.importPoints(importedPoints);
+            statusLabel.setText(String.format("Imported %d points", importedPoints.size()));
+            importAgainButton.setDisable(!replacePlot);
+        } catch (FileNotFoundException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
+            error.showAndWait();
+        } catch (DataFormatException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            error.setHeaderText("Invalid line in data file");
+            error.showAndWait();
+        }
     }
 }
