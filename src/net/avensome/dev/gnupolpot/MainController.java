@@ -9,6 +9,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import net.avensome.dev.gnupolpot.geometry.Viewport;
 import net.avensome.dev.gnupolpot.plotter.DataFormatException;
 import net.avensome.dev.gnupolpot.plotter.Plotter;
 import net.avensome.dev.gnupolpot.plotter.PointImporter;
@@ -31,14 +32,9 @@ public class MainController implements Initializable {
 
     private File lastImportedFile;
 
-    @FXML
-    private Plotter plotter;
-
-    @FXML
-    private Label statusLabel;
-
-    @FXML
-    private Button importAgainButton;
+    @FXML private Plotter plotter;
+    @FXML private Label statusLabel;
+    @FXML private Button importAgainButton;
 
     @FXML
     private void resetPlotClicked() {
@@ -81,6 +77,40 @@ public class MainController implements Initializable {
     @FXML
     private void importAgainClicked() {
         importPointsFromFile(lastImportedFile, true);
+    }
+
+    @FXML
+    private void zoomAllClicked() {
+        List<PlotPoint> points = plotter.getPoints();
+        Viewport viewport = plotter.getViewport();
+
+        if (points.size() == 0) {
+            viewport.centerAt(0, 0);
+            plotter.requestRepaint();
+            return;
+        } else if (points.size() == 1) {
+            PlotPoint point = points.get(0);
+            viewport.centerAt(point.getX(), point.getY());
+            plotter.requestRepaint();
+            return;
+        }
+
+        double minX = points.stream().map(PlotPoint::getX).reduce(Math::min).get();
+        double maxX = points.stream().map(PlotPoint::getX).reduce(Math::max).get();
+        double minY = points.stream().map(PlotPoint::getY).reduce(Math::min).get();
+        double maxY = points.stream().map(PlotPoint::getY).reduce(Math::max).get();
+
+        double spreadX = (maxX - minX) / viewport.getWidth();
+        double spreadY = (maxY - minY) / viewport.getHeight();
+        double spread = Math.max(spreadX, spreadY);
+        double scale = Math.log(spread) / Math.log(2);  // log_e(x) / log_e(2) == log_2(x)
+
+        double centerX = (minX + maxX) / 2;
+        double centerY = (minY + maxY) / 2;
+
+        viewport.setScalePower((int) -Math.round(scale));
+        viewport.centerAt(centerX, centerY);
+        plotter.requestRepaint();
     }
 
     @FXML

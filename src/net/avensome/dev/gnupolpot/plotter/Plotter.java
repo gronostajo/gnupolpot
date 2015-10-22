@@ -139,7 +139,7 @@ public class Plotter extends Pane {
         painters.add(pointPainter);
     }
 
-    private void requestRepaint() {
+    public void requestRepaint() {
         synchronized (canvas) {
             requiresRepaint = true;
         }
@@ -180,6 +180,10 @@ public class Plotter extends Pane {
 
     public List<Shape> getShapes() {
         return shapes;
+    }
+
+    public Viewport getViewport() {
+        return viewport;
     }
 
     private enum MouseState {

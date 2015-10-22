@@ -48,6 +48,11 @@ public class Viewport {
         return new Point(getLeft(), getTop());
     }
 
+    public void centerAt(double x, double y) {
+        centerX = x;
+        centerY = y;
+    }
+
     public void moveBy(double deltaX, double deltaY) {
         centerX += deltaX / scale;
         centerY += deltaY / scale;
@@ -60,6 +65,10 @@ public class Viewport {
 
     public void zoom(double factor) {
         scale *= factor;
+    }
+
+    public void setScalePower(int power) {
+        scale = Math.pow(2, power);
     }
 
     public Viewport applyScale() {

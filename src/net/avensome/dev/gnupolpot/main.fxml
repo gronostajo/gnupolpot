@@ -3,7 +3,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import net.avensome.dev.gnupolpot.plotter.*?>
-
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="400.0"
             prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="net.avensome.dev.gnupolpot.MainController">
@@ -16,6 +15,8 @@
                 <Button mnemonicParsing="false" onAction="#resetPlotClicked" text="Reset plot"/>
                 <Button mnemonicParsing="false" onAction="#importPointsClicked" text="Import points"/>
                 <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false" text="Import again"/>
+                <Separator orientation="VERTICAL"/>
+                <Button mnemonicParsing="false" onAction="#zoomAllClicked" text="Zoom all"/>
                 <Button mnemonicParsing="false" onAction="#snapshotClicked" text="Snapshot"/>
                 <Label fx:id="statusLabel"/>
             </items>
