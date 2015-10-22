@@ -35,9 +35,12 @@ public class MainController implements Initializable {
 
     private File lastImportedFile;
 
-    @FXML private Plotter plotter;
-    @FXML private Label statusLabel;
-    @FXML private Button importAgainButton;
+    @FXML
+    private Plotter plotter;
+    @FXML
+    private Label statusLabel;
+    @FXML
+    private Button importAgainButton;
 
     @FXML
     private void resetPlotClicked() {
@@ -114,6 +117,18 @@ public class MainController implements Initializable {
 
         viewport.setScalePower((int) -Math.round(scale));
         viewport.centerAt(centerX, centerY);
+        plotter.requestRepaint();
+    }
+
+    @FXML
+    private void zoomOneToOneClicked() {
+        plotter.getViewport().setScalePower(0);
+        plotter.requestRepaint();
+    }
+
+    @FXML
+    private void centerClicked() {
+        plotter.getViewport().centerAt(0, 0);
         plotter.requestRepaint();
     }
 

@@ -17,6 +17,9 @@
                 <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false" text="Import again"/>
                 <Separator orientation="VERTICAL"/>
                 <Button mnemonicParsing="false" onAction="#zoomAllClicked" text="Zoom all"/>
+                <Button mnemonicParsing="false" onAction="#zoomOneToOneClicked" text="Zoom 1:1"/>
+                <Button mnemonicParsing="false" onAction="#centerClicked" text="Center"/>
+                <Separator orientation="VERTICAL"/>
                 <Button mnemonicParsing="false" onAction="#snapshotClicked" text="Snapshot"/>
                 <Separator orientation="VERTICAL"/>
                 <Button mnemonicParsing="false" onAction="#summaryClicked" text="Summary"/>
