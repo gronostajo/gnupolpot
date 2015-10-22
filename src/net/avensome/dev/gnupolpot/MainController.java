@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -23,6 +24,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -100,10 +103,11 @@ public class MainController implements Initializable {
         double minY = points.stream().map(PlotPoint::getY).reduce(Math::min).get();
         double maxY = points.stream().map(PlotPoint::getY).reduce(Math::max).get();
 
-        double spreadX = (maxX - minX) / viewport.getWidth();
-        double spreadY = (maxY - minY) / viewport.getHeight();
-        double spread = Math.max(spreadX, spreadY);
-        double scale = Math.log(spread) / Math.log(2);  // log_e(x) / log_e(2) == log_2(x)
+        double spreadX = (maxX - minX);
+        double spreadY = (maxY - minY);
+
+        double viewportSpread = Math.max(spreadX / viewport.getWidth(), spreadY / viewport.getHeight());
+        double scale = Math.log(viewportSpread) / Math.log(2);  // log_e(x) / log_e(2) == log_2(x)
 
         double centerX = (minX + maxX) / 2;
         double centerY = (minY + maxY) / 2;
@@ -136,6 +140,48 @@ public class MainController implements Initializable {
             error.setHeaderText("Saving snapshot failed");
             error.showAndWait();
         }
+    }
+
+    @FXML
+    private void summaryClicked() {
+        List<PlotPoint> points = plotter.getPoints();
+
+        double minX = points.stream().map(PlotPoint::getX).reduce(Math::min).get();
+        double maxX = points.stream().map(PlotPoint::getX).reduce(Math::max).get();
+        double minY = points.stream().map(PlotPoint::getY).reduce(Math::min).get();
+        double maxY = points.stream().map(PlotPoint::getY).reduce(Math::max).get();
+
+        double spreadX = (maxX - minX);
+        double spreadY = (maxY - minY);
+
+        Dialog dialog = new Dialog();
+        dialog.setTitle("gnupolpot");
+        dialog.setHeaderText("Plot summary");
+
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        grid.add(new Label("Min X:"), 0, 0);
+        grid.add(new Label("Max X:"), 0, 1);
+        grid.add(new Label("Min Y:"), 0, 2);
+        grid.add(new Label("Max Y:"), 0, 3);
+        grid.add(new Label("X spread:"), 0, 4);
+        grid.add(new Label("Y spread:"), 0, 5);
+
+        NumberFormat formatter = new DecimalFormat("#0.0000000000");
+        grid.add(new Label(formatter.format(minX)), 1, 0);
+        grid.add(new Label(formatter.format(maxX)), 1, 1);
+        grid.add(new Label(formatter.format(minY)), 1, 2);
+        grid.add(new Label(formatter.format(maxY)), 1, 3);
+        grid.add(new Label(formatter.format(spreadX)), 1, 4);
+        grid.add(new Label(formatter.format(spreadY)), 1, 5);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.showAndWait();
     }
 
     @Override

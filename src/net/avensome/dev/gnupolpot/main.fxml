@@ -18,6 +18,8 @@
                 <Separator orientation="VERTICAL"/>
                 <Button mnemonicParsing="false" onAction="#zoomAllClicked" text="Zoom all"/>
                 <Button mnemonicParsing="false" onAction="#snapshotClicked" text="Snapshot"/>
+                <Separator orientation="VERTICAL"/>
+                <Button mnemonicParsing="false" onAction="#summaryClicked" text="Summary"/>
                 <Label fx:id="statusLabel"/>
             </items>
         </ToolBar>
