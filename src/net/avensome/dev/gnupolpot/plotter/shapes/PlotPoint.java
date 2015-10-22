@@ -37,9 +37,10 @@ public class PlotPoint {
         return new PlotPoint(getX() + delta.getX(), getY() + delta.getY(), color);
     }
 
-    public PlotPoint zoomed(Point offset, double factor) {
-        double x = getX() + offset.getX();
-        double y = getY() + offset.getY();
+    public PlotPoint zoomed(Point viewportOffset, double factor) {
+        Point invertedOffset = viewportOffset.scaled(-1);
+        double x = getX() + invertedOffset.getX();
+        double y = getY() + invertedOffset.getY();
         return new PlotPoint(x * factor, y * factor);
     }
 

@@ -71,13 +71,19 @@ public class Plotter extends Pane {
     }
 
     private void handleMouseMoved(MouseEvent mouseEvent) {
-        double x = mouseEvent.getX() + viewport.getLeft();
-        double y = mouseEvent.getY() + viewport.getTop();
+        double scale = viewport.getScale();
+        Viewport scaledViewport = viewport.applyScale();
+        double x = scaledViewport.getLeft() + mouseEvent.getX() / scale;
+        double y = scaledViewport.getTop() + mouseEvent.getY() / scale;
+
+        System.out.println(String.format("x %f, y %f, scale %f, mx %f, my %f", x, y, scale, mouseEvent.getX(), mouseEvent.getY()));
+
         PlotPoint focusedPoint = GeometryTools
-                .pointsInRect(points, viewport).stream()
-                .filter(point -> point.distanceFrom(x, y) < POINT_FOCUS_RADIUS)
+                .pointsInRect(points, this.viewport).stream()
+                .filter(point -> point.distanceFrom(x, y) * scale < POINT_FOCUS_RADIUS)
                 .sorted((o1, o2) -> Double.compare(o1.distanceFrom(x, y), o2.distanceFrom(x, y)))
                 .reduce(null, (point1, point2) -> point1 == null ? point2 : point1);
+
         boolean focusChanged = this.focusedPoint.set(focusedPoint);
         if (focusChanged) {
             requestRepaint();

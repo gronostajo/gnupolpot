@@ -20,7 +20,7 @@ public class ShapePainter extends Painter {
     public void paint(Viewport viewport) {
         Point topLeftCorner = viewport.applyScale().getTopLeftCorner();
         List<Shape> movedShapes = shapes.stream()
-                .map(shape -> shape.zoomed(topLeftCorner.scaled(-1), viewport.getScale()))
+                .map(shape -> shape.zoomed(topLeftCorner, viewport.getScale()))
                 .collect(Collectors.toList());
 
         ctx.setLineWidth(2);
