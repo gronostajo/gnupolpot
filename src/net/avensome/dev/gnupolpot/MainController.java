@@ -115,7 +115,7 @@ public class MainController implements Initializable {
         double centerX = (minX + maxX) / 2;
         double centerY = (minY + maxY) / 2;
 
-        viewport.setScalePower((int) -Math.round(scale));
+        viewport.setScalePower((int) -Math.ceil(scale));
         viewport.centerAt(centerX, centerY);
         plotter.requestRepaint();
     }
