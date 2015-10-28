@@ -14,7 +14,7 @@
             <items>
                 <Button mnemonicParsing="false" onAction="#resetPlotClicked" text="Reset plot"/>
                 <Button mnemonicParsing="false" onAction="#importPointsClicked" text="Import points"/>
-                <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false" text="Import again"/>
+                <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false" onAction="#importAgainClicked" text="Import again"/>
                 <Separator orientation="VERTICAL"/>
                 <Button mnemonicParsing="false" onAction="#zoomAllClicked" text="Zoom all"/>
                 <Button mnemonicParsing="false" onAction="#zoomOneToOneClicked" text="Zoom 1:1"/>
