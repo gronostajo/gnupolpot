@@ -48,7 +48,7 @@ public class Shape {
 
         if (points.size() > 2) {
             paintPolygon(ctx);
-        } else {
+        } else if (points.size() == 2) {
             paintLine(ctx);
         }
     }
