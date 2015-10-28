@@ -10,10 +10,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import net.avensome.dev.gnupolpot.geometry.Viewport;
 import net.avensome.dev.gnupolpot.plotter.DataFormatException;
-import net.avensome.dev.gnupolpot.plotter.Plotter;
 import net.avensome.dev.gnupolpot.plotter.Importer;
+import net.avensome.dev.gnupolpot.plotter.Plotter;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
@@ -87,37 +86,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void zoomAllClicked() {
-        List<PlotPoint> points = plotter.getPoints();
-        Viewport viewport = plotter.getViewport();
-
-        if (points.size() == 0) {
-            viewport.centerAt(0, 0);
-            plotter.requestRepaint();
-            return;
-        } else if (points.size() == 1) {
-            PlotPoint point = points.get(0);
-            viewport.centerAt(point.getX(), point.getY());
-            plotter.requestRepaint();
-            return;
-        }
-
-        double minX = points.stream().map(PlotPoint::getX).reduce(Math::min).get();
-        double maxX = points.stream().map(PlotPoint::getX).reduce(Math::max).get();
-        double minY = points.stream().map(PlotPoint::getY).reduce(Math::min).get();
-        double maxY = points.stream().map(PlotPoint::getY).reduce(Math::max).get();
-
-        double spreadX = (maxX - minX);
-        double spreadY = (maxY - minY);
-
-        double viewportSpread = Math.max(spreadX / viewport.getWidth(), spreadY / viewport.getHeight());
-        double scale = Math.log(viewportSpread) / Math.log(2);  // log_e(x) / log_e(2) == log_2(x)
-
-        double centerX = (minX + maxX) / 2;
-        double centerY = (minY + maxY) / 2;
-
-        viewport.setScalePower((int) -Math.ceil(scale));
-        viewport.centerAt(centerX, centerY);
-        plotter.requestRepaint();
+        plotter.zoomAll(false);
     }
 
     @FXML

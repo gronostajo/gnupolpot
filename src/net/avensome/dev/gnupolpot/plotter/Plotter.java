@@ -175,6 +175,49 @@ public class Plotter extends Pane {
         requestRepaint();
     }
 
+    public void zoomAll(boolean instantRepaint) {
+        if (points.size() == 0) {
+            viewport.centerAt(0, 0);
+            if (instantRepaint) {
+                repaint();
+            } else {
+                requestRepaint();
+            }
+            return;
+        } else if (points.size() == 1) {
+            PlotPoint point = points.get(0);
+            viewport.centerAt(point.getX(), point.getY());
+            if (instantRepaint) {
+                repaint();
+            } else {
+                requestRepaint();
+            }
+            return;
+        }
+
+        double minX = points.stream().map(PlotPoint::getX).reduce(Math::min).get();
+        double maxX = points.stream().map(PlotPoint::getX).reduce(Math::max).get();
+        double minY = points.stream().map(PlotPoint::getY).reduce(Math::min).get();
+        double maxY = points.stream().map(PlotPoint::getY).reduce(Math::max).get();
+
+        double spreadX = (maxX - minX);
+        double spreadY = (maxY - minY);
+
+        double viewportSpread = Math.max(spreadX / viewport.getWidth(), spreadY / viewport.getHeight());
+        double scale = Math.log(viewportSpread) / Math.log(2);  // log_e(x) / log_e(2) == log_2(x)
+
+        double centerX = (minX + maxX) / 2;
+        double centerY = (minY + maxY) / 2;
+
+        viewport.setScalePower((int) -Math.ceil(scale));
+        viewport.centerAt(centerX, centerY);
+        if (instantRepaint) {
+            repaint();
+        } else {
+            requestRepaint();
+        }
+    }
+
     public WritableImage snapshot() {
         return canvas.snapshot(null, null);
     }
