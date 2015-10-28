@@ -21,6 +21,7 @@
                 <Button mnemonicParsing="false" onAction="#centerClicked" text="Center"/>
                 <Separator orientation="VERTICAL"/>
                 <Button mnemonicParsing="false" onAction="#snapshotClicked" text="Snapshot"/>
+                <Button mnemonicParsing="false" onAction="#renderClicked" text="Render file(s)"/>
                 <Separator orientation="VERTICAL"/>
                 <Button mnemonicParsing="false" onAction="#summaryClicked" text="Summary"/>
                 <Label fx:id="statusLabel"/>

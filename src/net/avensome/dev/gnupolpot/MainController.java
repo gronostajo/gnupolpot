@@ -69,7 +69,7 @@ public class MainController implements Initializable {
         }
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Import points");
+        fileChooser.setTitle("Import plot");
         File file = fileChooser.showOpenDialog(primaryStage);
         if (file == null) {
             return;
@@ -115,14 +115,23 @@ public class MainController implements Initializable {
             return;
         }
 
-        WritableImage image = plotter.snapshot();
-        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-        try {
-            ImageIO.write(bufferedImage, "png", file);
-        } catch (IOException e) {
-            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
-            error.setHeaderText("Saving snapshot failed");
-            error.showAndWait();
+        saveSnapshotToFile(file);
+    }
+
+    @FXML
+    private void renderClicked() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Render plot from file");
+        List<File> files = fileChooser.showOpenMultipleDialog(primaryStage);
+        if (files == null) {
+            return;
+        }
+
+        for (File inFile : files) {
+            importPointsFromFile(inFile, true);
+            plotter.zoomAll(true);
+            File outFile = new File(inFile.getPath() + ".png");
+            saveSnapshotToFile(outFile);
         }
     }
 
@@ -215,6 +224,18 @@ public class MainController implements Initializable {
         } catch (DataFormatException e) {
             Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
             error.setHeaderText("Invalid line in data file");
+            error.showAndWait();
+        }
+    }
+
+    private void saveSnapshotToFile(File file) {
+        WritableImage image = plotter.snapshot();
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        try {
+            ImageIO.write(bufferedImage, "png", file);
+        } catch (IOException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            error.setHeaderText("Saving snapshot failed");
             error.showAndWait();
         }
     }
