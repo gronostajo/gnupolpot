@@ -92,13 +92,13 @@ public class MainController implements Initializable {
     @FXML
     private void zoomOneToOneClicked() {
         plotter.getViewport().setScalePower(0);
-        plotter.requestRepaint();
+        plotter.queueRepaint();
     }
 
     @FXML
     private void centerClicked() {
         plotter.getViewport().centerAt(0, 0);
-        plotter.requestRepaint();
+        plotter.queueRepaint();
     }
 
     @FXML
@@ -120,6 +120,17 @@ public class MainController implements Initializable {
 
     @FXML
     private void renderClicked() {
+        if (plotter.getPoints().size() > 0) {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("gnupolpot");
+            confirm.setHeaderText(null);
+            confirm.setContentText("This will erase current plot. Continue?");
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.get() != ButtonType.OK) {
+                return;
+            }
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Render plot from file");
         List<File> files = fileChooser.showOpenMultipleDialog(primaryStage);
@@ -130,6 +141,7 @@ public class MainController implements Initializable {
         for (File inFile : files) {
             importPointsFromFile(inFile, true);
             plotter.zoomAll(true);
+            plotter.requestLayout();
             File outFile = new File(inFile.getPath() + ".png");
             saveSnapshotToFile(outFile);
         }

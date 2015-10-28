@@ -55,7 +55,7 @@ public class Plotter extends Pane {
 
         ChangeListener<Number> resizeListener = (observable, oldValue, newValue) -> {
             viewport.resize(getWidth(), getHeight());
-            requestRepaint();
+            queueRepaint();
         };
         widthProperty().addListener(resizeListener);
         heightProperty().addListener(resizeListener);
@@ -67,7 +67,7 @@ public class Plotter extends Pane {
         canvas.addEventHandler(ScrollEvent.SCROLL, this::handleScrolling);
 
         createPaintingPipeline();
-        requestRepaint();
+        queueRepaint();
     }
 
     private void handleMouseMoved(MouseEvent mouseEvent) {
@@ -84,7 +84,7 @@ public class Plotter extends Pane {
 
         boolean focusChanged = this.focusedPoint.set(focusedPoint);
         if (focusChanged) {
-            requestRepaint();
+            queueRepaint();
         }
     }
 
@@ -105,7 +105,7 @@ public class Plotter extends Pane {
             Point delta = mouseAnchor.minus(newAnchor);
 
             viewport.moveBy(delta.getX(), delta.getY());
-            requestRepaint();
+            queueRepaint();
             mouseAnchor = newAnchor;
 
             handleMouseMoved(mouseEvent);
@@ -127,7 +127,7 @@ public class Plotter extends Pane {
             return;
         }
 
-        requestRepaint();
+        queueRepaint();
     }
 
     private void createPaintingPipeline() {
@@ -143,7 +143,7 @@ public class Plotter extends Pane {
         painters.add(pointPainter);
     }
 
-    public void requestRepaint() {
+    public void queueRepaint() {
         synchronized (canvas) {
             requiresRepaint = true;
         }
@@ -166,13 +166,13 @@ public class Plotter extends Pane {
     public void clear() {
         points.clear();
         shapes.clear();
-        requestRepaint();
+        queueRepaint();
     }
 
     public void importPlot(Importer.PlotData data) throws DataFormatException {
         points.addAll(data.getPoints());
         shapes.addAll(data.getShapes());
-        requestRepaint();
+        queueRepaint();
     }
 
     public void zoomAll(boolean instantRepaint) {
@@ -181,7 +181,7 @@ public class Plotter extends Pane {
             if (instantRepaint) {
                 repaint();
             } else {
-                requestRepaint();
+                queueRepaint();
             }
             return;
         } else if (points.size() == 1) {
@@ -190,7 +190,7 @@ public class Plotter extends Pane {
             if (instantRepaint) {
                 repaint();
             } else {
-                requestRepaint();
+                queueRepaint();
             }
             return;
         }
@@ -214,7 +214,7 @@ public class Plotter extends Pane {
         if (instantRepaint) {
             repaint();
         } else {
-            requestRepaint();
+            queueRepaint();
         }
     }
 
