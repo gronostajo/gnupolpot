@@ -1,5 +1,6 @@
 package net.avensome.dev.gnupolpot.plotter.shapes;
 
+import com.sun.istack.internal.Nullable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.geometry.Point;
@@ -10,7 +11,13 @@ import java.util.stream.Collectors;
 public class Shape {
     public static final double OPACITY_STROKE = 0.8;
     public static final double OPACITY_FILL = 0.5;
+
+    public static final Color DEFAULT_SEGMENT_COLOR = Color.web("#222222");
+    public static final Color DEFAULT_POLYGON_COLOR = Color.web("#888888");
+
     private final List<PlotPoint> points;
+
+    @Nullable
     private final Color color;
 
     public Shape(List<PlotPoint> points, Color color) {
@@ -19,14 +26,13 @@ public class Shape {
     }
 
     public Color getColor() {
-        return color;
-    }
-
-    public Shape movedBy(Point delta) {
-        List<PlotPoint> newPoints = points.stream()
-                .map(plotPoint -> plotPoint.movedBy(delta))
-                .collect(Collectors.toList());
-        return new Shape(newPoints, color);
+        if (color != null) {
+            return color;
+        } else if (points.size() == 2) {
+            return DEFAULT_SEGMENT_COLOR;
+        } else {
+            return DEFAULT_POLYGON_COLOR;
+        }
     }
 
     public Shape zoomed(Point offset, double factor) {
@@ -37,8 +43,8 @@ public class Shape {
     }
 
     public void paint(GraphicsContext ctx) {
-        ctx.setFill(applyOpacity(color, OPACITY_FILL));
-        ctx.setStroke(applyOpacity(color, OPACITY_STROKE));
+        ctx.setFill(applyOpacity(getColor(), OPACITY_FILL));
+        ctx.setStroke(applyOpacity(getColor(), OPACITY_STROKE));
 
         if (points.size() > 2) {
             paintPolygon(ctx);

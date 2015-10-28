@@ -3,7 +3,9 @@ package net.avensome.dev.gnupolpot.plotter.shapes;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.geometry.Point;
 
-public class PlotPoint {
+import java.io.Serializable;
+
+public class PlotPoint implements Serializable {
     private Point point;
     private Color color;
 

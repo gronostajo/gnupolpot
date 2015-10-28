@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import net.avensome.dev.gnupolpot.geometry.Viewport;
 import net.avensome.dev.gnupolpot.plotter.DataFormatException;
 import net.avensome.dev.gnupolpot.plotter.Plotter;
-import net.avensome.dev.gnupolpot.plotter.PointImporter;
+import net.avensome.dev.gnupolpot.plotter.Importer;
 import net.avensome.dev.gnupolpot.plotter.shapes.PlotPoint;
 import net.avensome.dev.gnupolpot.plotter.shapes.Shape;
 
@@ -231,12 +231,14 @@ public class MainController implements Initializable {
 
     private void importPointsFromFile(File file, boolean replacePlot) {
         try {
-            List<PlotPoint> importedPoints = PointImporter.fromStream(new FileInputStream(file));
+            Importer.PlotData importedPlot = Importer.fromStream(new FileInputStream(file));
             if (replacePlot) {
                 plotter.clear();
             }
-            plotter.importPoints(importedPoints);
-            statusLabel.setText(String.format("Imported %d points", importedPoints.size()));
+            plotter.importPlot(importedPlot);
+            statusLabel.setText(String.format("Imported %d points, %d shapes",
+                    importedPlot.getPoints().size(),
+                    importedPlot.getShapes().size()));
             importAgainButton.setDisable(!replacePlot);
         } catch (FileNotFoundException e) {
             Alert error = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);

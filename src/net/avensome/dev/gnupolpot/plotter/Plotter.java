@@ -169,8 +169,9 @@ public class Plotter extends Pane {
         requestRepaint();
     }
 
-    public void importPoints(List<PlotPoint> importedPoints) throws DataFormatException {
-        points.addAll(importedPoints);
+    public void importPlot(Importer.PlotData data) throws DataFormatException {
+        points.addAll(data.getPoints());
+        shapes.addAll(data.getShapes());
         requestRepaint();
     }
 
