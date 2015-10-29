@@ -34,7 +34,7 @@ public class PointPainter extends Painter {
             ctx.setFill(point.getColor());
             double radius = point.hasEqualPoint(focusedPoint) ? POINT_RADIUS_FOCUSED : POINT_RADIUS;
             PlotPoint movedPoint = point.zoomed(topLeftCorner, viewport.getScale());
-            ctx.fillOval(movedPoint.getX() - radius, movedPoint.getY() - radius, radius * 2, radius * 2);
+            ctx.fillOval(movedPoint.getX() - radius, viewport.getHeight() - movedPoint.getY() - radius, radius * 2, radius * 2);
         }
     }
 }

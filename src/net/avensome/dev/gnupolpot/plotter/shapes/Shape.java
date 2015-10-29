@@ -42,34 +42,34 @@ public class Shape {
         return new Shape(newPoints, color);
     }
 
-    public void paint(GraphicsContext ctx) {
+    public void paint(GraphicsContext ctx, double viewportHeight) {
         ctx.setFill(applyOpacity(getColor(), OPACITY_FILL));
         ctx.setStroke(applyOpacity(getColor(), OPACITY_STROKE));
 
         if (points.size() > 2) {
-            paintPolygon(ctx);
+            paintPolygon(ctx, viewportHeight);
         } else if (points.size() == 2) {
-            paintLine(ctx);
+            paintLine(ctx, viewportHeight);
         }
     }
 
-    private void paintPolygon(GraphicsContext ctx) {
+    private void paintPolygon(GraphicsContext ctx, double viewportHeight) {
         double[] x = new double[points.size()];
         double[] y = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
             PlotPoint point = points.get(i);
             x[i] = point.getX();
-            y[i] = point.getY();
+            y[i] = viewportHeight - point.getY();
         }
 
         ctx.fillPolygon(x, y, points.size());
         ctx.strokePolygon(x, y, points.size());
     }
 
-    private void paintLine(GraphicsContext ctx) {
+    private void paintLine(GraphicsContext ctx, double viewportHeight) {
         PlotPoint a = points.get(0);
         PlotPoint b = points.get(1);
-        ctx.strokeLine(a.getX(), a.getY(), b.getX(), b.getY());
+        ctx.strokeLine(a.getX(), viewportHeight - a.getY(), b.getX(), viewportHeight - b.getY());
     }
 
     private Color applyOpacity(Color color, double opacity) {

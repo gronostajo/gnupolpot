@@ -74,7 +74,7 @@ public class Plotter extends Pane {
         double scale = viewport.getScale();
         Viewport scaledViewport = viewport.applyScale();
         double x = scaledViewport.getLeft() + mouseEvent.getX() / scale;
-        double y = scaledViewport.getTop() + mouseEvent.getY() / scale;
+        double y = scaledViewport.getBottom() - mouseEvent.getY() / scale;
 
         PlotPoint focusedPoint = GeometryTools
                 .pointsInRect(points, this.viewport).stream()
@@ -104,7 +104,7 @@ public class Plotter extends Pane {
             Point newAnchor = new Point(mouseEvent.getX(), mouseEvent.getY());
             Point delta = mouseAnchor.minus(newAnchor);
 
-            viewport.moveBy(delta.getX(), delta.getY());
+            viewport.moveBy(delta.getX(), -delta.getY());
             queueRepaint();
             mouseAnchor = newAnchor;
 

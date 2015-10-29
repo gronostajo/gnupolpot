@@ -25,7 +25,7 @@ public class ShapePainter extends Painter {
 
         ctx.setLineWidth(2);
         for (Shape shape : movedShapes) {
-            shape.paint(ctx);
+            shape.paint(ctx, viewport.getHeight());
         }
     }
 }
