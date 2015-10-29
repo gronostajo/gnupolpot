@@ -2,6 +2,7 @@
 
 *"It's like gnuplot, but wrong."*
 
+
 ## Importing plots
 
 Plot is a collection of points. Each point can have a color and can be assigned to any number of shapes (ie. segments or polygons). Each polygon can have a color.
@@ -35,3 +36,7 @@ Text file lines that create:
         $diagonal1 #00ff00
         $diagonal2 #0000ff
         
+
+## Various stuff
+
+Uses [Numix icon theme](https://github.com/numixproject/numix-icon-theme) (GPL v3).

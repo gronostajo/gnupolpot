@@ -40,10 +40,13 @@ public class MainController implements Initializable {
     private Label statusLabel;
     @FXML
     private Button importAgainButton;
+    @FXML
+    private Button summaryButton;
 
     @FXML
     private void resetPlotClicked() {
         plotter.clear();
+        summaryButton.setDisable(true);
         statusLabel.setText("Plot cleared");
     }
 
@@ -230,6 +233,7 @@ public class MainController implements Initializable {
                     importedPlot.getPoints().size(),
                     importedPlot.getShapes().size()));
             importAgainButton.setDisable(!replacePlot);
+            summaryButton.setDisable(plotter.getPoints().size() == 0);
         } catch (FileNotFoundException e) {
             Alert error = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
             error.showAndWait();
