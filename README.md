@@ -37,6 +37,15 @@ Text file lines that create:
         $diagonal2 #0000ff
 
 
+## Using plugins
+
+Just add plugin JAR to classpath. For example create a folder called `plugins`, place plugin JARs inside and launch gnupolpot like this:
+
+    java -classpath "path/to/gnupolpot/jar;plugins/*" net.avensome.dev.gnupolpot.core.PolpotApp
+
+You'll see a *"<N> plugin(s) loaded"* message if you have set the classpath correctly. Features provided by plugins will be available through dedicated button.
+
+
 ## Creating plugins
 
 Step by step tutorial for IntelliJ IDEA.
@@ -47,10 +56,12 @@ Step by step tutorial for IntelliJ IDEA.
 4. Create a class extending `Plugin` class from the library you've just added.
 5. Right-click `src` folder, create new package called `META-INF.services`. IntelliJ will complain, ignore it.
 6. Inside the package you have just created add a text file called `net.avensome.dev.gnupolpot.api.Plugin`. Open it and press `Ctrl`+`Space`, your class should pop up. Press `Enter`.
-7. Implement missing methods in your class. Make `getName()` return some name. Create **inner class** that implements `Feature`. Add it to the list returned by `getFeatures()` method.
+7. Implement missing methods in your class. Make `getName()` return some name. Create a class that implements `Feature`. Add it to the list returned by `getFeatures()` method.
 8. Open *File* > *Project Structure* > *Modules*. Click the `+` button on the far right. Add gnupolpot's main JAR. Click OK.
 9. Wait until IntelliJ IDEA finishes indexing. Open *Edit configurations* window (combo box in the top right corner).
 10. Add new configuration for *Application*. Enter `net.avensome.dev.gnupolpot.core.PolpotApp` as the main class.
+
+To build a plugin JAR, add an artifact containing your classes. You don't have to include API or core files.
         
 
 ## Various stuff
