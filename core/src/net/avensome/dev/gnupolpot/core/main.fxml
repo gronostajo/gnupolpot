@@ -136,7 +136,7 @@
                             <graphic>
                                 <ImageView>
                                     <image>
-                                        <Image url="@icons/zoom-fit-best.png"/>
+                                        <Image url="@icons/zoom-original.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -148,7 +148,7 @@
                             <graphic>
                                 <ImageView>
                                     <image>
-                                        <Image url="@icons/zoom-original.png"/>
+                                        <Image url="@icons/zoom-fit-best.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
