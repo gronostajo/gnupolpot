@@ -35,6 +35,22 @@ Text file lines that create:
         20 -20 $myLovelySquare $diagonal2
         $diagonal1 #00ff00
         $diagonal2 #0000ff
+
+
+## Creating plugins
+
+Step by step tutorial for IntelliJ IDEA.
+
+1. Create an empty Java project.
+2. Create a new directory called `lib` in your project's root. Place `api.jar` file in there.
+3. Right-click `api.jar` in IntelliJ IDEA, select *Add as Library...* and click OK.
+4. Create a class extending `Plugin` class from the library you've just added.
+5. Right-click `src` folder, create new package called `META-INF.services`. IntelliJ will complain, ignore it.
+6. Inside the package you have just created add a text file called `net.avensome.dev.gnupolpot.api.Plugin`. Open it and press `Ctrl`+`Space`, your class should pop up. Press `Enter`.
+7. Implement missing methods in your class. Make `getName()` return some name. Create **inner class** that implements `Feature`. Add it to the list returned by `getFeatures()` method.
+8. Open *File* > *Project Structure* > *Modules*. Click the `+` button on the far right. Add gnupolpot's main JAR. Click OK.
+9. Wait until IntelliJ IDEA finishes indexing. Open *Edit configurations* window (combo box in the top right corner).
+10. Add new configuration for *Application*. Enter `net.avensome.dev.gnupolpot.core.PolpotApp` as the main class.
         
 
 ## Various stuff
