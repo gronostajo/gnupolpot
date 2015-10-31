@@ -38,6 +38,8 @@ public class MainController implements Initializable {
 
     private File lastImportedFile;
 
+    private String lastPermanentStatus = "";
+
     @FXML
     private Plotter plotter;
     @FXML
@@ -254,6 +256,15 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        plotter.focusedPointProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                restoreStatus();
+            } else {
+                setTemporaryStatus(String.format("Point: %f ; %f", newValue.getX(), newValue.getY()));
+            }
+        });
+
+        // FIXME Dev content. Remove from final product.
         List<PlotPoint> points = plotter.getPoints();
         List<Shape> shapes = plotter.getShapes();
 
@@ -279,7 +290,19 @@ public class MainController implements Initializable {
     }
 
     public void setStatus(String status) {
+        lastPermanentStatus = null;
         statusLabel.setText(status);
+    }
+
+    public void setTemporaryStatus(String status) {
+        lastPermanentStatus = statusLabel.getText();
+        statusLabel.setText(status);
+    }
+
+    public void restoreStatus() {
+        if (lastPermanentStatus != null) {
+            statusLabel.setText(lastPermanentStatus);
+        }
     }
 
     public void setPrimaryStage(Stage primaryStage) {

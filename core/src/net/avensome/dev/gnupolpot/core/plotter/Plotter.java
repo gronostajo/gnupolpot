@@ -1,6 +1,7 @@
 package net.avensome.dev.gnupolpot.core.plotter;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.scene.Cursor;
@@ -21,7 +22,6 @@ import net.avensome.dev.gnupolpot.core.plotter.painters.Painter;
 import net.avensome.dev.gnupolpot.core.plotter.painters.PointPainter;
 import net.avensome.dev.gnupolpot.core.plotter.painters.ShapePainter;
 import net.avensome.dev.gnupolpot.core.plotter.util.GeometryTools;
-import net.avensome.dev.gnupolpot.core.plotter.util.Wrapper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -40,7 +40,7 @@ public class Plotter extends Pane implements IPlotter {
 
     private MouseState mouseState = MouseState.NOT_INTERACTING;
     private Point mouseAnchor;
-    private Wrapper<PlotPoint> focusedPoint = new Wrapper<>();
+    private SimpleObjectProperty<PlotPoint> focusedPoint = new SimpleObjectProperty<>();
 
     public Plotter() {
         super();
@@ -81,7 +81,9 @@ public class Plotter extends Pane implements IPlotter {
                 .sorted((o1, o2) -> Double.compare(o1.distanceFrom(x, y), o2.distanceFrom(x, y)))
                 .reduce(null, (point1, point2) -> point1 == null ? point2 : point1);
 
-        boolean focusChanged = this.focusedPoint.set(focusedPoint);
+        boolean focusChanged = (this.focusedPoint.get() != focusedPoint);
+        this.focusedPoint.set(focusedPoint);
+
         if (focusChanged) {
             queueRepaint();
         }
@@ -238,6 +240,10 @@ public class Plotter extends Pane implements IPlotter {
 
     public Viewport getViewport() {
         return viewport;
+    }
+
+    public SimpleObjectProperty<PlotPoint> focusedPointProperty() {
+        return focusedPoint;
     }
 
     private enum MouseState {

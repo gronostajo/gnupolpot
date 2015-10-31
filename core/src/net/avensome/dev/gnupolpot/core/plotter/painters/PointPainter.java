@@ -1,11 +1,11 @@
 package net.avensome.dev.gnupolpot.core.plotter.painters;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.canvas.GraphicsContext;
+import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.core.geometry.Point;
 import net.avensome.dev.gnupolpot.core.geometry.Viewport;
-import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.core.plotter.util.GeometryTools;
-import net.avensome.dev.gnupolpot.core.plotter.util.Wrapper;
 
 import java.util.List;
 
@@ -14,9 +14,9 @@ public class PointPainter extends Painter {
     public static final double POINT_RADIUS_FOCUSED = 3;
     private final GraphicsContext ctx;
     private final List<PlotPoint> points;
-    private final Wrapper<PlotPoint> focusedPoint;
+    private final SimpleObjectProperty<PlotPoint> focusedPoint;
 
-    public PointPainter(GraphicsContext ctx, List<PlotPoint> points, Wrapper<PlotPoint> focusedPoint) {
+    public PointPainter(GraphicsContext ctx, List<PlotPoint> points, SimpleObjectProperty<PlotPoint> focusedPoint) {
         super(ctx);
         this.ctx = ctx;
         this.points = points;
