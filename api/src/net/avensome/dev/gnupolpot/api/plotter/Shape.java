@@ -20,9 +20,12 @@ public class Shape implements Serializable {
     @Nullable
     private Color color;
 
-    public Shape(List<PlotPoint> points, Color color) {
+    private Type type;
+
+    public Shape(List<PlotPoint> points, Color color, Type type) {
         this.points = points;
         this.color = color;
+        this.type = type;
     }
 
     public Color getColor() {
@@ -43,11 +46,11 @@ public class Shape implements Serializable {
         List<PlotPoint> newPoints = points.stream()
                 .map(plotPoint -> plotPoint.zoomed(offsetX, offsetY, factor))
                 .collect(Collectors.toList());
-        return new Shape(newPoints, color);
+        return new Shape(newPoints, color, type);
     }
 
     public void paint(GraphicsContext ctx, double viewportHeight) {
-        ctx.setFill(applyOpacity(getColor(), OPACITY_FILL));
+        ctx.setFill(applyOpacity(getColor(), (type == Type.FILLED) ? OPACITY_FILL : 0));
         ctx.setStroke(applyOpacity(getColor(), OPACITY_STROKE));
 
         if (points.size() > 2) {
@@ -66,8 +69,12 @@ public class Shape implements Serializable {
             y[i] = viewportHeight - point.getY();
         }
 
-        ctx.fillPolygon(x, y, points.size());
-        ctx.strokePolygon(x, y, points.size());
+        if (type != Type.LINE) {
+            ctx.fillPolygon(x, y, points.size());
+            ctx.strokePolygon(x, y, points.size());
+        } else {
+            ctx.strokePolyline(x, y, points.size());
+        }
     }
 
     private void paintLine(GraphicsContext ctx, double viewportHeight) {
@@ -78,5 +85,11 @@ public class Shape implements Serializable {
 
     private Color applyOpacity(Color color, double opacity) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity * color.getOpacity());
+    }
+
+    public enum Type {
+        FILLED,
+        EMPTY,
+        LINE
     }
 }

@@ -23,7 +23,7 @@ public class Importer {
         List<PlotPoint> points = new ArrayList<>();
 
         Map<String, List<PlotPoint>> shapePoints = new HashMap<>();
-        Map<String, String> shapeColors = new HashMap<>();
+        Map<String, ShapeStub> shapeStubs = new HashMap<>();
 
         Scanner scanner = new Scanner(dataStream);
 
@@ -35,8 +35,8 @@ public class Importer {
                 continue;   // It's a comment or empty line, ignore it
             } else if (line.matches("\\$.+")) {
                 // There's a chance it's a shape color spec
-                Pair<String, String> shapeColor = parseShapeColor(line);
-                shapeColors.put(shapeColor.getFirst(), shapeColor.getSecond());
+                ShapeStub shapeStub = parseShapeColor(line);
+                shapeStubs.put(shapeStub.getName(), shapeStub);
             } else {
                 Pair<PlotPoint, Set<String>> dataPoint = parsePoint(line);
                 PlotPoint point = dataPoint.getFirst();
@@ -56,29 +56,53 @@ public class Importer {
         List<Shape> shapes = shapePoints.entrySet().stream()
                 .map(entry -> {
                     String shapeName = entry.getKey();
-                    String colorString = shapeColors.get(shapeName);
-                    Color color = (colorString != null) ? Color.web(colorString) : null;
-                    return new Shape(entry.getValue(), color);
+                    ShapeStub shapeStub = shapeStubs.get(shapeName);
+                    if (shapeStub == null) {
+                        shapeStub = new ShapeStub(shapeName, null, Shape.Type.FILLED);
+                    }
+                    return shapeStub.toShape(entry.getValue());
                 })
                 .collect(Collectors.toList());
 
         return new PlotData(points, shapes);
     }
 
-    private static Pair<String, String> parseShapeColor(String line) throws DataFormatException {
+    private static ShapeStub parseShapeColor(String line) throws DataFormatException {
         String[] parts = line.split("\\s+");
-        if (parts.length != 2) {
+        if (parts.length < 2 || parts.length > 3) {
             throw new DataFormatException(line);
         }
+
+        String name;
+        String color;
+        Shape.Type type = Shape.Type.FILLED;
 
         Matcher nameMatcher = SHAPE_PATTERN.matcher(parts[0]);
-        Matcher colorMatcher = COLOR_PATTERN.matcher(parts[1]);
-
-        if (!nameMatcher.matches() || ! colorMatcher.matches()) {
+        Matcher strokeColorMatcher = COLOR_PATTERN.matcher(parts[1]);
+        if (!nameMatcher.matches() || !strokeColorMatcher.matches()) {
             throw new DataFormatException(line);
         }
+        name = nameMatcher.group(1);
+        color = parts[1];
 
-        return new Pair<>(nameMatcher.group(1), parts[1]);
+        if (parts.length == 3) {
+            String typeString = parts[2].toLowerCase();
+            switch (typeString) {
+                case "filled":
+                    type = Shape.Type.FILLED;
+                    break;
+                case "empty":
+                    type = Shape.Type.EMPTY;
+                    break;
+                case "line":
+                    type = Shape.Type.LINE;
+                    break;
+                default:
+                    throw new DataFormatException(line);
+            }
+        }
+
+        return new ShapeStub(name, color, type);
     }
 
     private static Pair<PlotPoint, Set<String>> parsePoint(String line) throws DataFormatException {
@@ -115,5 +139,25 @@ public class Importer {
 
         PlotPoint point = new PlotPoint(x, y, color);
         return new Pair<>(point, shapeNames);
+    }
+
+    private static class ShapeStub {
+        private final String name;
+        private final Color color;
+        private final Shape.Type type;
+
+        public ShapeStub(String name, String color, Shape.Type type) {
+            this.name = name;
+            this.color = (color != null) ? Color.web(color) : null;
+            this.type = type;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Shape toShape(List<PlotPoint> value) {
+            return new Shape(value, color, type);
+        }
     }
 }

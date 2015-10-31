@@ -281,22 +281,39 @@ public class MainController implements Initializable {
         points.add(new PlotPoint(0, 0));
         points.add(new PlotPoint(5, 5, Color.RED));
 
-        List<PlotPoint> shapePoints = ImmutableList.of(
+        List<PlotPoint> filledShapePoints = ImmutableList.of(
                 new PlotPoint(30, 20),
                 new PlotPoint(40, 30),
                 new PlotPoint(35, 50),
                 new PlotPoint(20, 50),
                 new PlotPoint(15, 40)
         );
-        points.addAll(shapePoints);
-        shapes.add(new Shape(shapePoints, Color.GREEN));
+        points.addAll(filledShapePoints);
+        shapes.add(new Shape(filledShapePoints, Color.GREEN, Shape.Type.FILLED));
+
+        List<PlotPoint> emptyShapePoints = ImmutableList.of(
+                new PlotPoint(60, 20),
+                new PlotPoint(70, 50),
+                new PlotPoint(50, 80),
+                new PlotPoint(40, 60)
+        );
+        points.addAll(emptyShapePoints);
+        shapes.add(new Shape(emptyShapePoints, Color.BLUE, Shape.Type.EMPTY));
+
+        List<PlotPoint> lineShapePoints = ImmutableList.of(
+                new PlotPoint(140, 20),
+                new PlotPoint(180, 70),
+                new PlotPoint(150, 80)
+        );
+        points.addAll(lineShapePoints);
+        shapes.add(new Shape(lineShapePoints, Color.HOTPINK, Shape.Type.LINE));
 
         ImmutableList<PlotPoint> linePoints = ImmutableList.of(
-                new PlotPoint(60, 70),
-                new PlotPoint(70, 90)
+                new PlotPoint(80, 70),
+                new PlotPoint(90, 90)
         );
         points.addAll(linePoints);
-        shapes.add(new Shape(linePoints, Color.PINK));
+        shapes.add(new Shape(linePoints, Color.PINK, Shape.Type.FILLED));
     }
 
     public void setStatus(String status) {
