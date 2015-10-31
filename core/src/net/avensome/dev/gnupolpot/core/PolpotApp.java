@@ -19,7 +19,7 @@ public class PolpotApp extends Application {
         primaryStage.setTitle("gnupolpot");
         primaryStage.setScene(new Scene(root));
         primaryStage.setMinWidth(640);
-        primaryStage.setMinHeight(400);
+        primaryStage.setMinHeight(480);
         primaryStage.show();
 
         PluginManager pluginManager = new PluginManager();
@@ -27,6 +27,8 @@ public class PolpotApp extends Application {
         int pluginCount = pluginManager.getPlugins().size();
         if (pluginCount > 0) {
             mainController.setStatus(String.format("%d plugin(s) loaded", pluginCount));
+        } else {
+            mainController.setStatus("No plugins found");
         }
     }
 

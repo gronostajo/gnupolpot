@@ -1,140 +1,184 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import net.avensome.dev.gnupolpot.core.plotter.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.avensome.dev.gnupolpot.core.MainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="400.0"
+            prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="net.avensome.dev.gnupolpot.core.MainController">
     <center>
-        <Plotter fx:id="plotter" />
+        <Plotter fx:id="plotter"/>
     </center>
     <bottom>
-        <ToolBar BorderPane.alignment="CENTER">
-            <items>
-                <Button mnemonicParsing="false" onAction="#resetPlotClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/edit-delete.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Clear" />
-                    </tooltip>
-                </Button>
-                <Button mnemonicParsing="false" onAction="#importPointsClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/default-document-open.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Import" />
-                    </tooltip>
-                </Button>
-                <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false" onAction="#importAgainClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/system-reboot.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Import last file again" />
-                    </tooltip>
-                </Button>
-                <Separator orientation="VERTICAL" />
-                <Button mnemonicParsing="false" onAction="#zoomAllClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/transform-scale.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Zoom to fit" />
-                    </tooltip>
-                </Button>
-                <Button mnemonicParsing="false" onAction="#zoomOneToOneClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/zoom-original.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Original scale" />
-                    </tooltip>
-                </Button>
-                <Button mnemonicParsing="false" onAction="#centerClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/zoom-fit-best.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Center" />
-                    </tooltip>
-                </Button>
-                <Separator orientation="VERTICAL" />
-                <Button mnemonicParsing="false" onAction="#snapshotClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/document-save.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Save as image" />
-                    </tooltip>
-                </Button>
-                <Button mnemonicParsing="false" onAction="#renderClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/document-save-as.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Render file(s) to image(s)" />
-                    </tooltip>
-                </Button>
-                <Separator orientation="VERTICAL" />
-                <Button fx:id="summaryButton" mnemonicParsing="false" onAction="#summaryClicked">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/document-properties.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                    <tooltip>
-                        <Tooltip text="Plot summary" />
-                    </tooltip>
-                </Button>
-                <Separator orientation="VERTICAL" />
-                <MenuButton fx:id="featureButton" disable="true" mnemonicParsing="false">
-                    <graphic>
-                        <ImageView fitHeight="24" fitWidth="24">
-                            <image>
-                                <Image url="@icons/image-auto-adjust.svg.png" />
-                            </image>
-                        </ImageView>
-                    </graphic>
-                </MenuButton>
-                <Label fx:id="statusLabel" />
-            </items>
-        </ToolBar>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <ToolBar>
+                    <items>
+                        <Label fx:id="statusLabel"/>
+                    </items>
+                </ToolBar>
+                <ToolBar>
+                    <items>
+                        <Button mnemonicParsing="false" onAction="#addPointClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/list-add.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Import"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#importPointsClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/default-document-open.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Import"/>
+                            </tooltip>
+                        </Button>
+                        <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false"
+                                onAction="#importAgainClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/system-reboot.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Import last file again"/>
+                            </tooltip>
+                        </Button>
+                        <MenuButton fx:id="featureButton" disable="true" mnemonicParsing="false">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/image-auto-adjust.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                        </MenuButton>
+                        <Button mnemonicParsing="false" onAction="#resetPlotClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/edit-delete.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Clear"/>
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                            <padding>
+                                <Insets left="3.0"/>
+                            </padding>
+                        </Separator>
+                        <Button mnemonicParsing="false" onAction="#snapshotClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/document-save.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Save as image"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#renderClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/document-save-as.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Render file(s) to image(s)"/>
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                            <padding>
+                                <Insets left="3.0"/>
+                            </padding>
+                        </Separator>
+                        <Button mnemonicParsing="false" onAction="#zoomAllClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/transform-scale.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Zoom to fit"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#zoomOneToOneClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/zoom-original.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Original scale"/>
+                            </tooltip>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#centerClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/zoom-fit-best.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Center"/>
+                            </tooltip>
+                        </Button>
+                        <Separator orientation="VERTICAL">
+                            <opaqueInsets>
+                                <Insets/>
+                            </opaqueInsets>
+                            <padding>
+                                <Insets left="3.0"/>
+                            </padding>
+                        </Separator>
+                        <Button fx:id="summaryButton" mnemonicParsing="false" onAction="#summaryClicked">
+                            <graphic>
+                                <ImageView fitHeight="24" fitWidth="24">
+                                    <image>
+                                        <Image url="@icons/document-properties.svg.png"/>
+                                    </image>
+                                </ImageView>
+                            </graphic>
+                            <tooltip>
+                                <Tooltip text="Plot summary"/>
+                            </tooltip>
+                        </Button>
+                    </items>
+                </ToolBar>
+            </children>
+        </VBox>
     </bottom>
 </BorderPane>
