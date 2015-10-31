@@ -356,7 +356,7 @@ public class MainController implements Initializable {
     public int registerFeature(Feature feature) {
         featureButton.setDisable(false);
 
-        MenuItem menuItem = new MenuItem(feature.getMenuPath());
+        MenuItem menuItem = new MenuItem(feature.getMenuItem());
         menuItem.setOnAction(event -> {
             String status = feature.call(plotter);
             if (status != null) {

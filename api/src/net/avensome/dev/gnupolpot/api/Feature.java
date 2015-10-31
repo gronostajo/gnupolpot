@@ -6,7 +6,7 @@ import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 
 public interface Feature {
     @NotNull
-    String getMenuPath();
+    String getMenuItem();
 
     @Nullable
     String call(IPlotter plotter);

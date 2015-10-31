@@ -55,4 +55,4 @@ Step by step tutorial for IntelliJ IDEA.
 
 ## Various stuff
 
-Uses [Numix icon theme](https://github.com/numixproject/numix-icon-theme) (GPL v3).
+Uses [Gnome icon theme](http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/3.12/) (LGPL v3).

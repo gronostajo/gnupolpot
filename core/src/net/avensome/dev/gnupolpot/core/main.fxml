@@ -24,9 +24,9 @@
                     <items>
                         <Button mnemonicParsing="false" onAction="#addPointClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/list-add.svg.png"/>
+                                        <Image url="@icons/list-add.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -36,9 +36,9 @@
                         </Button>
                         <Button mnemonicParsing="false" onAction="#importPointsClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/default-document-open.svg.png"/>
+                                        <Image url="@icons/document-open.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -49,9 +49,9 @@
                         <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false"
                                 onAction="#importAgainClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/system-reboot.svg.png"/>
+                                        <Image url="@icons/view-refresh.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -61,18 +61,18 @@
                         </Button>
                         <MenuButton fx:id="featureButton" disable="true" mnemonicParsing="false">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/image-auto-adjust.svg.png"/>
+                                        <Image url="@icons/ac-adapter.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
                         </MenuButton>
                         <Button mnemonicParsing="false" onAction="#clearPlotClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/edit-delete.svg.png"/>
+                                        <Image url="@icons/edit-delete.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -90,9 +90,9 @@
                         </Separator>
                         <Button mnemonicParsing="false" onAction="#snapshotClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/document-save.svg.png"/>
+                                        <Image url="@icons/camera-photo.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -102,9 +102,9 @@
                         </Button>
                         <Button mnemonicParsing="false" onAction="#renderClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/document-save-as.svg.png"/>
+                                        <Image url="@icons/applets-screenshooter.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -122,9 +122,9 @@
                         </Separator>
                         <Button mnemonicParsing="false" onAction="#zoomAllClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/transform-scale.svg.png"/>
+                                        <Image url="@icons/view-fullscreen.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -134,9 +134,9 @@
                         </Button>
                         <Button mnemonicParsing="false" onAction="#zoomOneToOneClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/zoom-original.svg.png"/>
+                                        <Image url="@icons/zoom-fit-best.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -146,9 +146,9 @@
                         </Button>
                         <Button mnemonicParsing="false" onAction="#centerClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/zoom-fit-best.svg.png"/>
+                                        <Image url="@icons/zoom-original.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>
@@ -166,9 +166,9 @@
                         </Separator>
                         <Button fx:id="summaryButton" mnemonicParsing="false" onAction="#summaryClicked">
                             <graphic>
-                                <ImageView fitHeight="24" fitWidth="24">
+                                <ImageView>
                                     <image>
-                                        <Image url="@icons/document-properties.svg.png"/>
+                                        <Image url="@icons/document-page-setup.png"/>
                                     </image>
                                 </ImageView>
                             </graphic>

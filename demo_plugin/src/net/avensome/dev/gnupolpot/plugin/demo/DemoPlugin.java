@@ -34,7 +34,7 @@ public class DemoPlugin extends Plugin {
     private class AllBlackFeature implements Feature {
 
         @Override
-        public String getMenuPath() {
+        public String getMenuItem() {
             return "Paint it black";
         }
 
