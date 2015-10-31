@@ -9,5 +9,8 @@ public interface Feature {
     String getMenuItem();
 
     @Nullable
-    String call(IPlotter plotter);
+    String getMenuItemDescription();
+
+    @Nullable
+    String execute(IPlotter plotter);
 }

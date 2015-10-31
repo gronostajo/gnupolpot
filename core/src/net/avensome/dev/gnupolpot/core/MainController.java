@@ -19,6 +19,7 @@ import net.avensome.dev.gnupolpot.api.plotter.Shape;
 import net.avensome.dev.gnupolpot.core.control.NumberTextField;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
+import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -50,23 +51,6 @@ public class MainController implements Initializable {
     private Button summaryButton;
     @FXML
     private MenuButton featureButton;
-
-    @FXML
-    private void clearPlotClicked() {
-        if (plotter.getPoints().size() == 0) {
-            return;
-        }
-
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Clear plot?", ButtonType.OK, ButtonType.CANCEL);
-        confirm.setHeaderText(null);
-        Optional<ButtonType> result = confirm.showAndWait();
-
-        if (result.get() == ButtonType.OK) {
-            plotter.clear();
-            summaryButton.setDisable(true);
-            setStatus("Plot cleared");
-        }
-    }
 
     @FXML
     private void addPointClicked() {
@@ -160,7 +144,29 @@ public class MainController implements Initializable {
     }
 
     @FXML
-    private void zoomAllClicked() {
+    private void pluginInfoClicked() {
+        PluginInfo.showInfoWindow();
+    }
+
+    @FXML
+    private void clearPlotClicked() {
+        if (plotter.getPoints().size() == 0) {
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Clear plot?", ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText(null);
+        Optional<ButtonType> result = confirm.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            plotter.clear();
+            summaryButton.setDisable(true);
+            setStatus("Plot cleared");
+        }
+    }
+
+    @FXML
+    private void zoomFitClicked() {
         plotter.zoomAll(false);
     }
 
@@ -375,7 +381,7 @@ public class MainController implements Initializable {
 
         MenuItem menuItem = new MenuItem(feature.getMenuItem());
         menuItem.setOnAction(event -> {
-            String status = feature.call(plotter);
+            String status = feature.execute(plotter);
             if (status != null) {
                 statusLabel.setText(status);
             }

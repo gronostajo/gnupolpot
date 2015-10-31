@@ -5,6 +5,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
+import net.avensome.dev.gnupolpot.core.plugins.PluginManager;
 
 public class PolpotApp extends Application {
     @Override
@@ -30,6 +32,8 @@ public class PolpotApp extends Application {
         } else {
             mainController.setStatus("No plugins found");
         }
+
+        PluginInfo.createInfoWindow(primaryStage, pluginManager);
     }
 
     public static void main(String[] args) {

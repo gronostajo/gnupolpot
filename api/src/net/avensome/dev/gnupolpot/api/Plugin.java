@@ -13,7 +13,7 @@ public abstract class Plugin {
     public abstract String getName();
 
     @Nullable
-    public String getAuthor() {
+    public String getDeveloper() {
         return null;
     }
 

@@ -1,32 +1,32 @@
-package net.avensome.dev.gnupolpot.core;
+package net.avensome.dev.gnupolpot.core.plugins;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import javafx.util.Callback;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.Plugin;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.io.IOException;
+import java.util.*;
 
 public class PluginManager {
-    private Map<String, Plugin> plugins = new HashMap<>();
+    private List<Plugin> plugins = new LinkedList<>();
 
-    public PluginManager() {
+    public PluginManager() throws IOException {
         ServiceLoader<Plugin> serviceLoader = ServiceLoader.load(Plugin.class);
 
         for (Plugin plugin : serviceLoader) {
-            plugins.put(plugin.getName(), plugin);
+            plugins.add(plugin);
         }
     }
 
-    public Map<String, Plugin> getPlugins() {
-        return ImmutableMap.copyOf(plugins);
+    public List<Plugin> getPlugins() {
+        return ImmutableList.copyOf(plugins);
     }
 
     public void registerFeatures(Callback<Feature, Integer> registrarCallback) {
-        plugins.values().stream()
+        plugins.stream()
                 .flatMap(plugin -> plugin.getFeatures().stream())
                 .forEach(registrarCallback::call);
     }
+
 }

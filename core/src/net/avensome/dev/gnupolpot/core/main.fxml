@@ -67,6 +67,10 @@
                                     </image>
                                 </ImageView>
                             </graphic>
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#pluginInfoClicked" text="Plugin info..."/>
+                                <SeparatorMenuItem mnemonicParsing="false"/>
+                            </items>
                         </MenuButton>
                         <Button mnemonicParsing="false" onAction="#clearPlotClicked">
                             <graphic>
@@ -120,7 +124,7 @@
                                 <Insets left="3.0"/>
                             </padding>
                         </Separator>
-                        <Button mnemonicParsing="false" onAction="#zoomAllClicked">
+                        <Button mnemonicParsing="false" onAction="#zoomFitClicked">
                             <graphic>
                                 <ImageView>
                                     <image>
