@@ -68,7 +68,7 @@
                                 </ImageView>
                             </graphic>
                         </MenuButton>
-                        <Button mnemonicParsing="false" onAction="#resetPlotClicked">
+                        <Button mnemonicParsing="false" onAction="#clearPlotClicked">
                             <graphic>
                                 <ImageView fitHeight="24" fitWidth="24">
                                     <image>

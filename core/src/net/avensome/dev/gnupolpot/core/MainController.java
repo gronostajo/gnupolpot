@@ -52,10 +52,20 @@ public class MainController implements Initializable {
     private MenuButton featureButton;
 
     @FXML
-    private void resetPlotClicked() {
-        plotter.clear();
-        summaryButton.setDisable(true);
-        setStatus("Plot cleared");
+    private void clearPlotClicked() {
+        if (plotter.getPoints().size() == 0) {
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Clear plot?", ButtonType.OK, ButtonType.CANCEL);
+        confirm.setHeaderText(null);
+        Optional<ButtonType> result = confirm.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            plotter.clear();
+            summaryButton.setDisable(true);
+            setStatus("Plot cleared");
+        }
     }
 
     @FXML
