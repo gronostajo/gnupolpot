@@ -3,7 +3,6 @@ package net.avensome.dev.gnupolpot.plugin.generator;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.Feature;
@@ -11,6 +10,7 @@ import net.avensome.dev.gnupolpot.api.control.DoubleTextField;
 import net.avensome.dev.gnupolpot.api.control.IntTextField;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
+import net.avensome.dev.gnupolpot.api.util.LabeledControlGridBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +36,6 @@ public class RectangleGeneratorFeature implements Feature {
         dialog.setTitle("Generate points in rectangle");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-
         IntTextField countField = new IntTextField(lastParams.getCount(), value -> value > 0);
         DoubleTextField leftField = new DoubleTextField(lastParams.getLeft());
         DoubleTextField topField = new DoubleTextField(lastParams.getTop());
@@ -48,44 +44,15 @@ public class RectangleGeneratorFeature implements Feature {
         ColorPicker colorPicker = new ColorPicker(lastParams.getColor());
         IntTextField seedField = new IntTextField(lastParams.getSeed());
 
-        countField.setPrefWidth(120);
-        leftField.setPrefWidth(120);
-        topField.setPrefWidth(120);
-        rightField.setPrefWidth(120);
-        bottomField.setPrefWidth(120);
-        colorPicker.setPrefWidth(120);
-        seedField.setPrefWidth(120);
-
-        Label countLabel = new Label("Count");
-        Label leftLabel = new Label("Left");
-        Label topLabel = new Label("Top");
-        Label rightLabel = new Label("Right");
-        Label bottomLabel = new Label("Bottom");
-        Label colorLabel = new Label("Color");
-        Label seedLabel = new Label("Seed (0 = random)");
-
-        countLabel.setPrefWidth(120);
-        leftLabel.setPrefWidth(120);
-        topLabel.setPrefWidth(120);
-        rightLabel.setPrefWidth(120);
-        bottomLabel.setPrefWidth(120);
-        colorLabel.setPrefWidth(120);
-        seedLabel.setPrefWidth(120);
-
-        grid.add(countLabel, 0, 0);
-        grid.add(countField, 1, 0);
-        grid.add(leftLabel, 0, 1);
-        grid.add(leftField, 1, 1);
-        grid.add(topLabel, 0, 2);
-        grid.add(topField, 1, 2);
-        grid.add(rightLabel, 0, 3);
-        grid.add(rightField, 1, 3);
-        grid.add(bottomLabel, 0, 4);
-        grid.add(bottomField, 1, 4);
-        grid.add(colorLabel, 0, 5);
-        grid.add(colorPicker, 1, 5);
-        grid.add(seedLabel, 0, 6);
-        grid.add(seedField, 1, 6);
+        GridPane grid = new LabeledControlGridBuilder(120, 160)
+                .add("Count", countField)
+                .add("Left", leftField)
+                .add("Top", topField)
+                .add("Right", rightField)
+                .add("Bottom", bottomField)
+                .add("Color", colorPicker)
+                .add("Seed (0 = random)", seedField)
+                .build();
 
         dialog.getDialogPane().setContent(grid);
 
