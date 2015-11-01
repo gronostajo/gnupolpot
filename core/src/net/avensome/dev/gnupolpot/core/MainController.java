@@ -1,26 +1,23 @@
 package net.avensome.dev.gnupolpot.core;
 
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.PluginException;
-import net.avensome.dev.gnupolpot.api.control.DoubleTextField;
 import net.avensome.dev.gnupolpot.api.plotter.DataFormatException;
 import net.avensome.dev.gnupolpot.api.plotter.PlotData;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
-import net.avensome.dev.gnupolpot.api.util.LabeledControlGridBuilder;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
+import net.avensome.dev.gnupolpot.core.ui.AddPointsDialog;
+import net.avensome.dev.gnupolpot.core.ui.FeatureMenuAppender;
+import net.avensome.dev.gnupolpot.core.ui.SummaryDialog;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -29,21 +26,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
-    private Stage primaryStage;
-
-    private File lastImportedFile;
-
-    private String lastPermanentStatus = "";
-
     @FXML
     private Plotter plotter;
     @FXML
@@ -55,58 +42,21 @@ public class MainController implements Initializable {
     @FXML
     private MenuButton featureButton;
 
+    private Stage primaryStage;
+
+    private File lastImportedFile;
+
+    private String lastPermanentStatus = "";
+
+    private FeatureMenuAppender featureMenuAppender;
+
     @FXML
     private void addPointClicked() {
-        Dialog<PlotPoint> dialog = new Dialog<>();
-        dialog.setTitle("Add point");
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-
-        Label xLabel = new Label("X");
-        Label yLabel = new Label("Y");
-        Label colorLabel = new Label("Color");
-
-        DoubleTextField xField = new DoubleTextField(0);
-        DoubleTextField yField = new DoubleTextField(0);
-        ColorPicker colorPicker = new ColorPicker(Color.BLACK);
-
-        xLabel.setPrefWidth(60);
-        yLabel.setPrefWidth(60);
-        colorLabel.setPrefWidth(60);
-        xField.setPrefWidth(120);
-        yField.setPrefWidth(120);
-        colorPicker.setPrefWidth(120);
-
-        grid.add(xLabel, 0, 0);
-        grid.add(xField, 1, 0);
-        grid.add(yLabel, 0, 1);
-        grid.add(yField, 1, 1);
-        grid.add(colorLabel, 0, 2);
-        grid.add(colorPicker, 1, 2);
-
-        dialog.getDialogPane().setContent(grid);
-
-        Platform.runLater(xField::requestFocus);
-
-        dialog.setResultConverter(button -> {
-            if (button == ButtonType.OK) {
-                double x = xField.getValue();
-                double y = yField.getValue();
-                Color color = colorPicker.getValue();
-                return new PlotPoint(x, y, color);
-            } else {
-                return null;
-            }
-        });
-
-        Optional<PlotPoint> pointOptional = dialog.showAndWait();
-        pointOptional.ifPresent(plotPoint -> {
-            plotter.getPoints().add(plotPoint);
+        PlotPoint addedPoint = new AddPointsDialog().show();
+        if (addedPoint != null) {
+            plotter.getPoints().add(addedPoint);
             plotter.requestRepaint();
-        });
+        }
     }
 
     @FXML
@@ -233,50 +183,13 @@ public class MainController implements Initializable {
 
     @FXML
     private void summaryClicked() {
-        List<PlotPoint> points = plotter.getPoints();
-
-        double minX = points.stream().map(PlotPoint::getX).reduce(Math::min).get();
-        double maxX = points.stream().map(PlotPoint::getX).reduce(Math::max).get();
-        double minY = points.stream().map(PlotPoint::getY).reduce(Math::min).get();
-        double maxY = points.stream().map(PlotPoint::getY).reduce(Math::max).get();
-
-        double spreadX = (maxX - minX);
-        double spreadY = (maxY - minY);
-
-        Dialog dialog = new Dialog();
-        dialog.setTitle("gnupolpot");
-        dialog.setHeaderText("Plot summary");
-
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-
-        NumberFormat formatter = new DecimalFormat("#0.0000000000");
-        Label pointCountLabel = new Label(String.valueOf(points.size()));
-        Label shapeCountLabel = new Label(String.valueOf(plotter.getShapes().size()));
-        Label minXlabel = new Label(formatter.format(minX));
-        Label maxXlabel = new Label(formatter.format(maxX));
-        Label minYlabel = new Label(formatter.format(minY));
-        Label maxYlabel = new Label(formatter.format(maxY));
-        Label spreadXlabel = new Label(formatter.format(spreadX));
-        Label spreadYlabel = new Label(formatter.format(spreadY));
-
-        GridPane grid = new LabeledControlGridBuilder(100, 160)
-                .add("Point count", pointCountLabel)
-                .add("Shape count", shapeCountLabel)
-                .add("Min X", minXlabel)
-                .add("Max X", maxXlabel)
-                .add("Min Y", minYlabel)
-                .add("Max Y", maxYlabel)
-                .add("X spread", spreadXlabel)
-                .add("Y spread", spreadYlabel)
-                .build();
-
-        dialog.getDialogPane().setContent(grid);
-
-        dialog.showAndWait();
+        new SummaryDialog(plotter).show();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        featureMenuAppender = new FeatureMenuAppender(featureButton, plotter, this::setStatus);
+
         plotter.focusedPointProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 restoreStatus();
@@ -302,10 +215,6 @@ public class MainController implements Initializable {
         if (lastPermanentStatus != null) {
             statusLabel.setText(lastPermanentStatus);
         }
-    }
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.primaryStage = primaryStage;
     }
 
     private void importPointsFromFile(File file, boolean replacePlot) {
@@ -342,81 +251,11 @@ public class MainController implements Initializable {
         }
     }
 
-    public int registerFeature(Feature feature) throws PluginException {
-        featureButton.setDisable(false);
-
-        MenuItem newItem = createFeatureMenuItem(feature);
-        List<String> itemPath = Arrays.asList(feature.getMenuItem().split("\\\\")).stream()
-                .map(String::trim)
-                .filter(s -> s.length() > 0)
-                .collect(Collectors.toList());
-
-        List<String> pathWithoutFinalItem = itemPath.subList(0, itemPath.size() - 1);
-        ObservableList<MenuItem> menuItems = findParentMenu(featureButton.getItems(), pathWithoutFinalItem, 2);
-
-        for (int i = 2; i < menuItems.size(); i++) {
-            MenuItem menuItem = menuItems.get(i);
-            if (menuItem instanceof Menu) { // it's a submenu
-                continue;
-            }
-            if (newItem.getText().compareTo(menuItem.getText()) < 0) {
-                menuItems.add(i, newItem);
-                return i;
-            }
-        }
-
-        menuItems.add(newItem);
-        return menuItems.size() - 1;
+    public void registerFeature(Feature feature) throws PluginException {
+        featureMenuAppender.addFeature(feature);
     }
 
-    private ObservableList<MenuItem> findParentMenu(ObservableList<MenuItem> items, List<String> itemPath, int offset) {
-        if (itemPath.size() == 0) {
-            return items;
-        }
-
-        String thisLevel = itemPath.get(0);
-        List<String> nextLevels = itemPath.subList(1, itemPath.size());
-
-        for (MenuItem item : items) {
-            if (!(item instanceof Menu)) {
-                continue;
-            }
-            if (item.getText().equals(thisLevel)) {
-                return findParentMenu(((Menu) item).getItems(), nextLevels, 0);
-            }
-        }
-
-        Menu newMenu = new Menu(thisLevel);
-        for (int i = offset; i < items.size(); i++) {
-            MenuItem menuItem = items.get(i);
-            if (newMenu.getText().compareTo(menuItem.getText()) < 0) {
-                items.add(i, newMenu);
-                return newMenu.getItems();
-            }
-        }
-        items.add(newMenu);
-        return newMenu.getItems();
-    }
-
-    private MenuItem createFeatureMenuItem(Feature feature) throws PluginException {
-        String menuItem = feature.getMenuItem();
-        String menuItemName = menuItem.substring(menuItem.lastIndexOf('\\') + 1);
-        if (menuItemName.trim().isEmpty()) {
-            throw new PluginException();
-        }
-
-        MenuItem item = new MenuItem(menuItemName);
-        item.setOnAction(event -> {
-            String status = null;
-            try {
-                status = feature.execute(plotter);
-            } catch (Exception e) {
-                PluginException.showAlert(e);
-            }
-            if (status != null) {
-                statusLabel.setText(status);
-            }
-        });
-        return item;
+    public void setPrimaryStage(Stage primaryStage) {
+        this.primaryStage = primaryStage;
     }
 }
