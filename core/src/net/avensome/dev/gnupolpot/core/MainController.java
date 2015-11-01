@@ -388,7 +388,15 @@ public class MainController implements Initializable {
 
         MenuItem newItem = new MenuItem(feature.getMenuItem());
         newItem.setOnAction(event -> {
-            String status = feature.execute(plotter);
+            String status = null;
+            try {
+                status = feature.execute(plotter);
+            } catch (Exception e) {
+                Alert error = new Alert(Alert.AlertType.ERROR, "", ButtonType.OK);
+                error.setTitle("gnupolpot");
+                error.setHeaderText("Plugin caused an error");
+                error.setContentText(e.toString());
+            }
             if (status != null) {
                 statusLabel.setText(status);
             }
