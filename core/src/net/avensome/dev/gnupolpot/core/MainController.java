@@ -18,6 +18,7 @@ import net.avensome.dev.gnupolpot.api.plotter.PlotData;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
 import net.avensome.dev.gnupolpot.api.control.DoubleTextField;
+import net.avensome.dev.gnupolpot.api.util.LabeledControlGridBuilder;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
@@ -247,24 +248,26 @@ public class MainController implements Initializable {
 
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-        grid.setVgap(10);
-
-        grid.add(new Label("Min X:"), 0, 0);
-        grid.add(new Label("Max X:"), 0, 1);
-        grid.add(new Label("Min Y:"), 0, 2);
-        grid.add(new Label("Max Y:"), 0, 3);
-        grid.add(new Label("X spread:"), 0, 4);
-        grid.add(new Label("Y spread:"), 0, 5);
-
         NumberFormat formatter = new DecimalFormat("#0.0000000000");
-        grid.add(new Label(formatter.format(minX)), 1, 0);
-        grid.add(new Label(formatter.format(maxX)), 1, 1);
-        grid.add(new Label(formatter.format(minY)), 1, 2);
-        grid.add(new Label(formatter.format(maxY)), 1, 3);
-        grid.add(new Label(formatter.format(spreadX)), 1, 4);
-        grid.add(new Label(formatter.format(spreadY)), 1, 5);
+        Label pointCountLabel = new Label(String.valueOf(points.size()));
+        Label shapeCountLabel = new Label(String.valueOf(plotter.getShapes().size()));
+        Label minXlabel = new Label(formatter.format(minX));
+        Label maxXlabel = new Label(formatter.format(maxX));
+        Label minYlabel = new Label(formatter.format(minY));
+        Label maxYlabel = new Label(formatter.format(maxY));
+        Label spreadXlabel = new Label(formatter.format(spreadX));
+        Label spreadYlabel = new Label(formatter.format(spreadY));
+
+        GridPane grid = new LabeledControlGridBuilder(100, 160)
+                .add("Point count", pointCountLabel)
+                .add("Shape count", shapeCountLabel)
+                .add("Min X", minXlabel)
+                .add("Max X", maxXlabel)
+                .add("Min Y", minYlabel)
+                .add("Max Y", maxYlabel)
+                .add("X spread", spreadXlabel)
+                .add("Y spread", spreadYlabel)
+                .build();
 
         dialog.getDialogPane().setContent(grid);
 
