@@ -54,7 +54,7 @@ public class Plotter extends Pane implements IPlotter {
 
         ChangeListener<Number> resizeListener = (observable, oldValue, newValue) -> {
             viewport.resize(getWidth(), getHeight());
-            queueRepaint();
+            requestRepaint();
         };
         widthProperty().addListener(resizeListener);
         heightProperty().addListener(resizeListener);
@@ -66,14 +66,14 @@ public class Plotter extends Pane implements IPlotter {
         canvas.addEventHandler(ScrollEvent.SCROLL, this::handleScrolling);
 
         createPaintingPipeline();
-        queueRepaint();
+        requestRepaint();
     }
 
     private void handleMouseMoved(MouseEvent mouseEvent) {
         double scale = viewport.getScale();
         Viewport scaledViewport = viewport.applyScale();
         double x = scaledViewport.getLeft() + mouseEvent.getX() / scale;
-        double y = scaledViewport.getBottom() - mouseEvent.getY() / scale;
+        double y = scaledViewport.getTop() - mouseEvent.getY() / scale;
 
         PlotPoint focusedPoint = GeometryTools
                 .pointsInRect(points, this.viewport).stream()
@@ -85,7 +85,7 @@ public class Plotter extends Pane implements IPlotter {
         this.focusedPoint.set(focusedPoint);
 
         if (focusChanged) {
-            queueRepaint();
+            requestRepaint();
         }
     }
 
@@ -106,7 +106,7 @@ public class Plotter extends Pane implements IPlotter {
             Point delta = mouseAnchor.minus(newAnchor);
 
             viewport.moveBy(delta.getX(), -delta.getY());
-            queueRepaint();
+            requestRepaint();
             mouseAnchor = newAnchor;
 
             handleMouseMoved(mouseEvent);
@@ -128,7 +128,7 @@ public class Plotter extends Pane implements IPlotter {
             return;
         }
 
-        queueRepaint();
+        requestRepaint();
     }
 
     private void createPaintingPipeline() {
@@ -145,7 +145,7 @@ public class Plotter extends Pane implements IPlotter {
     }
 
     @Override
-    public void queueRepaint() {
+    public void requestRepaint() {
         synchronized (canvas) {
             requiresRepaint = true;
         }
@@ -169,14 +169,14 @@ public class Plotter extends Pane implements IPlotter {
     public void clear() {
         points.clear();
         shapes.clear();
-        queueRepaint();
+        requestRepaint();
     }
 
     @Override
     public void importPlot(PlotData data) throws DataFormatException {
         points.addAll(data.getPoints());
         shapes.addAll(data.getShapes());
-        queueRepaint();
+        requestRepaint();
     }
 
     @Override
@@ -186,7 +186,7 @@ public class Plotter extends Pane implements IPlotter {
             if (instantRepaint) {
                 repaint();
             } else {
-                queueRepaint();
+                requestRepaint();
             }
             return;
         } else if (points.size() == 1) {
@@ -195,7 +195,7 @@ public class Plotter extends Pane implements IPlotter {
             if (instantRepaint) {
                 repaint();
             } else {
-                queueRepaint();
+                requestRepaint();
             }
             return;
         }
@@ -219,7 +219,7 @@ public class Plotter extends Pane implements IPlotter {
         if (instantRepaint) {
             repaint();
         } else {
-            queueRepaint();
+            requestRepaint();
         }
     }
 

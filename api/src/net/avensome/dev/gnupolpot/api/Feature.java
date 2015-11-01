@@ -9,7 +9,7 @@ public interface Feature {
     String getMenuItem();
 
     @Nullable
-    String getMenuItemDescription();
+    String getDescription();
 
     @Nullable
     String execute(IPlotter plotter);

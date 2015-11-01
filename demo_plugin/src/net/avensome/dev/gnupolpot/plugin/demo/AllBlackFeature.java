@@ -11,7 +11,7 @@ public class AllBlackFeature implements Feature {
     }
 
     @Override
-    public String getMenuItemDescription() {
+    public String getDescription() {
         return "\"I see a red door and I want it painted black\n" +
                 "No colors anymore, I want them to turn black\n" +
                 "I see the girls walk by dressed in their summer clothes\n" +
@@ -22,7 +22,7 @@ public class AllBlackFeature implements Feature {
     public String execute(IPlotter plotter) {
         plotter.getPoints().stream().forEach(point -> point.setColor(Color.BLACK));
         plotter.getShapes().stream().forEach(shape -> shape.setColor(Color.BLACK));
-        plotter.queueRepaint();
+        plotter.requestRepaint();
         return "Rolling Stones fan, huh?";
     }
 }

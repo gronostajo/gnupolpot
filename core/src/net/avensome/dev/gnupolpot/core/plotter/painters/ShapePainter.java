@@ -18,9 +18,9 @@ public class ShapePainter extends Painter {
 
     @Override
     public void paint(Viewport viewport) {
-        Point topLeftCorner = viewport.applyScale().getTopLeftCorner();
+        Point corner = viewport.applyScale().getBottomLeftCorner();
         List<Shape> movedShapes = shapes.stream()
-                .map(shape -> shape.zoomed(topLeftCorner.getX(), topLeftCorner.getY(), viewport.getScale()))
+                .map(shape -> shape.zoomed(corner.getX(), corner.getY(), viewport.getScale()))
                 .collect(Collectors.toList());
 
         ctx.setLineWidth(2);

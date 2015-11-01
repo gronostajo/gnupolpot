@@ -2,6 +2,7 @@ package net.avensome.dev.gnupolpot.core;
 
 import com.google.common.collect.ImmutableList;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,7 +17,7 @@ import net.avensome.dev.gnupolpot.api.plotter.DataFormatException;
 import net.avensome.dev.gnupolpot.api.plotter.PlotData;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
-import net.avensome.dev.gnupolpot.core.control.NumberTextField;
+import net.avensome.dev.gnupolpot.api.control.DoubleTextField;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
@@ -66,8 +67,8 @@ public class MainController implements Initializable {
         Label yLabel = new Label("Y");
         Label colorLabel = new Label("Color");
 
-        NumberTextField xField = new NumberTextField();
-        NumberTextField yField = new NumberTextField();
+        DoubleTextField xField = new DoubleTextField(0);
+        DoubleTextField yField = new DoubleTextField(0);
         ColorPicker colorPicker = new ColorPicker(Color.BLACK);
 
         xLabel.setPrefWidth(60);
@@ -102,7 +103,7 @@ public class MainController implements Initializable {
         Optional<PlotPoint> pointOptional = dialog.showAndWait();
         pointOptional.ifPresent(plotPoint -> {
             plotter.getPoints().add(plotPoint);
-            plotter.queueRepaint();
+            plotter.requestRepaint();
         });
     }
 
@@ -173,13 +174,13 @@ public class MainController implements Initializable {
     @FXML
     private void zoomOneToOneClicked() {
         plotter.getViewport().setScalePower(0);
-        plotter.queueRepaint();
+        plotter.requestRepaint();
     }
 
     @FXML
     private void centerClicked() {
         plotter.getViewport().centerAt(0, 0);
-        plotter.queueRepaint();
+        plotter.requestRepaint();
     }
 
     @FXML
@@ -378,16 +379,25 @@ public class MainController implements Initializable {
 
     public int registerFeature(Feature feature) {
         featureButton.setDisable(false);
+        ObservableList<MenuItem> menuItems = featureButton.getItems();
 
-        MenuItem menuItem = new MenuItem(feature.getMenuItem());
-        menuItem.setOnAction(event -> {
+        MenuItem newItem = new MenuItem(feature.getMenuItem());
+        newItem.setOnAction(event -> {
             String status = feature.execute(plotter);
             if (status != null) {
                 statusLabel.setText(status);
             }
         });
-        featureButton.getItems().add(menuItem);
 
-        return 0;
+        for (int i = 2; i < menuItems.size(); i++) {
+            MenuItem menuItem = menuItems.get(i);
+            if (newItem.getText().compareTo(menuItem.getText()) < 0) {
+                menuItems.add(i, newItem);
+                return i;
+            }
+        }
+
+        menuItems.add(newItem);
+        return menuItems.size() - 1;
     }
 }

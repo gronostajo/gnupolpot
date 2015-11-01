@@ -1,15 +1,15 @@
-package net.avensome.dev.gnupolpot.plugin.demo;
+package net.avensome.dev.gnupolpot.plugin.generator;
 
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.Plugin;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
-public class DemoPlugin extends Plugin {
+public class GeneratorPlugin extends Plugin {
     @Override
     public String getName() {
-        return "Demo Plugin";
+        return "Generator";
     }
 
     @Override
@@ -19,11 +19,16 @@ public class DemoPlugin extends Plugin {
 
     @Override
     public String getDescription() {
-        return "A simple plugin that demonstrates how gnupolpot plugins are made.";
+        return "Generates points and whistles";
+    }
+
+    @Override
+    public String getLicense() {
+        return "GNU GPL v2";
     }
 
     @Override
     public Collection<Feature> getFeatures() {
-        return Collections.singletonList(new AllBlackFeature());
+        return Arrays.asList(new RectangleGeneratorFeature());
     }
 }

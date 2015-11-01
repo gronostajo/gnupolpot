@@ -5,7 +5,7 @@ import javafx.scene.image.WritableImage;
 import java.util.List;
 
 public interface IPlotter {
-    void queueRepaint();
+    void requestRepaint();
 
     void clear();
 

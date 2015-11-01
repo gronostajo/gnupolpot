@@ -27,13 +27,13 @@ public class PointPainter extends Painter {
     public void paint(Viewport viewport) {
         Viewport actualViewport = viewport.applyScale();
         List<PlotPoint> pointsInViewport = GeometryTools.pointsInRect(points, actualViewport);
-        Point topLeftCorner = actualViewport.getTopLeftCorner();
+        Point corner = actualViewport.getBottomLeftCorner();
         PlotPoint focusedPoint = this.focusedPoint.get();
 
         for (PlotPoint point : pointsInViewport) {
             ctx.setFill(point.getColor());
             double radius = point.hasEqualPoint(focusedPoint) ? POINT_RADIUS_FOCUSED : POINT_RADIUS;
-            PlotPoint movedPoint = point.zoomed(topLeftCorner.getX(), topLeftCorner.getY(), viewport.getScale());
+            PlotPoint movedPoint = point.zoomed(corner.getX(), corner.getY(), viewport.getScale());
             ctx.fillOval(movedPoint.getX() - radius, viewport.getHeight() - movedPoint.getY() - radius, radius * 2, radius * 2);
         }
     }

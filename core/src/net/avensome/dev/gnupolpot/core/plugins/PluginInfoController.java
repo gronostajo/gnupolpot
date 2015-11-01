@@ -65,7 +65,7 @@ public class PluginInfoController implements Initializable {
         featureNameColumn.setCellValueFactory(feature ->
                 new SimpleStringProperty(feature.getValue().getMenuItem()));
         featureDescriptionColumn.setCellValueFactory(feature ->
-                new SimpleStringProperty(feature.getValue().getMenuItemDescription()));
+                new SimpleStringProperty(feature.getValue().getDescription()));
 
         pluginList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             selectPlugin(newValue);

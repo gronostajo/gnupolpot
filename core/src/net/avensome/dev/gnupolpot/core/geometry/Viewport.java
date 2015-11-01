@@ -24,7 +24,7 @@ public class Viewport {
         return centerX - width / 2;
     }
 
-    public double getTop() {
+    public double getBottom() {
         return centerY - height / 2;
     }
 
@@ -40,12 +40,12 @@ public class Viewport {
         return centerX + width / 2;
     }
 
-    public double getBottom() {
+    public double getTop() {
         return centerY + height / 2;
     }
 
-    public Point getTopLeftCorner() {
-        return new Point(getLeft(), getTop());
+    public Point getBottomLeftCorner() {
+        return new Point(getLeft(), getBottom());
     }
 
     public void centerAt(double x, double y) {
@@ -76,12 +76,12 @@ public class Viewport {
     }
 
     public boolean contains(double x, double y) {
-        return getLeft() <= x && getRight() >= x && getTop() <= y && getBottom() >= y;
+        return getLeft() <= x && getRight() >= x && getBottom() <= y && getTop() >= y;
     }
 
     @Override
     public String toString() {
         return String.format("%f:%f -- %f:%f (%f x %f)",
-                getLeft(), getTop(), getRight(), getBottom(), getWidth(), getHeight());
+                getLeft(), getBottom(), getRight(), getTop(), getWidth(), getHeight());
     }
 }

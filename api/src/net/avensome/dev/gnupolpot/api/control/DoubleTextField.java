@@ -1,12 +1,25 @@
-package net.avensome.dev.gnupolpot.core.control;
+package net.avensome.dev.gnupolpot.api.control;
 
 import javafx.scene.control.TextField;
+import net.avensome.dev.gnupolpot.api.util.Validator;
 
-public class NumberTextField extends TextField {
-    private String lastValidValue = "0";
+public class DoubleTextField extends TextField {
+    private final Validator<Double> validator;
+    private String lastValidValue;
 
-    public NumberTextField() {
-        super("0");
+    public DoubleTextField(double initialValue) {
+        this(initialValue, value -> true);
+    }
+
+    public DoubleTextField(double initialValue, Validator<Double> validator) {
+        super(String.valueOf(initialValue));
+
+        if (!validator.validate(initialValue)) {
+            throw new IllegalArgumentException("Invalid initial value");
+        }
+        this.validator = validator;
+        lastValidValue = String.valueOf(initialValue);
+
         textProperty().addListener((observable, oldValue, newValue) -> {
             if (isValidValue(newValue)) {
                 lastValidValue = newValue;
@@ -24,9 +37,8 @@ public class NumberTextField extends TextField {
     private boolean isValidValue(String value) {
         String replaced = normalizeDecimalPoint(value);
         try {
-            //noinspection ResultOfMethodCallIgnored
-            Double.parseDouble(replaced);
-            return true;
+            double doubleValue = Double.parseDouble(replaced);
+            return validator.validate(doubleValue);
         } catch (NumberFormatException e) {
             return false;
         }
