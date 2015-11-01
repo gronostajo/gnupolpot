@@ -28,6 +28,10 @@ public class Shape implements Serializable {
         this.type = type;
     }
 
+    public List<PlotPoint> getPoints() {
+        return points;
+    }
+
     public Color getColor() {
         if (color != null) {
             return color;
