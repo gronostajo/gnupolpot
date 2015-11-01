@@ -329,7 +329,9 @@ public class MainController implements Initializable {
     }
 
     public void setTemporaryStatus(String status) {
-        lastPermanentStatus = statusLabel.getText();
+        if (lastPermanentStatus == null) {
+            lastPermanentStatus = statusLabel.getText();
+        }
         statusLabel.setText(status);
     }
 
