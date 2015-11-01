@@ -1,12 +1,14 @@
 package net.avensome.dev.gnupolpot.core.plugins;
 
 import com.google.common.collect.ImmutableList;
-import javafx.util.Callback;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.Plugin;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 public class PluginManager {
     private List<Plugin> plugins = new LinkedList<>();
@@ -23,10 +25,10 @@ public class PluginManager {
         return ImmutableList.copyOf(plugins);
     }
 
-    public void registerFeatures(Callback<Feature, Integer> registrarCallback) {
-        plugins.stream()
+    public List<Feature> getFeatures() {
+        return plugins.stream()
                 .flatMap(plugin -> plugin.getFeatures().stream())
-                .forEach(registrarCallback::call);
+                .collect(Collectors.toList());
     }
 
 }

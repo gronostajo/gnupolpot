@@ -5,12 +5,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import net.avensome.dev.gnupolpot.api.Feature;
+import net.avensome.dev.gnupolpot.api.PluginException;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
 import net.avensome.dev.gnupolpot.core.plugins.PluginManager;
 
+import java.io.IOException;
+
 public class PolpotApp extends Application {
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getResource("main.fxml"));
         Parent root = loader.load();
@@ -25,7 +29,13 @@ public class PolpotApp extends Application {
         primaryStage.show();
 
         PluginManager pluginManager = new PluginManager();
-        pluginManager.registerFeatures(mainController::registerFeature);
+        for (Feature feature : pluginManager.getFeatures()) {
+            try {
+                mainController.registerFeature(feature);
+            } catch (Exception e) {
+                PluginException.showAlert(e);
+            }
+        }
         int pluginCount = pluginManager.getPlugins().size();
         if (pluginCount > 0) {
             mainController.setStatus(String.format("%d plugin(s) loaded", pluginCount));

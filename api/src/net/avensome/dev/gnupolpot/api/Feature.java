@@ -12,5 +12,5 @@ public interface Feature {
     String getDescription();
 
     @Nullable
-    String execute(IPlotter plotter);
+    String execute(IPlotter plotter) throws PluginException;
 }
