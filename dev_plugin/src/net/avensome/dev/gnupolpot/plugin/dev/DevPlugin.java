@@ -1,4 +1,4 @@
-package net.avensome.dev.gnupolpot.plugin.demo;
+package net.avensome.dev.gnupolpot.plugin.dev;
 
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.Plugin;
@@ -6,10 +6,10 @@ import net.avensome.dev.gnupolpot.api.Plugin;
 import java.util.Collection;
 import java.util.Collections;
 
-public class DemoPlugin extends Plugin {
+public class DevPlugin extends Plugin {
     @Override
     public String getName() {
-        return "Demo Plugin";
+        return "Dev Plugin";
     }
 
     @Override
@@ -19,11 +19,11 @@ public class DemoPlugin extends Plugin {
 
     @Override
     public String getDescription() {
-        return "A simple plugin that demonstrates how gnupolpot plugins are made.";
+        return "A plugin for doing developer stuff.";
     }
 
     @Override
     public Collection<Feature> getFeatures() {
-        return Collections.singletonList(new AllBlackFeature());
+        return Collections.singletonList(new DevPlotFeature());
     }
 }
