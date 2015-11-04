@@ -168,7 +168,7 @@
                                 <Insets left="3.0"/>
                             </padding>
                         </Separator>
-                        <Button fx:id="summaryButton" mnemonicParsing="false" onAction="#summaryClicked">
+                        <Button fx:id="summaryButton" disable="true" mnemonicParsing="false" onAction="#summaryClicked">
                             <graphic>
                                 <ImageView>
                                     <image>

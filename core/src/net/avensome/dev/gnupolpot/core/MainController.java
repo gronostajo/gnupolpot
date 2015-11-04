@@ -1,5 +1,6 @@
 package net.avensome.dev.gnupolpot.core;
 
+import javafx.collections.ListChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -197,6 +198,10 @@ public class MainController implements Initializable {
                 setTemporaryStatus(String.format("Point: %f ; %f", newValue.getX(), newValue.getY()));
             }
         });
+
+        ListChangeListener<PlotPoint> pointsChange = listChange ->
+                summaryButton.setDisable(plotter.getPoints().size() == 0);
+        plotter.getPoints().addListener(pointsChange);
     }
 
     public void setStatus(String status) {

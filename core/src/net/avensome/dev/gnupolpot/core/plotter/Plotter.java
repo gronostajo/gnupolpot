@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -31,8 +32,8 @@ public class Plotter extends Pane implements IPlotter {
     private final Canvas canvas = new Canvas();
     private boolean requiresRepaint;
 
-    private List<PlotPoint> points = FXCollections.observableArrayList();
-    private List<Shape> shapes = FXCollections.observableArrayList();
+    private ObservableList<PlotPoint> points = FXCollections.observableArrayList();
+    private ObservableList<Shape> shapes = FXCollections.observableArrayList();
 
     private Viewport viewport;
 
@@ -229,12 +230,12 @@ public class Plotter extends Pane implements IPlotter {
     }
 
     @Override
-    public List<PlotPoint> getPoints() {
+    public ObservableList<PlotPoint> getPoints() {
         return points;
     }
 
     @Override
-    public List<Shape> getShapes() {
+    public ObservableList<Shape> getShapes() {
         return shapes;
     }
 
