@@ -46,6 +46,14 @@ public class Shape implements Serializable {
         this.color = color;
     }
 
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     public Shape zoomed(double offsetX, double offsetY, double factor) {
         List<PlotPoint> newPoints = points.stream()
                 .map(plotPoint -> plotPoint.zoomed(offsetX, offsetY, factor))
