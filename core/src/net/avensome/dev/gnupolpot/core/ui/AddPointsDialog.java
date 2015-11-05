@@ -7,7 +7,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import net.avensome.dev.gnupolpot.api.control.DoubleTextField;
+import net.avensome.dev.gnupolpot.api.ui.DoubleTextField;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 
 import java.util.Optional;

@@ -45,6 +45,7 @@ public class DefaultTool extends Tool {
     public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event) {
         plotter = api.getPlotter();
         viewport = plotter.getViewport();
+        Buttons buttons = Buttons.fromMouseEvent(event);
 
         switch (eventType) {
             case MOVED:
@@ -54,10 +55,12 @@ public class DefaultTool extends Tool {
                 handleMousePressed(event);
                 break;
             case DRAGGED:
-                handleMouseDragged(event);
+                if (buttons.equals(Buttons.PRIMARY) || buttons.equals(Buttons.SECONDARY)) {
+                    handleMouseDragged(event);
+                }
                 break;
             case RELEASED:
-                handleMouseReleased(event);
+                handleMouseReleased();
                 break;
         }
     }
@@ -75,8 +78,8 @@ public class DefaultTool extends Tool {
         plotter.requestRepaint();
     }
 
-    public void handleMouseMoved(MouseEvent mouseEvent) {
-        Point plotCoords = viewport.fromScreenCoords(mouseEvent.getX(), mouseEvent.getY());
+    public void handleMouseMoved(MouseEvent event) {
+        Point plotCoords = viewport.fromScreenCoords(event.getX(), event.getY());
         double x = plotCoords.getX();
         double y = plotCoords.getY();
 
@@ -90,28 +93,28 @@ public class DefaultTool extends Tool {
         }
     }
 
-    public void handleMousePressed(MouseEvent mouseEvent) {
-        mouseAnchor = new Point(mouseEvent.getX(), mouseEvent.getY());
+    public void handleMousePressed(MouseEvent event) {
+        mouseAnchor = new Point(event.getX(), event.getY());
     }
 
-    public void handleMouseDragged(MouseEvent mouseEvent) {
-        Buttons actual = Buttons.fromMouseEvent(mouseEvent);
+    public void handleMouseDragged(MouseEvent event) {
+        Buttons actual = Buttons.fromMouseEvent(event);
 
         if (actual.equals(Buttons.PRIMARY) || actual.equals(Buttons.SECONDARY)) {
             plotter.setCursor(Cursor.MOVE);
 
-            Point newAnchor = new Point(mouseEvent.getX(), mouseEvent.getY());
+            Point newAnchor = new Point(event.getX(), event.getY());
             Point delta = mouseAnchor.minus(newAnchor);
 
             viewport.moveBy(delta.getX(), -delta.getY());
             plotter.requestRepaint();
             mouseAnchor = newAnchor;
 
-            handleMouseMoved(mouseEvent);
+            handleMouseMoved(event);
         }
     }
 
-    public void handleMouseReleased(MouseEvent mouseEvent) {
+    public void handleMouseReleased() {
         plotter.setCursor(Cursor.DEFAULT);
         mouseAnchor = null;
     }

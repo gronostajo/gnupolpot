@@ -4,6 +4,7 @@ import com.sun.istack.internal.Nullable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
+import net.avensome.dev.gnupolpot.api.util.FxUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -56,8 +57,8 @@ public class Shape implements Serializable {
     }
 
     public void paint(GraphicsContext ctx, Viewport viewport) {
-        ctx.setFill(applyOpacity(getColor(), (type == Type.FILLED) ? OPACITY_FILL : 0));
-        ctx.setStroke(applyOpacity(getColor(), OPACITY_STROKE));
+        ctx.setFill(FxUtils.applyOpacity(getColor(), (type == Type.FILLED) ? OPACITY_FILL : 0));
+        ctx.setStroke(FxUtils.applyOpacity(getColor(), OPACITY_STROKE));
 
         if (points.size() > 2) {
             paintPolygon(ctx, viewport);
@@ -83,15 +84,10 @@ public class Shape implements Serializable {
         }
     }
 
-
     private void paintLine(GraphicsContext ctx, Viewport viewport) {
         Point a = viewport.toScreenCoords(points.get(0));
         Point b = viewport.toScreenCoords(points.get(1));
         ctx.strokeLine(a.getX(), a.getY(), b.getX(), b.getY());
-    }
-
-    private Color applyOpacity(Color color, double opacity) {
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity * color.getOpacity());
     }
 
     public enum Type {

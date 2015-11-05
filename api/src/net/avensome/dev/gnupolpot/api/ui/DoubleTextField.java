@@ -1,4 +1,4 @@
-package net.avensome.dev.gnupolpot.api.control;
+package net.avensome.dev.gnupolpot.api.ui;
 
 import javafx.scene.control.TextField;
 import net.avensome.dev.gnupolpot.api.util.Validator;

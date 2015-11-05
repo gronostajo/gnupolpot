@@ -10,4 +10,8 @@ public class FxUtils {
                 (int) (color.getBlue() * 255)
         );
     }
+
+    public static Color applyOpacity(Color color, double opacity) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), opacity * color.getOpacity());
+    }
 }

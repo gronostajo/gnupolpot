@@ -2,6 +2,7 @@ package net.avensome.dev.gnupolpot.core.tools;
 
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.Api;
 import net.avensome.dev.gnupolpot.api.Tool;
@@ -18,6 +19,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PolygonTool extends Tool {
+
+    public static final Buttons PANNING_BUTTONS = Buttons.SECONDARY;
+    public static final Buttons ADDING_BUTTONS = Buttons.PRIMARY;
+
+    public static final Color COLOR_ADDED = Color.RED;
+    public static final Color COLOR_FINAL = Color.BLACK;
+
     private Shape shape;
     private List<PlotPoint> chain;
     private Collection<PlotPoint> newPoints;
@@ -54,12 +62,27 @@ public class PolygonTool extends Tool {
 
     @Override
     public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event) {
-        Buttons actual = Buttons.fromMouseEvent(event);
+        Buttons buttons = Buttons.fromMouseEvent(event);
+
         if (eventType == MouseEventType.MOVED) {
             DefaultTool.getInstance().handleMouseMoved(event);
-        } else if (eventType == MouseEventType.PRESSED && actual.equals(Buttons.PRIMARY)) {
-            handleMousePressed(api, event);
+        } else if (eventType == MouseEventType.DRAGGED && buttons.equals(PANNING_BUTTONS)) {
+            DefaultTool.getInstance().handleMouseDragged(event);
+        } else if (eventType == MouseEventType.PRESSED) {
+            if (buttons.equals(ADDING_BUTTONS)) {
+                handleMousePressed(api, event);
+            } else if (buttons.equals(PANNING_BUTTONS)) {
+                DefaultTool.getInstance().handleMousePressed(event);
+            }
+        } else if (eventType == MouseEventType.RELEASED) {
+            DefaultTool.getInstance().handleMouseReleased();
         }
+
+    }
+
+    @Override
+    public void receiveScrollEvent(Api api, ScrollEvent event) {
+        DefaultTool.getInstance().receiveScrollEvent(api, event);
     }
 
     private void handleMousePressed(Api api, MouseEvent event) {
@@ -80,11 +103,11 @@ public class PolygonTool extends Tool {
             clickedPoint = new PlotPoint(pt.getX(), pt.getY());
             newPoints.add(clickedPoint);
             plotter.getPoints().add(clickedPoint);
-        } else if (clickedPoint.equals(chain.get(0))) {
+        } else if (chain.size() > 0 && clickedPoint.equals(chain.get(0))) {
             if (chain.size() <= 2) {
                 return;
             } else {
-                shape.setColor(Color.BLACK);
+                shape.setColor(COLOR_FINAL);
                 shape.setType(Shape.Type.FILLED);
                 plotter.requestRepaint();
 
@@ -101,7 +124,7 @@ public class PolygonTool extends Tool {
             if (shape != null) {
                 plotter.getShapes().remove(shape);
             }
-            shape = new Shape(chain, Color.RED, Shape.Type.LINE);
+            shape = new Shape(chain, COLOR_ADDED, Shape.Type.LINE);
             plotter.getShapes().add(shape);
         }
 
