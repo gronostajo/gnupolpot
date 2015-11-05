@@ -1,6 +1,5 @@
 package net.avensome.dev.gnupolpot.plugin.dev;
 
-import com.google.common.collect.ImmutableList;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.Api;
 import net.avensome.dev.gnupolpot.api.Feature;
@@ -8,6 +7,7 @@ import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class DevPlotFeature implements Feature {
@@ -31,7 +31,7 @@ public class DevPlotFeature implements Feature {
         points.add(new PlotPoint(0, 0));
         points.add(new PlotPoint(5, 5, Color.RED));
 
-        List<PlotPoint> filledShapePoints = ImmutableList.of(
+        List<PlotPoint> filledShapePoints = Arrays.asList(
                 new PlotPoint(30, 20),
                 new PlotPoint(40, 30),
                 new PlotPoint(35, 50),
@@ -41,7 +41,7 @@ public class DevPlotFeature implements Feature {
         points.addAll(filledShapePoints);
         shapes.add(new Shape(filledShapePoints, Color.GREEN, Shape.Type.FILLED));
 
-        List<PlotPoint> emptyShapePoints = ImmutableList.of(
+        List<PlotPoint> emptyShapePoints = Arrays.asList(
                 new PlotPoint(60, 20),
                 new PlotPoint(70, 50),
                 new PlotPoint(50, 80),
@@ -50,7 +50,7 @@ public class DevPlotFeature implements Feature {
         points.addAll(emptyShapePoints);
         shapes.add(new Shape(emptyShapePoints, Color.BLUE, Shape.Type.EMPTY));
 
-        List<PlotPoint> lineShapePoints = ImmutableList.of(
+        List<PlotPoint> lineShapePoints = Arrays.asList(
                 new PlotPoint(140, 20),
                 new PlotPoint(180, 70),
                 new PlotPoint(150, 80)
@@ -58,7 +58,7 @@ public class DevPlotFeature implements Feature {
         points.addAll(lineShapePoints);
         shapes.add(new Shape(lineShapePoints, Color.HOTPINK, Shape.Type.LINE));
 
-        ImmutableList<PlotPoint> linePoints = ImmutableList.of(
+        List<PlotPoint> linePoints = Arrays.asList(
                 new PlotPoint(80, 70),
                 new PlotPoint(90, 90)
         );

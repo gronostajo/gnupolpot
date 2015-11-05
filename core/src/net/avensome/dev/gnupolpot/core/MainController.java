@@ -31,12 +31,8 @@ import net.avensome.dev.gnupolpot.core.ui.AddPointsDialog;
 import net.avensome.dev.gnupolpot.core.ui.FeatureMenuAppender;
 import net.avensome.dev.gnupolpot.core.ui.SummaryDialog;
 import net.avensome.dev.gnupolpot.core.ui.ToolPaneAppender;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -129,8 +125,9 @@ public class MainController implements Initializable {
     private void saveToFile(File file) {
         PlotData plotData = new PlotData(plotter.getPoints(), plotter.getShapes());
         String output = Exporter.toString(plotData);
-        try {
-            FileUtils.writeStringToFile(file, output);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(output);
+            writer.close();
         } catch (IOException e) {
             Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
             error.setHeaderText("Saving failed");

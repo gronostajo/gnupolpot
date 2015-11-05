@@ -1,11 +1,11 @@
 package net.avensome.dev.gnupolpot.core.plugins;
 
-import com.google.common.collect.ImmutableList;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.Plugin;
 import net.avensome.dev.gnupolpot.api.Tool;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -23,7 +23,7 @@ public class PluginManager {
     }
 
     public List<Plugin> getPlugins() {
-        return ImmutableList.copyOf(plugins);
+        return Collections.unmodifiableList(plugins);
     }
 
     public List<Feature> getFeatures() {
