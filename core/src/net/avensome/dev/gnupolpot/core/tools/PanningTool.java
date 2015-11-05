@@ -38,7 +38,7 @@ public class PanningTool extends Tool {
 
     @Override
     public Image getButtonImage() {
-        return new Image("/net/avensome/dev/gnupolpot/core/icons/tools/input-mouse.png");
+        return new Image("/net/avensome/dev/gnupolpot/core/icons/tools/panning.png");
     }
 
     @Override

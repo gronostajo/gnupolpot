@@ -46,7 +46,7 @@ public class PolygonTool extends Tool {
 
     @Override
     public Image getButtonImage() {
-        return new Image("/net/avensome/dev/gnupolpot/core/icons/tools/insert-object.png");
+        return new Image("/net/avensome/dev/gnupolpot/core/icons/tools/polygon.png");
     }
 
     @Override

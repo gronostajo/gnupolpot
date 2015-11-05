@@ -66,4 +66,7 @@ To build a plugin JAR, add an artifact containing your classes. You don't have t
 
 ## Various stuff
 
-Uses [Gnome icon theme](http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/3.12/) (LGPL v3).
+gnupolpot uses parts of other open source projects:
+
+  - [Gnome icon theme](http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/3.12/) (LGPL v3).
+  - [Inkscape tool icons](https://inkscape.org/en/) (GPL v2)
