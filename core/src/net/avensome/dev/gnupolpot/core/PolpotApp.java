@@ -29,6 +29,7 @@ public class PolpotApp extends Application {
         primaryStage.show();
 
         PluginManager pluginManager = new PluginManager();
+
         for (Feature feature : pluginManager.getFeatures()) {
             try {
                 mainController.registerFeature(feature);
@@ -36,6 +37,8 @@ public class PolpotApp extends Application {
                 PluginException.showAlert(e);
             }
         }
+
+        pluginManager.getTools().forEach(mainController::registerTool);
 
         int pluginCount = pluginManager.getPlugins().size();
         if (pluginCount > 0) {

@@ -3,6 +3,7 @@ package net.avensome.dev.gnupolpot.core.plugins;
 import com.google.common.collect.ImmutableList;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.Plugin;
+import net.avensome.dev.gnupolpot.api.Tool;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -31,4 +32,9 @@ public class PluginManager {
                 .collect(Collectors.toList());
     }
 
+    public List<Tool> getTools() {
+        return plugins.stream()
+                .flatMap(plugin -> plugin.getTools().stream())
+                .collect(Collectors.toList());
+    }
 }

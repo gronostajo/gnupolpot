@@ -274,6 +274,10 @@ public class MainController implements Initializable {
         featureMenuAppender.addFeature(feature);
     }
 
+    public void registerTool(Tool tool) {
+        toolPaneAppender.addTool(tool);
+    }
+
     public PluginInterface getPluginInterface() {
         return pluginInterface;
     }
