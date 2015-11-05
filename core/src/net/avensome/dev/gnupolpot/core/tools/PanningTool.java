@@ -13,21 +13,21 @@ import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.plotter.Viewport;
 
-public class DefaultTool extends Tool {
+public class PanningTool extends Tool {
 
     public static final int POINT_FOCUS_RADIUS = 3;
 
-    private static DefaultTool instance = new DefaultTool();
+    private static PanningTool instance = new PanningTool();
 
     private IPlotter plotter;
     private Viewport viewport;
 
     private Point mouseAnchor;
 
-    private DefaultTool() {
+    private PanningTool() {
     }
 
-    public static DefaultTool getInstance() {
+    public static PanningTool getInstance() {
         return instance;
     }
 

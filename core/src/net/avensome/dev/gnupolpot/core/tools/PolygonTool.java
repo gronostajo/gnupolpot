@@ -26,9 +26,18 @@ public class PolygonTool extends Tool {
     public static final Color COLOR_ADDED = Color.RED;
     public static final Color COLOR_FINAL = Color.BLACK;
 
+    private static PolygonTool instance = new PolygonTool();
+
     private Shape shape;
     private List<PlotPoint> chain;
     private Collection<PlotPoint> newPoints;
+
+    private PolygonTool() {
+    }
+
+    public static PolygonTool getInstance() {
+        return instance;
+    }
 
     @Override
     public String getName() {
@@ -65,24 +74,24 @@ public class PolygonTool extends Tool {
         Buttons buttons = Buttons.fromMouseEvent(event);
 
         if (eventType == MouseEventType.MOVED) {
-            DefaultTool.getInstance().handleMouseMoved(event);
+            PanningTool.getInstance().handleMouseMoved(event);
         } else if (eventType == MouseEventType.DRAGGED && buttons.equals(PANNING_BUTTONS)) {
-            DefaultTool.getInstance().handleMouseDragged(event);
+            PanningTool.getInstance().handleMouseDragged(event);
         } else if (eventType == MouseEventType.PRESSED) {
             if (buttons.equals(ADDING_BUTTONS)) {
                 handleMousePressed(api, event);
             } else if (buttons.equals(PANNING_BUTTONS)) {
-                DefaultTool.getInstance().handleMousePressed(event);
+                PanningTool.getInstance().handleMousePressed(event);
             }
         } else if (eventType == MouseEventType.RELEASED) {
-            DefaultTool.getInstance().handleMouseReleased();
+            PanningTool.getInstance().handleMouseReleased();
         }
 
     }
 
     @Override
     public void receiveScrollEvent(Api api, ScrollEvent event) {
-        DefaultTool.getInstance().receiveScrollEvent(api, event);
+        PanningTool.getInstance().receiveScrollEvent(api, event);
     }
 
     private void handleMousePressed(Api api, MouseEvent event) {
@@ -96,7 +105,7 @@ public class PolygonTool extends Tool {
         double plotX = plotCoords.getX();
         double plotY = plotCoords.getY();
 
-        PlotPoint clickedPoint = viewport.pointAtPlotCoords(plotX, plotY, DefaultTool.POINT_FOCUS_RADIUS, plotter.getPoints());
+        PlotPoint clickedPoint = viewport.pointAtPlotCoords(plotX, plotY, PanningTool.POINT_FOCUS_RADIUS, plotter.getPoints());
 
         if (clickedPoint == null) {
             Point pt = viewport.fromScreenCoords(x, y);

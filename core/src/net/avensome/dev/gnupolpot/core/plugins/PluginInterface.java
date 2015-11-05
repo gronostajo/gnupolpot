@@ -9,7 +9,7 @@ import net.avensome.dev.gnupolpot.api.PluginException;
 import net.avensome.dev.gnupolpot.api.Tool;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
-import net.avensome.dev.gnupolpot.core.tools.DefaultTool;
+import net.avensome.dev.gnupolpot.core.tools.PanningTool;
 import net.avensome.dev.gnupolpot.core.ui.ToolButton;
 
 import java.util.Optional;
@@ -61,7 +61,7 @@ public class PluginInterface implements Api {
 
     @Override
     public void selectDefaultTool() {
-        selectTool(DefaultTool.getInstance());
+        selectTool(PanningTool.getInstance());
     }
 
     @Override

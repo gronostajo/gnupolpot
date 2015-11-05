@@ -24,7 +24,7 @@ import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
-import net.avensome.dev.gnupolpot.core.tools.DefaultTool;
+import net.avensome.dev.gnupolpot.core.tools.PanningTool;
 import net.avensome.dev.gnupolpot.core.tools.PolygonTool;
 import net.avensome.dev.gnupolpot.core.ui.AddPointsDialog;
 import net.avensome.dev.gnupolpot.core.ui.FeatureMenuAppender;
@@ -254,8 +254,8 @@ public class MainController implements Initializable {
         featureMenuAppender = new FeatureMenuAppender(featureButton, pluginInterface);
 
         toolPaneAppender = new ToolPaneAppender(pluginInterface, toolPane);
-        toolPaneAppender.addTool(DefaultTool.getInstance());
-        toolPaneAppender.addTool(new PolygonTool());
+        toolPaneAppender.addTool(PanningTool.getInstance());
+        toolPaneAppender.addTool(PolygonTool.getInstance());
         pluginInterface.selectDefaultTool();
 
         plotter.registerEventHandler(new EventHandler() {
