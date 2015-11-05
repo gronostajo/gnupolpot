@@ -81,6 +81,24 @@ public class Viewport {
         return getLeft() <= x && getRight() >= x && getBottom() <= y && getTop() >= y;
     }
 
+    public Point fromScreenCoords(double screenX, double screenY) {
+        Viewport scaledViewport = applyScale();
+        double x = scaledViewport.getLeft() + screenX / scale;
+        double y = scaledViewport.getTop() - screenY / scale;
+        return new Point(x, y);
+    }
+
+    public Point toScreenCoords(double plotX, double plotY) {
+        Viewport scaledViewport = applyScale();
+        double x = (plotX - scaledViewport.getLeft()) * scale;
+        double y = -(plotY - scaledViewport.getTop()) * scale;
+        return new Point(x, y);
+    }
+
+    public Point toScreenCoords(PlotPoint point) {
+        return toScreenCoords(point.getX(), point.getY());
+    }
+
     @Override
     public String toString() {
         return String.format("%f:%f -- %f:%f (%f x %f)",

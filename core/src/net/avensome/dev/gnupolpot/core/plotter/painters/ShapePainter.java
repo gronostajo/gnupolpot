@@ -1,12 +1,10 @@
 package net.avensome.dev.gnupolpot.core.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
-import net.avensome.dev.gnupolpot.api.mouse.Point;
-import net.avensome.dev.gnupolpot.api.plotter.Viewport;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
+import net.avensome.dev.gnupolpot.api.plotter.Viewport;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ShapePainter extends Painter {
     private final List<Shape> shapes;
@@ -18,14 +16,9 @@ public class ShapePainter extends Painter {
 
     @Override
     public void paint(Viewport viewport) {
-        Point corner = viewport.applyScale().getBottomLeftCorner();
-        List<Shape> movedShapes = shapes.stream()
-                .map(shape -> shape.zoomed(corner.getX(), corner.getY(), viewport.getScale()))
-                .collect(Collectors.toList());
-
         ctx.setLineWidth(2);
-        for (Shape shape : movedShapes) {
-            shape.paint(ctx, viewport.getHeight());
+        for (Shape shape : shapes) {
+            shape.paint(ctx, viewport);
         }
     }
 }

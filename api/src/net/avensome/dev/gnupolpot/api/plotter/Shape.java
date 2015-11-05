@@ -3,10 +3,10 @@ package net.avensome.dev.gnupolpot.api.plotter;
 import com.sun.istack.internal.Nullable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import net.avensome.dev.gnupolpot.api.mouse.Point;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Shape implements Serializable {
     public static final double OPACITY_STROKE = 0.8;
@@ -54,31 +54,24 @@ public class Shape implements Serializable {
         this.type = type;
     }
 
-    public Shape zoomed(double offsetX, double offsetY, double factor) {
-        List<PlotPoint> newPoints = points.stream()
-                .map(plotPoint -> plotPoint.zoomed(offsetX, offsetY, factor))
-                .collect(Collectors.toList());
-        return new Shape(newPoints, color, type);
-    }
-
-    public void paint(GraphicsContext ctx, double viewportHeight) {
+    public void paint(GraphicsContext ctx, Viewport viewport) {
         ctx.setFill(applyOpacity(getColor(), (type == Type.FILLED) ? OPACITY_FILL : 0));
         ctx.setStroke(applyOpacity(getColor(), OPACITY_STROKE));
 
         if (points.size() > 2) {
-            paintPolygon(ctx, viewportHeight);
+            paintPolygon(ctx, viewport);
         } else if (points.size() == 2) {
-            paintLine(ctx, viewportHeight);
+            paintLine(ctx, viewport);
         }
     }
 
-    private void paintPolygon(GraphicsContext ctx, double viewportHeight) {
+    private void paintPolygon(GraphicsContext ctx, Viewport viewport) {
         double[] x = new double[points.size()];
         double[] y = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
-            PlotPoint point = points.get(i);
-            x[i] = point.getX();
-            y[i] = viewportHeight - point.getY();
+            Point screenPoint = viewport.toScreenCoords(points.get(i));
+            x[i] = screenPoint.getX();
+            y[i] = screenPoint.getY();
         }
 
         if (type != Type.LINE) {
@@ -89,10 +82,11 @@ public class Shape implements Serializable {
         }
     }
 
-    private void paintLine(GraphicsContext ctx, double viewportHeight) {
-        PlotPoint a = points.get(0);
-        PlotPoint b = points.get(1);
-        ctx.strokeLine(a.getX(), viewportHeight - a.getY(), b.getX(), viewportHeight - b.getY());
+
+    private void paintLine(GraphicsContext ctx, Viewport viewport) {
+        Point a = viewport.toScreenCoords(points.get(0));
+        Point b = viewport.toScreenCoords(points.get(1));
+        ctx.strokeLine(a.getX(), a.getY(), b.getX(), b.getY());
     }
 
     private Color applyOpacity(Color color, double opacity) {

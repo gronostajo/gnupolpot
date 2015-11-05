@@ -78,9 +78,9 @@ public class DefaultTool extends Tool {
 
     private void handleMouseMoved(MouseEvent mouseEvent) {
         double scale = viewport.getScale();
-        Viewport scaledViewport = viewport.applyScale();
-        double x = scaledViewport.getLeft() + mouseEvent.getX() / scale;
-        double y = scaledViewport.getTop() - mouseEvent.getY() / scale;
+        Point plotCoords = viewport.fromScreenCoords(mouseEvent.getX(), mouseEvent.getY());
+        double x = plotCoords.getX();
+        double y = plotCoords.getY();
 
         PlotPoint focusedPoint = GeometryTools
                 .pointsInRect(plotter.getPoints(), this.viewport).stream()

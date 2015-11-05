@@ -36,16 +36,6 @@ public class PlotPoint implements Serializable {
         this.color = color;
     }
 
-    public PlotPoint movedBy(double x, double y) {
-        return new PlotPoint(getX() + x, getY() + y, color);
-    }
-
-    public PlotPoint zoomed(double offsetX, double offsetY, double factor) {
-        double x = getX() - offsetX;
-        double y = getY() - offsetY;
-        return new PlotPoint(x * factor, y * factor);
-    }
-
     public double distanceFrom(double x, double y) {
         double dX = Math.abs(this.x - x);
         double dY = Math.abs(this.y - y);
