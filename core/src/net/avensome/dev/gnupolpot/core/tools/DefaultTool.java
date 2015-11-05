@@ -12,7 +12,6 @@ import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.plotter.Viewport;
-import net.avensome.dev.gnupolpot.core.plotter.util.GeometryTools;
 
 public class DefaultTool extends Tool {
 
@@ -82,11 +81,7 @@ public class DefaultTool extends Tool {
         double x = plotCoords.getX();
         double y = plotCoords.getY();
 
-        PlotPoint focusedPoint = GeometryTools
-                .pointsInRect(plotter.getPoints(), this.viewport).stream()
-                .filter(point -> point.distanceFrom(x, y) * scale < POINT_FOCUS_RADIUS)
-                .sorted((o1, o2) -> Double.compare(o1.distanceFrom(x, y), o2.distanceFrom(x, y)))
-                .reduce(null, (point1, point2) -> point1 == null ? point2 : point1);
+        PlotPoint focusedPoint = viewport.pointAtScreenCoords(x, y, POINT_FOCUS_RADIUS, plotter.getPoints());
 
         boolean focusChanged = (plotter.focusedPointProperty().get() != focusedPoint);
         plotter.focusedPointProperty().set(focusedPoint);

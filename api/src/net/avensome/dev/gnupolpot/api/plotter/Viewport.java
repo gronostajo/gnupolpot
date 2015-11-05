@@ -2,6 +2,9 @@ package net.avensome.dev.gnupolpot.api.plotter;
 
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 public class Viewport {
 
     private double centerX;
@@ -95,8 +98,22 @@ public class Viewport {
         return new Point(x, y);
     }
 
+    public Collection<PlotPoint> visiblePoints(Collection<PlotPoint> points) {
+        Viewport scaledViewpoint = applyScale();
+        return points.stream()
+                .filter(plotPoint -> scaledViewpoint.contains(plotPoint.getX(), plotPoint.getY()))
+                .collect(Collectors.toList());
+    }
+
     public Point toScreenCoords(PlotPoint point) {
         return toScreenCoords(point.getX(), point.getY());
+    }
+
+    public PlotPoint pointAtScreenCoords(double x, double y, double tolerance, Collection<PlotPoint> points) {
+        return visiblePoints(points).stream()
+                .filter(point -> point.distanceFrom(x, y) * scale < tolerance)
+                .sorted((o1, o2) -> Double.compare(o1.distanceFrom(x, y), o2.distanceFrom(x, y)))
+                .reduce(null, (point1, point2) -> point1 == null ? point2 : point1);
     }
 
     @Override
