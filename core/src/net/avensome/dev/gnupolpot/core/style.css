@@ -1,0 +1,4 @@
+.scroll-pane:focused {
+    -fx-background-color: -fx-box-border, -fx-background;
+    -fx-background-insets: 0, 1;
+}

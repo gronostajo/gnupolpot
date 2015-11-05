@@ -211,7 +211,7 @@
         </VBox>
     </bottom>
     <left>
-        <ScrollPane>
+        <ScrollPane focusTraversable="false" hbarPolicy="NEVER" stylesheets="@style.css">
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
