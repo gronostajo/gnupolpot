@@ -3,22 +3,21 @@ package net.avensome.dev.gnupolpot.api.plotter;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class PlotData {
-    private List<PlotPoint> points;
-    private List<Shape> shapes;
+    private Collection<PlotPoint> points;
+    private Collection<Shape> shapes;
 
-    public PlotData(List<PlotPoint> points, List<Shape> shapes) {
+    public PlotData(Collection<PlotPoint> points, Collection<Shape> shapes) {
         this.points = new ImmutableList<>(points);
         this.shapes = new ImmutableList<>(shapes);
     }
 
-    public List<PlotPoint> getPoints() {
+    public Collection<PlotPoint> getPoints() {
         return points;
     }
 
-    public List<Shape> getShapes() {
+    public Collection<Shape> getShapes() {
         return shapes;
     }
 

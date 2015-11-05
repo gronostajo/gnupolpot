@@ -17,6 +17,7 @@ public class Shape implements Serializable {
 
     private final List<PlotPoint> points;
 
+
     @Nullable
     private Color color;
 

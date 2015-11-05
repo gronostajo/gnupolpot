@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.control.DoubleTextField;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 
+import java.util.Optional;
+
 public class AddPointsDialog {
     public PlotPoint show() {
         Dialog<PlotPoint> dialog = new Dialog<>();
@@ -57,6 +59,7 @@ public class AddPointsDialog {
             }
         });
 
-        return dialog.showAndWait().get();
+        Optional<PlotPoint> result = dialog.showAndWait();
+        return result.isPresent() ? result.get() : null;
     }
 }

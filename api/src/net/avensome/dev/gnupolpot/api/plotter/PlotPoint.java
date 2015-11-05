@@ -42,7 +42,26 @@ public class PlotPoint implements Serializable {
         return Math.sqrt(dX * dX + dY * dY);
     }
 
-    public boolean hasEqualPoint(PlotPoint another) {
-        return (another != null) && (x == another.x) && (y == another.y);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PlotPoint point = (PlotPoint) o;
+
+        return Double.compare(point.x, x) == 0 && Double.compare(point.y, y) == 0;
+
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(x);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(y);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 }

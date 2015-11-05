@@ -19,6 +19,7 @@ import net.avensome.dev.gnupolpot.api.plotter.PlotData;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.util.SnapshotUtil;
 import net.avensome.dev.gnupolpot.core.plotter.EventHandler;
+import net.avensome.dev.gnupolpot.core.plotter.Exporter;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
@@ -29,10 +30,12 @@ import net.avensome.dev.gnupolpot.core.ui.AddPointsDialog;
 import net.avensome.dev.gnupolpot.core.ui.FeatureMenuAppender;
 import net.avensome.dev.gnupolpot.core.ui.SummaryDialog;
 import net.avensome.dev.gnupolpot.core.ui.ToolPaneAppender;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +47,8 @@ public class MainController implements Initializable {
     @FXML
     private Label statusLabel;
     @FXML
+    private Button saveButton;
+    @FXML
     private Button importAgainButton;
     @FXML
     private Button summaryButton;
@@ -54,22 +59,13 @@ public class MainController implements Initializable {
 
     private Stage primaryStage;
 
-    private File lastImportedFile;
+    private SimpleObjectProperty<File> lastTouchedFile = new SimpleObjectProperty<>();
 
     private SimpleObjectProperty<Tool> currentTool = new SimpleObjectProperty<>();
 
     private PluginInterface pluginInterface;
     private FeatureMenuAppender featureMenuAppender;
     private ToolPaneAppender toolPaneAppender;
-
-    @FXML
-    private void addPointClicked() {
-        PlotPoint addedPoint = new AddPointsDialog().show();
-        if (addedPoint != null) {
-            plotter.getPoints().add(addedPoint);
-            plotter.requestRepaint();
-        }
-    }
 
     @FXML
     private void importPointsClicked() {
@@ -100,12 +96,54 @@ public class MainController implements Initializable {
         }
 
         importPointsFromFile(file, result.get() == replaceType);
-        lastImportedFile = file;
+        lastTouchedFile.set(file);
     }
 
     @FXML
     private void importAgainClicked() {
-        importPointsFromFile(lastImportedFile, true);
+        importPointsFromFile(lastTouchedFile.get(), true);
+    }
+
+    @FXML
+    private void saveClicked() {
+        if (lastTouchedFile.get() == null) {
+            saveAsClicked();
+            return;
+        }
+        saveToFile(lastTouchedFile.get());
+    }
+
+    @FXML
+    private void saveAsClicked() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save plot");
+        File file = fileChooser.showSaveDialog(primaryStage);
+        if (file == null) {
+            return;
+        }
+        saveToFile(file);
+        lastTouchedFile.set(file);
+    }
+
+    private void saveToFile(File file) {
+        PlotData plotData = new PlotData(plotter.getPoints(), plotter.getShapes());
+        String output = Exporter.toString(plotData);
+        try {
+            FileUtils.writeStringToFile(file, output);
+        } catch (IOException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            error.setHeaderText("Saving failed");
+            error.showAndWait();
+        }
+    }
+
+    @FXML
+    private void addPointClicked() {
+        PlotPoint addedPoint = new AddPointsDialog().show();
+        if (addedPoint != null) {
+            plotter.getPoints().add(addedPoint);
+            plotter.requestRepaint();
+        }
     }
 
     @FXML
@@ -246,6 +284,9 @@ public class MainController implements Initializable {
                 currentTool.get().receiveScrollEvent(pluginInterface, event);
             }
         });
+
+        lastTouchedFile.addListener((observable, oldValue, newValue) ->
+                saveButton.setDisable(lastTouchedFile.get() == null));
     }
 
     private void importPointsFromFile(File file, boolean replacePlot) {

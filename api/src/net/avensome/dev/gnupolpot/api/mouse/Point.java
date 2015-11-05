@@ -37,6 +37,7 @@ public final class Point {
 
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public int hashCode() {
         int result;

@@ -31,7 +31,7 @@ public class PointPainter extends Painter {
 
         for (PlotPoint point : pointsInViewport) {
             ctx.setFill(point.getColor());
-            double radius = point.hasEqualPoint(focusedPoint) ? POINT_RADIUS_FOCUSED : POINT_RADIUS;
+            double radius = point.equals(focusedPoint) ? POINT_RADIUS_FOCUSED : POINT_RADIUS;
             Point screenPoint = viewport.toScreenCoords(point);
             ctx.fillOval(screenPoint.getX() - radius, screenPoint.getY() - radius, radius * 2, radius * 2);
         }

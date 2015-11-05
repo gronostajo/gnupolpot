@@ -16,14 +16,12 @@ import java.util.stream.Collectors;
 public class Importer {
     private static final Pattern DOUBLE_PATTERN = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?");
     private static final Pattern COLOR_PATTERN = Pattern.compile("#[0-9a-f]{6}|#[0-9a-f]{3}", Pattern.CASE_INSENSITIVE);
-    private static final Pattern SHAPE_PATTERN = Pattern.compile("\\$([a-z0-9_-]+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern ID_PATTERN = Pattern.compile("\\*([a-z0-9_-]+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TYPE_PATTERN = Pattern.compile("_([a-z]+)", Pattern.CASE_INSENSITIVE);
 
     public static PlotData fromStream(InputStream dataStream) throws DataFormatException {
-
-        List<PlotPoint> points = new ArrayList<>();
-
-        Map<String, List<PlotPoint>> shapePoints = new HashMap<>();
-        Map<String, ShapeStub> shapeStubs = new HashMap<>();
+        List<ShapeStub> shapeStubs = new LinkedList<>();
+        Map<String, PlotPoint> points = new HashMap<>();
 
         Scanner scanner = new Scanner(dataStream);
 
@@ -33,79 +31,26 @@ public class Importer {
             if (line.matches("#.*") || line.isEmpty()) {
                 //noinspection UnnecessaryContinue
                 continue;   // It's a comment or empty line, ignore it
-            } else if (line.matches("\\$.+")) {
+            } else if (line.matches("\\$\\s.+")) {
                 // There's a chance it's a shape color spec
-                ShapeStub shapeStub = parseShapeColor(line);
-                shapeStubs.put(shapeStub.getName(), shapeStub);
+                ShapeStub shapeStub = parseShape(line);
+                shapeStubs.add(shapeStub);
             } else {
-                Pair<PlotPoint, Set<String>> dataPoint = parsePoint(line);
+                Pair<PlotPoint, String> dataPoint = parsePoint(line);
                 PlotPoint point = dataPoint.getFirst();
-                Set<String> shapeNames = dataPoint.getSecond();
-
-                points.add(point);
-
-                for (String shapeName : shapeNames) {
-                    if (!shapePoints.containsKey(shapeName)) {
-                        shapePoints.put(shapeName, new ArrayList<>());
-                    }
-                    shapePoints.get(shapeName).add(point);
-                }
+                String pointId = dataPoint.getSecond();
+                points.put(pointId, point);
             }
         }
 
-        List<Shape> shapes = shapePoints.entrySet().stream()
-                .map(entry -> {
-                    String shapeName = entry.getKey();
-                    ShapeStub shapeStub = shapeStubs.get(shapeName);
-                    if (shapeStub == null) {
-                        shapeStub = new ShapeStub(shapeName, null, Shape.Type.FILLED);
-                    }
-                    return shapeStub.toShape(entry.getValue());
-                })
+        List<Shape> shapes = shapeStubs.stream()
+                .map(stub -> stub.toShape(points))
                 .collect(Collectors.toList());
 
-        return new PlotData(points, shapes);
+        return new PlotData(points.values(), shapes);
     }
 
-    private static ShapeStub parseShapeColor(String line) throws DataFormatException {
-        String[] parts = line.split("\\s+");
-        if (parts.length < 2 || parts.length > 3) {
-            throw new DataFormatException(line);
-        }
-
-        String name;
-        String color;
-        Shape.Type type = Shape.Type.FILLED;
-
-        Matcher nameMatcher = SHAPE_PATTERN.matcher(parts[0]);
-        Matcher strokeColorMatcher = COLOR_PATTERN.matcher(parts[1]);
-        if (!nameMatcher.matches() || !strokeColorMatcher.matches()) {
-            throw new DataFormatException(line);
-        }
-        name = nameMatcher.group(1);
-        color = parts[1];
-
-        if (parts.length == 3) {
-            String typeString = parts[2].toLowerCase();
-            switch (typeString) {
-                case "filled":
-                    type = Shape.Type.FILLED;
-                    break;
-                case "empty":
-                    type = Shape.Type.EMPTY;
-                    break;
-                case "line":
-                    type = Shape.Type.LINE;
-                    break;
-                default:
-                    throw new DataFormatException(line);
-            }
-        }
-
-        return new ShapeStub(name, color, type);
-    }
-
-    private static Pair<PlotPoint, Set<String>> parsePoint(String line) throws DataFormatException {
+    private static Pair<PlotPoint, String> parsePoint(String line) throws DataFormatException {
         String[] parts = line.split("\\s+");
         if (parts.length < 2) {
             throw new DataFormatException(line);
@@ -117,47 +62,101 @@ public class Importer {
         double y = Double.parseDouble(parts[1]);
 
         Color color = Color.BLACK;
-        Set<String> shapeNames = new HashSet<>();
+        String id = null;
 
         if (parts.length >= 3) {
-            int startIndex;
+            int idIndex;
             if (COLOR_PATTERN.matcher(parts[2]).matches()) {
                 color = Color.web(parts[2]);
-                startIndex = 3;
+                idIndex = 3;
             } else {
-                startIndex = 2;
+                idIndex = 2;
             }
 
-            for (int i = startIndex; i < parts.length; i++) {
-                Matcher matcher = SHAPE_PATTERN.matcher(parts[i]);
-                if (!matcher.matches()) {
+            if (parts.length > idIndex) {
+                Matcher idMatcher = ID_PATTERN.matcher(parts[idIndex]);
+                if (idMatcher.matches()) {
+                    id = idMatcher.group(1);
+                } else {
                     throw new DataFormatException(line);
                 }
-                shapeNames.add(matcher.group(1));
+            }
+
+            if (parts.length > 4) {
+                throw new DataFormatException(line);
             }
         }
 
         PlotPoint point = new PlotPoint(x, y, color);
-        return new Pair<>(point, shapeNames);
+        return new Pair<>(point, id);
+    }
+
+    private static ShapeStub parseShape(String line) throws DataFormatException {
+        String[] parts = line.split("\\s+");
+        if (parts.length < 2) {
+            throw new DataFormatException(line);
+        }
+
+
+        int index = 1;
+
+        String color = null;
+        Matcher colorMatcher = COLOR_PATTERN.matcher(parts[index]);
+        if (colorMatcher.matches()) {
+            index++;
+            color = parts[1];
+        }
+
+        Shape.Type type = Shape.Type.FILLED;
+        Matcher typeMatcher = TYPE_PATTERN.matcher(parts[index]);
+        if (typeMatcher.matches()) {
+            index++;
+            type = parseType(typeMatcher.group(1).toUpperCase());
+        }
+
+        List<String> partsList = Arrays.asList(parts);
+        List<String> idParts = partsList.subList(index, partsList.size());
+        for (String id : idParts) {
+            if (!ID_PATTERN.matcher(id).matches()) {
+                throw new DataFormatException(line);
+            }
+        }
+        List<String> ids = idParts.stream()
+                .map(part -> {
+                    Matcher matcher = ID_PATTERN.matcher(part);
+                    //noinspection ResultOfMethodCallIgnored
+                    matcher.matches();
+                    return matcher.group(1);
+                })
+                .collect(Collectors.toList());
+
+        return new ShapeStub(color, type, ids);
+    }
+
+    private static Shape.Type parseType(String typeString) {
+        try {
+            return Shape.Type.valueOf(typeString);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     private static class ShapeStub {
-        private final String name;
         private final Color color;
         private final Shape.Type type;
+        private final List<String> expectedPointIds;
 
-        public ShapeStub(String name, String color, Shape.Type type) {
-            this.name = name;
+        public ShapeStub(String color, Shape.Type type, List<String> expectedPointIds) {
             this.color = (color != null) ? Color.web(color) : null;
             this.type = type;
+            this.expectedPointIds = expectedPointIds;
         }
 
-        public String getName() {
-            return name;
-        }
-
-        public Shape toShape(List<PlotPoint> value) {
-            return new Shape(value, color, type);
+        public Shape toShape(Map<String, PlotPoint> pointIds) {
+            List<PlotPoint> points = expectedPointIds.stream()
+                    .map(pointIds::get)
+                    .collect(Collectors.toList());
+            return new Shape(points, color, type);
         }
     }
 }
