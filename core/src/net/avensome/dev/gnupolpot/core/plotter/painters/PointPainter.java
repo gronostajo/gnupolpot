@@ -3,8 +3,8 @@ package net.avensome.dev.gnupolpot.core.plotter.painters;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.canvas.GraphicsContext;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
-import net.avensome.dev.gnupolpot.core.geometry.Point;
-import net.avensome.dev.gnupolpot.core.geometry.Viewport;
+import net.avensome.dev.gnupolpot.api.mouse.Point;
+import net.avensome.dev.gnupolpot.api.plotter.Viewport;
 import net.avensome.dev.gnupolpot.core.plotter.util.GeometryTools;
 
 import java.util.List;

@@ -10,4 +10,8 @@ public interface Api {
     void cancelTemporaryStatus();
 
     void executeFeature(Feature feature) throws PluginException;
+
+    void selectDefaultTool();
+
+    void selectTool(Tool tool);
 }

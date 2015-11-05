@@ -32,4 +32,9 @@ public abstract class Plugin {
     public Collection<Feature> getFeatures() {
         return new LinkedList<>();
     }
+
+    @NotNull
+    public Collection<Tool> getTools() {
+        return new LinkedList<>();
+    }
 }

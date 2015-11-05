@@ -1,4 +1,6 @@
-package net.avensome.dev.gnupolpot.core.geometry;
+package net.avensome.dev.gnupolpot.api.plotter;
+
+import net.avensome.dev.gnupolpot.api.mouse.Point;
 
 public class Viewport {
 

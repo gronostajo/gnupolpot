@@ -56,7 +56,7 @@ Step by step tutorial for IntelliJ IDEA.
 4. Create a class extending `Plugin` class from the library you've just added.
 5. Right-click `src` folder, create new package called `META-INF.services`. IntelliJ will complain, ignore it.
 6. Inside the package you have just created add a text file called `net.avensome.dev.gnupolpot.api.Plugin`. Open it and press `Ctrl`+`Space`, your class should pop up. Press `Enter`.
-7. Implement missing methods in your class. Make `getName()` return some name. Create a class that implements `Feature`. Add it to the list returned by `getFeatures()` method.
+7. Implement `getName()` in your class and return some name. Create a class that implements `Feature`. Add it to the list returned by `YourPlugin.getFeatures()` method.
 8. Open *File* > *Project Structure* > *Modules*. Click the `+` button on the far right. Add gnupolpot's main JAR. Click OK.
 9. Wait until IntelliJ IDEA finishes indexing. Open *Edit configurations* window (combo box in the top right corner).
 10. Add new configuration for *Application*. Enter `net.avensome.dev.gnupolpot.core.PolpotApp` as the main class.

@@ -1,6 +1,6 @@
 package net.avensome.dev.gnupolpot.core.plotter.util;
 
-import net.avensome.dev.gnupolpot.core.geometry.Viewport;
+import net.avensome.dev.gnupolpot.api.plotter.Viewport;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 
 import java.util.List;

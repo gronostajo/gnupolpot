@@ -1,24 +1,34 @@
 package net.avensome.dev.gnupolpot.core;
 
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.PluginException;
+import net.avensome.dev.gnupolpot.api.Tool;
+import net.avensome.dev.gnupolpot.api.mouse.MouseEventType;
 import net.avensome.dev.gnupolpot.api.plotter.DataFormatException;
 import net.avensome.dev.gnupolpot.api.plotter.PlotData;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.util.SnapshotUtil;
+import net.avensome.dev.gnupolpot.core.plotter.EventHandler;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
+import net.avensome.dev.gnupolpot.core.tools.DefaultTool;
+import net.avensome.dev.gnupolpot.core.tools.TestTool;
 import net.avensome.dev.gnupolpot.core.ui.AddPointsDialog;
 import net.avensome.dev.gnupolpot.core.ui.FeatureMenuAppender;
 import net.avensome.dev.gnupolpot.core.ui.SummaryDialog;
+import net.avensome.dev.gnupolpot.core.ui.ToolPaneAppender;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,13 +49,18 @@ public class MainController implements Initializable {
     private Button summaryButton;
     @FXML
     private MenuButton featureButton;
+    @FXML
+    private VBox toolPane;
 
     private Stage primaryStage;
 
     private File lastImportedFile;
 
+    private SimpleObjectProperty<Tool> currentTool = new SimpleObjectProperty<>();
+
     private PluginInterface pluginInterface;
     private FeatureMenuAppender featureMenuAppender;
+    private ToolPaneAppender toolPaneAppender;
 
     @FXML
     private void addPointClicked() {
@@ -185,9 +200,6 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        pluginInterface = new PluginInterface(plotter, statusLabel);
-        featureMenuAppender = new FeatureMenuAppender(featureButton, pluginInterface);
-
         plotter.focusedPointProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 pluginInterface.cancelTemporaryStatus();
@@ -199,6 +211,41 @@ public class MainController implements Initializable {
         ListChangeListener<PlotPoint> pointsChange = listChange ->
                 summaryButton.setDisable(plotter.getPoints().size() == 0);
         plotter.getPoints().addListener(pointsChange);
+
+        pluginInterface = new PluginInterface(plotter, statusLabel, currentTool, toolPane);
+        featureMenuAppender = new FeatureMenuAppender(featureButton, pluginInterface);
+
+        toolPaneAppender = new ToolPaneAppender(pluginInterface, toolPane);
+        toolPaneAppender.addTool(DefaultTool.getInstance());
+        toolPaneAppender.addTool(new TestTool());
+        pluginInterface.selectDefaultTool();
+
+        plotter.registerEventHandler(new EventHandler() {
+            @Override
+            public void mouseMoved(MouseEvent event) {
+                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.MOVED, event);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent event) {
+                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.PRESSED, event);
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent event) {
+                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.DRAGGED, event);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent event) {
+                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.RELEASED, event);
+            }
+
+            @Override
+            public void scrolled(ScrollEvent event) {
+                currentTool.get().receiveScrollEvent(pluginInterface, event);
+            }
+        });
     }
 
     private void importPointsFromFile(File file, boolean replacePlot) {

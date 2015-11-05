@@ -1,8 +1,8 @@
 package net.avensome.dev.gnupolpot.core.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
-import net.avensome.dev.gnupolpot.core.geometry.Point;
-import net.avensome.dev.gnupolpot.core.geometry.Viewport;
+import net.avensome.dev.gnupolpot.api.mouse.Point;
+import net.avensome.dev.gnupolpot.api.plotter.Viewport;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
 
 import java.util.List;
