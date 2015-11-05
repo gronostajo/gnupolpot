@@ -109,7 +109,7 @@ public class Viewport {
         return toScreenCoords(point.getX(), point.getY());
     }
 
-    public PlotPoint pointAtScreenCoords(double x, double y, double tolerance, Collection<PlotPoint> points) {
+    public PlotPoint pointAtPlotCoords(double x, double y, double tolerance, Collection<PlotPoint> points) {
         return visiblePoints(points).stream()
                 .filter(point -> point.distanceFrom(x, y) * scale < tolerance)
                 .sorted((o1, o2) -> Double.compare(o1.distanceFrom(x, y), o2.distanceFrom(x, y)))

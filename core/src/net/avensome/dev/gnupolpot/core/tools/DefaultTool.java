@@ -75,13 +75,12 @@ public class DefaultTool extends Tool {
         plotter.requestRepaint();
     }
 
-    private void handleMouseMoved(MouseEvent mouseEvent) {
-        double scale = viewport.getScale();
+    public void handleMouseMoved(MouseEvent mouseEvent) {
         Point plotCoords = viewport.fromScreenCoords(mouseEvent.getX(), mouseEvent.getY());
         double x = plotCoords.getX();
         double y = plotCoords.getY();
 
-        PlotPoint focusedPoint = viewport.pointAtScreenCoords(x, y, POINT_FOCUS_RADIUS, plotter.getPoints());
+        PlotPoint focusedPoint = viewport.pointAtPlotCoords(x, y, POINT_FOCUS_RADIUS, plotter.getPoints());
 
         boolean focusChanged = (plotter.focusedPointProperty().get() != focusedPoint);
         plotter.focusedPointProperty().set(focusedPoint);
@@ -91,11 +90,11 @@ public class DefaultTool extends Tool {
         }
     }
 
-    private void handleMousePressed(MouseEvent mouseEvent) {
+    public void handleMousePressed(MouseEvent mouseEvent) {
         mouseAnchor = new Point(mouseEvent.getX(), mouseEvent.getY());
     }
 
-    private void handleMouseDragged(MouseEvent mouseEvent) {
+    public void handleMouseDragged(MouseEvent mouseEvent) {
         Buttons actual = Buttons.fromMouseEvent(mouseEvent);
 
         if (actual.equals(Buttons.PRIMARY) || actual.equals(Buttons.SECONDARY)) {
@@ -112,7 +111,7 @@ public class DefaultTool extends Tool {
         }
     }
 
-    private void handleMouseReleased(MouseEvent mouseEvent) {
+    public void handleMouseReleased(MouseEvent mouseEvent) {
         plotter.setCursor(Cursor.DEFAULT);
         mouseAnchor = null;
     }
