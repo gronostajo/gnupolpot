@@ -24,8 +24,21 @@ public class PlotPoint implements Serializable {
         return x;
     }
 
+    public void setX(double x) {
+        this.x = x;
+    }
+
     public double getY() {
         return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void moveTo(double x, double y) {
+        setX(x);
+        setY(y);
     }
 
     public Color getColor() {

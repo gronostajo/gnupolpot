@@ -1,5 +1,6 @@
 package net.avensome.dev.gnupolpot.core.tools;
 
+import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -54,6 +55,8 @@ public class PolygonTool extends Tool {
         shape = null;
         chain = new LinkedList<>();
         newPoints = new LinkedList<>();
+
+        api.getPlotter().setCursor(Cursor.CROSSHAIR);
     }
 
     @Override
@@ -74,19 +77,18 @@ public class PolygonTool extends Tool {
         Buttons buttons = Buttons.fromMouseEvent(event);
 
         if (eventType == MouseEventType.MOVED) {
-            PanningTool.getInstance().handleMouseMoved(event);
-        } else if (eventType == MouseEventType.DRAGGED && buttons.equals(PANNING_BUTTONS)) {
-            PanningTool.getInstance().handleMouseDragged(event);
+            PanningTool.getInstance().updateFocus(api, event);
+        } else if (eventType == MouseEventType.DRAGGED) {
+            PanningTool.getInstance().pan(api, event);
         } else if (eventType == MouseEventType.PRESSED) {
             if (buttons.equals(ADDING_BUTTONS)) {
-                handleMousePressed(api, event);
+                addPoint(api, event);
             } else if (buttons.equals(PANNING_BUTTONS)) {
-                PanningTool.getInstance().handleMousePressed(event);
+                PanningTool.getInstance().startPanning(event);
             }
         } else if (eventType == MouseEventType.RELEASED) {
-            PanningTool.getInstance().handleMouseReleased();
+            PanningTool.getInstance().stopPanning(api, Cursor.CROSSHAIR);
         }
-
     }
 
     @Override
@@ -94,7 +96,7 @@ public class PolygonTool extends Tool {
         PanningTool.getInstance().receiveScrollEvent(api, event);
     }
 
-    private void handleMousePressed(Api api, MouseEvent event) {
+    private void addPoint(Api api, MouseEvent event) {
         IPlotter plotter = api.getPlotter();
         Viewport viewport = plotter.getViewport();
 
@@ -121,9 +123,9 @@ public class PolygonTool extends Tool {
                 plotter.requestRepaint();
 
                 shape = null;
+                chain = new LinkedList<>();
                 newPoints.clear();
 
-                api.selectDefaultTool();
                 return;
             }
         }
