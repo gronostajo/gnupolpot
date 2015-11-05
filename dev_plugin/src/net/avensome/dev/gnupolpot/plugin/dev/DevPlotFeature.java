@@ -2,6 +2,7 @@ package net.avensome.dev.gnupolpot.plugin.dev;
 
 import com.google.common.collect.ImmutableList;
 import javafx.scene.paint.Color;
+import net.avensome.dev.gnupolpot.api.Api;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
@@ -21,7 +22,9 @@ public class DevPlotFeature implements Feature {
     }
 
     @Override
-    public String execute(IPlotter plotter) {
+    public void execute(Api api) {
+        IPlotter plotter = api.getPlotter();
+
         List<PlotPoint> points = plotter.getPoints();
         List<Shape> shapes = plotter.getShapes();
 
@@ -63,6 +66,5 @@ public class DevPlotFeature implements Feature {
         shapes.add(new Shape(linePoints, Color.PINK, Shape.Type.FILLED));
 
         plotter.requestRepaint();
-        return null;
     }
 }

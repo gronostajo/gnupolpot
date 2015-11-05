@@ -1,4 +1,4 @@
-package net.avensome.dev.gnupolpot.api.util;
+package net.avensome.dev.gnupolpot.api.comparator;
 
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 

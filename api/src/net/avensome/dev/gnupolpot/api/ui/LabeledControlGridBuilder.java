@@ -1,4 +1,4 @@
-package net.avensome.dev.gnupolpot.api.util;
+package net.avensome.dev.gnupolpot.api.ui;
 
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;

@@ -5,7 +5,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
-import net.avensome.dev.gnupolpot.api.util.LabeledControlGridBuilder;
+import net.avensome.dev.gnupolpot.api.ui.LabeledControlGridBuilder;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 
 import java.text.DecimalFormat;

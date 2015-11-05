@@ -36,11 +36,12 @@ public class PolpotApp extends Application {
                 PluginException.showAlert(e);
             }
         }
+
         int pluginCount = pluginManager.getPlugins().size();
         if (pluginCount > 0) {
-            mainController.setStatus(String.format("%d plugin(s) loaded", pluginCount));
+            mainController.getPluginInterface().setStatus(String.format("%d plugin(s) loaded", pluginCount));
         } else {
-            mainController.setStatus("No plugins found");
+            mainController.getPluginInterface().setStatus("No plugins found");
         }
 
         PluginInfo.createInfoWindow(primaryStage, pluginManager);

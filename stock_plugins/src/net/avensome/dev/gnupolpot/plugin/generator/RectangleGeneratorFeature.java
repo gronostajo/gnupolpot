@@ -5,12 +5,13 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import net.avensome.dev.gnupolpot.api.Api;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.control.DoubleTextField;
 import net.avensome.dev.gnupolpot.api.control.IntTextField;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
-import net.avensome.dev.gnupolpot.api.util.LabeledControlGridBuilder;
+import net.avensome.dev.gnupolpot.api.ui.LabeledControlGridBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class RectangleGeneratorFeature implements Feature {
     }
 
     @Override
-    public String execute(IPlotter plotter) {
+    public void execute(Api api) {
         Dialog<RectangleGeneratorParams> dialog = new Dialog<>();
         dialog.setTitle("Generate points in rectangle");
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -85,13 +86,11 @@ public class RectangleGeneratorFeature implements Feature {
                 points.add(new PlotPoint(x, y, params.getColor()));
             }
 
+            IPlotter plotter = api.getPlotter();
             plotter.getPoints().addAll(points);
             plotter.requestRepaint();
             
-            return String.format("%d points generated", points.size());
-        } else {
-
-            return null;
+            api.setStatus(String.format("%d points generated", points.size()));
         }
     }
 }

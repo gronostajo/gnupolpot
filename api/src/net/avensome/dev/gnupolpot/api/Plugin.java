@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 public abstract class Plugin {
     public Plugin() {
@@ -28,5 +29,7 @@ public abstract class Plugin {
     }
 
     @NotNull
-    public abstract Collection<Feature> getFeatures();
+    public Collection<Feature> getFeatures() {
+        return new LinkedList<>();
+    }
 }

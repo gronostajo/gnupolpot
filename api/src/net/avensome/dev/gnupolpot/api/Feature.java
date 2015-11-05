@@ -2,7 +2,6 @@ package net.avensome.dev.gnupolpot.api;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
-import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 
 public interface Feature {
     @NotNull
@@ -12,5 +11,5 @@ public interface Feature {
     String getDescription();
 
     @Nullable
-    String execute(IPlotter plotter) throws PluginException;
+    void execute(Api api) throws PluginException;
 }

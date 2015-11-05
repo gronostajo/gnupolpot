@@ -6,8 +6,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.PluginException;
-import net.avensome.dev.gnupolpot.core.plotter.Plotter;
-import net.avensome.dev.gnupolpot.core.util.Callback;
+import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,13 +14,11 @@ import java.util.stream.Collectors;
 
 public class FeatureMenuAppender {
     private final MenuButton featureButton;
-    private final Plotter plotter;
-    private final Callback<String> statusCallback;
+    private final PluginInterface pluginInterface;
 
-    public FeatureMenuAppender(MenuButton featureButton, Plotter plotter, Callback<String> statusCallback) {
+    public FeatureMenuAppender(MenuButton featureButton, PluginInterface pluginInterface) {
         this.featureButton = featureButton;
-        this.plotter = plotter;
-        this.statusCallback = statusCallback;
+        this.pluginInterface = pluginInterface;
     }
 
     public void addFeature(Feature feature) throws PluginException {
@@ -88,14 +85,10 @@ public class FeatureMenuAppender {
 
         MenuItem item = new MenuItem(menuItemName);
         item.setOnAction(event -> {
-            String status = null;
             try {
-                status = feature.execute(plotter);
+                pluginInterface.executeFeature(feature);
             } catch (Exception e) {
                 PluginException.showAlert(e);
-            }
-            if (status != null) {
-                statusCallback.call(status);
             }
         });
         return item;
