@@ -21,7 +21,7 @@ public abstract class Tool {
     public void deactivated(Api api) {
     }
 
-    public abstract void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event);
+    public abstract void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event, boolean focusedPointChanged);
 
     public void receiveScrollEvent(Api api, ScrollEvent event) {
     }

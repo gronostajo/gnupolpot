@@ -259,23 +259,23 @@ public class MainController implements Initializable {
 
         plotter.registerEventHandler(new EventHandler() {
             @Override
-            public void mouseMoved(MouseEvent event) {
-                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.MOVED, event);
+            public void mouseMoved(MouseEvent event, boolean focusedPointChanged) {
+                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.MOVED, event, focusedPointChanged);
             }
 
             @Override
             public void mousePressed(MouseEvent event) {
-                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.PRESSED, event);
+                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.PRESSED, event, false);
             }
 
             @Override
             public void mouseDragged(MouseEvent event) {
-                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.DRAGGED, event);
+                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.DRAGGED, event, false);
             }
 
             @Override
             public void mouseReleased(MouseEvent event) {
-                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.RELEASED, event);
+                currentTool.get().receiveMouseEvent(pluginInterface, MouseEventType.RELEASED, event, false);
             }
 
             @Override

@@ -4,7 +4,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 public interface EventHandler {
-    void mouseMoved(MouseEvent event);
+    void mouseMoved(MouseEvent event, boolean focusedPointChanged);
 
     void mousePressed(MouseEvent event);
 

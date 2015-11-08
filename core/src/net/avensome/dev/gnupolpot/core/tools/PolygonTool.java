@@ -73,12 +73,10 @@ public class PolygonTool extends Tool {
     }
 
     @Override
-    public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event) {
+    public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event, boolean focusedPointChanged) {
         Buttons buttons = Buttons.fromMouseEvent(event);
 
-        if (eventType == MouseEventType.MOVED) {
-            PanningTool.getInstance().updateFocus(api, event);
-        } else if (eventType == MouseEventType.DRAGGED) {
+        if (eventType == MouseEventType.DRAGGED) {
             PanningTool.getInstance().pan(api, event);
         } else if (eventType == MouseEventType.PRESSED) {
             if (buttons.equals(ADDING_BUTTONS)) {
@@ -103,11 +101,7 @@ public class PolygonTool extends Tool {
         double x = event.getX();
         double y = event.getY();
 
-        Point plotCoords = viewport.fromScreenCoords(x, y);
-        double plotX = plotCoords.getX();
-        double plotY = plotCoords.getY();
-
-        PlotPoint clickedPoint = viewport.pointAtPlotCoords(plotX, plotY, PanningTool.POINT_FOCUS_RADIUS, plotter.getPoints());
+        PlotPoint clickedPoint = plotter.focusedPointProperty().get();
 
         if (clickedPoint == null) {
             Point pt = viewport.fromScreenCoords(x, y);

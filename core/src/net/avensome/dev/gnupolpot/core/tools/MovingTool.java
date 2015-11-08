@@ -55,13 +55,11 @@ public class MovingTool extends Tool {
     }
 
     @Override
-    public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event) {
+    public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event, boolean focusedPointChanged) {
         Buttons buttons = Buttons.fromMouseEvent(event);
         SimpleObjectProperty<PlotPoint> focusedPoint = api.getPlotter().focusedPointProperty();
 
-        if (eventType == MouseEventType.MOVED) {
-            PanningTool.getInstance().updateFocus(api, event);
-        } else if (eventType == MouseEventType.DRAGGED) {
+        if (eventType == MouseEventType.DRAGGED) {
             move(api, event);
             PanningTool.getInstance().pan(api, event);
         } else if (eventType == MouseEventType.PRESSED) {
@@ -104,8 +102,6 @@ public class MovingTool extends Tool {
         movingPoint.moveTo(x, y);
         plotter.requestRepaint();
         mouseAnchor = newAnchor;
-
-        PanningTool.getInstance().updateFocus(api, event);
     }
 
     private void stopMoving() {

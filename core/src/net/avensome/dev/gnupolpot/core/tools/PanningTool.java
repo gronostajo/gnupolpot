@@ -9,12 +9,8 @@ import net.avensome.dev.gnupolpot.api.Tool;
 import net.avensome.dev.gnupolpot.api.mouse.MouseEventType;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
-import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
-import net.avensome.dev.gnupolpot.api.plotter.Viewport;
 
 public class PanningTool extends Tool {
-
-    public static final int POINT_FOCUS_RADIUS = 3;
 
     private static PanningTool instance = new PanningTool();
 
@@ -44,11 +40,8 @@ public class PanningTool extends Tool {
     }
 
     @Override
-    public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event) {
+    public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event, boolean focusedPointChanged) {
         switch (eventType) {
-            case MOVED:
-                updateFocus(api, event);
-                break;
             case PRESSED:
                 startPanning(event);
                 break;
@@ -76,24 +69,6 @@ public class PanningTool extends Tool {
         plotter.requestRepaint();
     }
 
-    public void updateFocus(Api api, MouseEvent event) {
-        IPlotter plotter = api.getPlotter();
-        Viewport viewport = plotter.getViewport();
-
-        Point plotCoords = viewport.fromScreenCoords(event.getX(), event.getY());
-        double x = plotCoords.getX();
-        double y = plotCoords.getY();
-
-        PlotPoint focusedPoint = viewport.pointAtPlotCoords(x, y, POINT_FOCUS_RADIUS, plotter.getPoints());
-
-        boolean focusChanged = (plotter.focusedPointProperty().get() != focusedPoint);
-        plotter.focusedPointProperty().set(focusedPoint);
-
-        if (focusChanged) {
-            plotter.requestRepaint();
-        }
-    }
-
     public void startPanning(MouseEvent event) {
         panning = true;
         mouseAnchor = new Point(event.getX(), event.getY());
@@ -114,8 +89,6 @@ public class PanningTool extends Tool {
         plotter.getViewport().moveBy(delta.getX(), -delta.getY());
         plotter.requestRepaint();
         mouseAnchor = newAnchor;
-
-        updateFocus(api, event);
     }
 
     public void stopPanning(Api api, Cursor cursor) {

@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.*;
 import net.avensome.dev.gnupolpot.core.plotter.painters.BackgroundPainter;
 import net.avensome.dev.gnupolpot.core.plotter.painters.Painter;
@@ -22,6 +23,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Plotter extends Pane implements IPlotter {
+
+    public static final int POINT_FOCUS_RADIUS = 3;
+
     private final Canvas canvas = new Canvas();
     private boolean requiresRepaint;
 
@@ -167,15 +171,34 @@ public class Plotter extends Pane implements IPlotter {
         return viewport;
     }
 
+    public SimpleObjectProperty<PlotPoint> focusedPointProperty() {
+        return focusedPoint;
+    }
+
     public void registerEventHandler(EventHandler eventHandler) {
-        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, eventHandler::mouseMoved);
+        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, (event) -> {
+            boolean focusChanged = updateFocusedPoint(event);
+            eventHandler.mouseMoved(event, focusChanged);
+            if (focusChanged) {
+                requestRepaint();
+            }
+        });
         canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, eventHandler::mousePressed);
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandler::mouseDragged);
         canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, eventHandler::mouseReleased);
         canvas.addEventHandler(ScrollEvent.SCROLL, eventHandler::scrolled);
     }
 
-    public SimpleObjectProperty<PlotPoint> focusedPointProperty() {
-        return focusedPoint;
+    private boolean updateFocusedPoint(MouseEvent event) {
+        Point plotCoords = viewport.fromScreenCoords(event.getX(), event.getY());
+        double x = plotCoords.getX();
+        double y = plotCoords.getY();
+
+        PlotPoint currentFocusedPoint = viewport.pointAtPlotCoords(x, y, POINT_FOCUS_RADIUS, points);
+
+        boolean focusChanged = (focusedPoint.get() != currentFocusedPoint);
+        focusedPoint.set(currentFocusedPoint);
+
+        return focusChanged;
     }
 }
