@@ -3,19 +3,14 @@ package net.avensome.dev.gnupolpot.core.tools;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import net.avensome.dev.gnupolpot.api.Api;
 import net.avensome.dev.gnupolpot.api.Tool;
+import net.avensome.dev.gnupolpot.api.action.Panning;
 import net.avensome.dev.gnupolpot.api.mouse.MouseEventType;
-import net.avensome.dev.gnupolpot.api.mouse.Point;
-import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 
 public class PanningTool extends Tool {
 
     private static PanningTool instance = new PanningTool();
-
-    private Point mouseAnchor;
-    private boolean panning = false;
 
     private PanningTool() {
     }
@@ -43,60 +38,16 @@ public class PanningTool extends Tool {
     public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event, boolean focusedPointChanged) {
         switch (eventType) {
             case PRESSED:
-                startPanning(event);
+                Panning.start(event);
+                api.getPlotter().setCursor(Cursor.MOVE);
                 break;
             case DRAGGED:
-                pan(api, event);
+                Panning.update(api, event);
                 break;
             case RELEASED:
-                stopPanning(api, Cursor.DEFAULT);
+                Panning.stop();
+                api.getPlotter().setCursor(Cursor.DEFAULT);
                 break;
         }
     }
-
-    @Override
-    public void receiveScrollEvent(Api api, ScrollEvent event) {
-        IPlotter plotter = api.getPlotter();
-
-        if (event.getDeltaY() < 0) {
-            plotter.getViewport().zoom(0.5);
-        } else if (event.getDeltaY() > 0) {
-            plotter.getViewport().zoom(2);
-        } else {
-            return;
-        }
-
-        plotter.requestRepaint();
-    }
-
-    public void startPanning(MouseEvent event) {
-        panning = true;
-        mouseAnchor = new Point(event.getX(), event.getY());
-    }
-
-    public void pan(Api api, MouseEvent event) {
-        if (!panning) {
-            return;
-        }
-
-        IPlotter plotter = api.getPlotter();
-
-        plotter.setCursor(Cursor.MOVE);
-
-        Point newAnchor = new Point(event.getX(), event.getY());
-        Point delta = mouseAnchor.minus(newAnchor);
-
-        plotter.getViewport().moveBy(delta.getX(), -delta.getY());
-        plotter.requestRepaint();
-        mouseAnchor = newAnchor;
-    }
-
-    public void stopPanning(Api api, Cursor cursor) {
-        if (panning) {
-            panning = false;
-            api.getPlotter().setCursor(cursor);
-            mouseAnchor = null;
-        }
-    }
-
 }

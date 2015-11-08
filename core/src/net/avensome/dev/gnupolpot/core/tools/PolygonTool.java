@@ -3,10 +3,10 @@ package net.avensome.dev.gnupolpot.core.tools;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.Api;
 import net.avensome.dev.gnupolpot.api.Tool;
+import net.avensome.dev.gnupolpot.api.action.Panning;
 import net.avensome.dev.gnupolpot.api.mouse.Buttons;
 import net.avensome.dev.gnupolpot.api.mouse.MouseEventType;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
@@ -77,21 +77,17 @@ public class PolygonTool extends Tool {
         Buttons buttons = Buttons.fromMouseEvent(event);
 
         if (eventType == MouseEventType.DRAGGED) {
-            PanningTool.getInstance().pan(api, event);
+            Panning.update(api, event);
         } else if (eventType == MouseEventType.PRESSED) {
             if (buttons.equals(ADDING_BUTTONS)) {
                 addPoint(api, event);
             } else if (buttons.equals(PANNING_BUTTONS)) {
-                PanningTool.getInstance().startPanning(event);
+                Panning.start(event);
             }
         } else if (eventType == MouseEventType.RELEASED) {
-            PanningTool.getInstance().stopPanning(api, Cursor.CROSSHAIR);
+            Panning.stop();
+            api.getPlotter().setCursor(Cursor.CROSSHAIR);
         }
-    }
-
-    @Override
-    public void receiveScrollEvent(Api api, ScrollEvent event) {
-        PanningTool.getInstance().receiveScrollEvent(api, event);
     }
 
     private void addPoint(Api api, MouseEvent event) {

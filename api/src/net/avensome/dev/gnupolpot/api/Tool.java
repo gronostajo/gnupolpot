@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import net.avensome.dev.gnupolpot.api.action.Zooming;
 import net.avensome.dev.gnupolpot.api.mouse.MouseEventType;
 
 public abstract class Tool {
@@ -24,5 +25,6 @@ public abstract class Tool {
     public abstract void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event, boolean focusedPointChanged);
 
     public void receiveScrollEvent(Api api, ScrollEvent event) {
+        Zooming.changeZoom(api, event);
     }
 }

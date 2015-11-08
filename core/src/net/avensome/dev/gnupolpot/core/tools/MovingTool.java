@@ -5,13 +5,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.Cursor;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import net.avensome.dev.gnupolpot.api.Api;
 import net.avensome.dev.gnupolpot.api.Tool;
+import net.avensome.dev.gnupolpot.api.action.Moving;
+import net.avensome.dev.gnupolpot.api.action.Panning;
 import net.avensome.dev.gnupolpot.api.mouse.Buttons;
 import net.avensome.dev.gnupolpot.api.mouse.MouseEventType;
-import net.avensome.dev.gnupolpot.api.mouse.Point;
-import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 
 public class MovingTool extends Tool {
@@ -21,9 +20,6 @@ public class MovingTool extends Tool {
 
     private static MovingTool instance = new MovingTool();
     private ChangeListener<PlotPoint> focusedPointChangeListener;
-
-    private Point mouseAnchor;
-    private PlotPoint movingPoint = null;
 
     private MovingTool() {
     }
@@ -58,57 +54,27 @@ public class MovingTool extends Tool {
     public void receiveMouseEvent(Api api, MouseEventType eventType, MouseEvent event, boolean focusedPointChanged) {
         Buttons buttons = Buttons.fromMouseEvent(event);
         SimpleObjectProperty<PlotPoint> focusedPoint = api.getPlotter().focusedPointProperty();
-
         if (eventType == MouseEventType.DRAGGED) {
-            move(api, event);
-            PanningTool.getInstance().pan(api, event);
+            if (Moving.isMoving()) {
+                api.getPlotter().setCursor(Cursor.CLOSED_HAND);
+                Moving.update(api, event);
+            } else if (Panning.isPanning()) {
+                api.getPlotter().setCursor(Cursor.MOVE);
+                Panning.update(api, event);
+            }
         } else if (eventType == MouseEventType.PRESSED) {
             if (buttons.equals(MOVING_BUTTONS) && focusedPoint.get() != null) {
-                startMoving(api, event);
+                Moving.start(api, event);
             } else if (buttons.equals(PANNING_BUTTONS)) {
-                PanningTool.getInstance().startPanning(event);
+                Panning.start(event);
             }
         } else if (eventType == MouseEventType.RELEASED) {
-            stopMoving();
+            Moving.stop();
+            Panning.stop();
             boolean pointFocused = (api.getPlotter().focusedPointProperty().get() != null);
-            PanningTool.getInstance().stopPanning(api, getCursor(pointFocused));
-        }
-    }
-
-    @Override
-    public void receiveScrollEvent(Api api, ScrollEvent event) {
-        PanningTool.getInstance().receiveScrollEvent(api, event);
-    }
-
-    private void startMoving(Api api, MouseEvent event) {
-        movingPoint = api.getPlotter().focusedPointProperty().get();
-        mouseAnchor = new Point(event.getX(), event.getY());
-    }
-
-    private void move(Api api, MouseEvent event) {
-        if (movingPoint == null) {
-            return;
+            api.getPlotter().setCursor(getCursor(pointFocused));
         }
 
-        IPlotter plotter = api.getPlotter();
-        plotter.setCursor(Cursor.CLOSED_HAND);
-
-        Point newAnchor = new Point(event.getX(), event.getY());
-        Point delta = mouseAnchor.minus(newAnchor);
-
-        double scale = plotter.getViewport().getScale();
-        double x = movingPoint.getX() - delta.getX() / scale;
-        double y = movingPoint.getY() + delta.getY() / scale;
-        movingPoint.moveTo(x, y);
-        plotter.requestRepaint();
-        mouseAnchor = newAnchor;
-    }
-
-    private void stopMoving() {
-        if (movingPoint != null) {
-            movingPoint = null;
-            mouseAnchor = null;
-        }
     }
 
     private void updateCursor(Api api, boolean pointFocused) {
