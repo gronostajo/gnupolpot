@@ -1,0 +1,54 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
+allprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+subprojects {
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDir 'src'
+            }
+            resources {
+                srcDir 'res'
+            }
+        }
+    }
+
+    tasks.withType(Jar) {
+        destinationDir = file("$rootDir/jars")
+    }
+}
+
+jar {
+    enabled = false
+}
+
+dependencies {
+    compile project(':api')
+    compile project(':core')
+    compile project(':stock_plugins')
+}
+
+jar.dependsOn shadowJar
+
+shadowJar {
+    mergeServiceFiles()
+    destinationDir = file("$rootDir/jars")
+    baseName = 'gnupolpot'
+    classifier = ''
+    manifest.attributes 'Main-Class': 'net.avensome.dev.gnupolpot.core.PolpotApp'
+}
+
+clean {
+    delete 'jars'
+}

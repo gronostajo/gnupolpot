@@ -1,6 +1,5 @@
 package net.avensome.dev.gnupolpot.api.plotter;
 
-import com.sun.istack.internal.Nullable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
@@ -18,8 +17,6 @@ public class Shape implements Serializable {
 
     private final List<PlotPoint> points;
 
-
-    @Nullable
     private Color color;
 
     private Type type;
