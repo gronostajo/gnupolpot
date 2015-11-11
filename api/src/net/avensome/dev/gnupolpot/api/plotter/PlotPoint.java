@@ -1,6 +1,7 @@
 package net.avensome.dev.gnupolpot.api.plotter;
 
 import javafx.scene.paint.Color;
+import net.avensome.dev.gnupolpot.api.util.FxUtils;
 
 import java.io.Serializable;
 
@@ -76,5 +77,10 @@ public class PlotPoint implements Serializable {
         temp = Double.doubleToLongBits(y);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%f : %f (%s)", x, y, FxUtils.colorToHex(color));
     }
 }
