@@ -1,6 +1,7 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
+apply plugin: 'application'
 
 allprojects {
     apply plugin: 'java'
@@ -36,12 +37,16 @@ jar {
 dependencies {
     compile project(':api')
     compile project(':core')
+    compile project(':dev_plugin')
     compile project(':stock_plugins')
 }
 
 jar.dependsOn shadowJar
 
 shadowJar {
+    dependencies {
+        exclude(dependency(':dev_plugin'))
+    }
     mergeServiceFiles()
     destinationDir = file("$rootDir/jars")
     baseName = 'gnupolpot'
@@ -51,4 +56,8 @@ shadowJar {
 
 clean {
     delete 'jars'
+}
+
+run {
+    mainClassName = 'net.avensome.dev.gnupolpot.core.PolpotApp'
 }
