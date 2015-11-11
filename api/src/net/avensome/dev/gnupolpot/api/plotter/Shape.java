@@ -6,6 +6,7 @@ import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.util.FxUtils;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 public class Shape implements Serializable {
@@ -25,6 +26,10 @@ public class Shape implements Serializable {
         this.points = points;
         this.color = color;
         this.type = type;
+    }
+
+    public Shape(Color color, Type type, PlotPoint... points) {
+        this(Arrays.asList(points), color, type);
     }
 
     public List<PlotPoint> getPoints() {
