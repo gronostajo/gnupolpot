@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.Plugin;
+import net.avensome.dev.gnupolpot.api.Tool;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,6 +32,9 @@ public class PluginInfoController implements Initializable {
     private Label licenseLabel;
 
     @FXML
+    private ListView<Tool> toolsList;
+
+    @FXML
     private TableView<Feature> featuresTable;
 
     @FXML
@@ -44,6 +48,7 @@ public class PluginInfoController implements Initializable {
         developerLabel.setText(plugin.getDeveloper());
         descriptionLabel.setText(plugin.getDescription());
         licenseLabel.setText(plugin.getLicense());
+        toolsList.setItems(FXCollections.observableArrayList(plugin.getTools()));
         featuresTable.setItems(FXCollections.observableArrayList(plugin.getFeatures()));
     }
 
@@ -62,6 +67,9 @@ public class PluginInfoController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         pluginList.setCellFactory(listView -> new PluginListCell());
+
+        toolsList.setCellFactory(listView -> new ToolListCell());
+
         featureNameColumn.setCellValueFactory(feature ->
                 new SimpleStringProperty(feature.getValue().getMenuItem()));
         featureDescriptionColumn.setCellValueFactory(feature ->
@@ -75,6 +83,16 @@ public class PluginInfoController implements Initializable {
     private class PluginListCell extends ListCell<Plugin> {
         @Override
         public void updateItem(Plugin item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item != null) {
+                setText(item.getName());
+            }
+        }
+    }
+
+    private class ToolListCell extends ListCell<Tool> {
+        @Override
+        protected void updateItem(Tool item, boolean empty) {
             super.updateItem(item, empty);
             if (item != null) {
                 setText(item.getName());

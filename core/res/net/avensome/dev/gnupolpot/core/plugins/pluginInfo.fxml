@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<SplitPane dividerPositions="0.3" prefHeight="320.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40"
+<SplitPane dividerPositions="0.3" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/null"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="net.avensome.dev.gnupolpot.core.plugins.PluginInfoController">
     <items>
@@ -28,24 +28,36 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER"/>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER"/>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="NEVER"/>
-                        <RowConstraints minHeight="10.0" vgrow="ALWAYS"/>
+                        <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="ALWAYS"/>
+                        <RowConstraints minHeight="10.0" prefHeight="80.0" vgrow="ALWAYS"/>
                     </rowConstraints>
                     <children>
                         <Label text="Plugin name"/>
                         <Label text="Developer" GridPane.rowIndex="1"/>
                         <Label text="Description" GridPane.rowIndex="2"/>
                         <Label text="License" GridPane.rowIndex="3"/>
-                        <Label fx:id="pluginNameLabel" GridPane.columnIndex="1"/>
-                        <Label fx:id="developerLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <Label fx:id="descriptionLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                        <Label fx:id="licenseLabel" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                        <Label text="Features" GridPane.rowIndex="4" GridPane.valignment="TOP">
+                        <Label text="Tools" GridPane.rowIndex="4" GridPane.valignment="TOP">
                             <GridPane.margin>
                                 <Insets top="7.0"/>
                             </GridPane.margin>
                         </Label>
+                        <Label text="Features" GridPane.rowIndex="5" GridPane.valignment="TOP">
+                            <GridPane.margin>
+                                <Insets top="7.0"/>
+                            </GridPane.margin>
+                        </Label>
+                        <Label fx:id="pluginNameLabel" GridPane.columnIndex="1"/>
+                        <Label fx:id="developerLabel" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label fx:id="descriptionLabel" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                        <Label fx:id="licenseLabel" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                        <ListView fx:id="toolsList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1"
+                                  GridPane.rowIndex="4">
+                            <GridPane.margin>
+                                <Insets top="4.0"/>
+                            </GridPane.margin>
+                        </ListView>
                         <TableView fx:id="featuresTable" prefHeight="24.0" GridPane.columnIndex="1"
-                                   GridPane.rowIndex="4">
+                                   GridPane.rowIndex="5">
                             <columns>
                                 <TableColumn fx:id="featureNameColumn" editable="false"
                                              maxWidth="1.7976931348623157E308" minWidth="50.0" prefWidth="120"
