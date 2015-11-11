@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class PointPainter extends Painter {
-    public static final double POINT_RADIUS = 1.5;
+    public static final double POINT_RADIUS = 2;
     public static final double POINT_RADIUS_FOCUSED = 3;
     private final GraphicsContext ctx;
     private final List<PlotPoint> points;
