@@ -49,10 +49,6 @@ public class Viewport {
         return centerY + height / 2;
     }
 
-    public Point getBottomLeftCorner() {
-        return new Point(getLeft(), getBottom());
-    }
-
     public void centerAt(double x, double y) {
         centerX = x;
         centerY = y;
@@ -80,8 +76,18 @@ public class Viewport {
         return new Viewport(centerX, centerY, width / scale, height / scale, 1);
     }
 
-    public boolean contains(double x, double y) {
-        return getLeft() <= x && getRight() >= x && getBottom() <= y && getTop() >= y;
+    public boolean containsHorizontalCoord(double plotCoord) {
+        return getLeft() <= plotCoord
+                && getRight() >= plotCoord;
+    }
+
+    public boolean containsVerticalCoord(double plotCoord) {
+        return getBottom() <= plotCoord
+                && getTop() >= plotCoord;
+    }
+
+    public boolean contains(double plotX, double plotY) {
+        return containsHorizontalCoord(plotX) && containsVerticalCoord(plotY);
     }
 
     public Point fromScreenCoords(double screenX, double screenY) {

@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.WritableImage;
@@ -14,11 +15,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.*;
-import net.avensome.dev.gnupolpot.core.plotter.painters.BackgroundPainter;
-import net.avensome.dev.gnupolpot.core.plotter.painters.Painter;
-import net.avensome.dev.gnupolpot.core.plotter.painters.PointPainter;
-import net.avensome.dev.gnupolpot.core.plotter.painters.ShapePainter;
+import net.avensome.dev.gnupolpot.core.plotter.painters.*;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,6 +30,7 @@ public class Plotter extends Pane implements IPlotter {
 
     private ObservableList<PlotPoint> points = FXCollections.observableArrayList();
     private ObservableList<Shape> shapes = FXCollections.observableArrayList();
+    private ObservableSet<Guide> guides = FXCollections.observableSet();
 
     private Viewport viewport;
 
@@ -56,6 +56,8 @@ public class Plotter extends Pane implements IPlotter {
         heightProperty().addListener(resizeListener);
 
         createPaintingPipeline();
+        addZeroGuides();
+
         requestRepaint();
     }
 
@@ -68,8 +70,18 @@ public class Plotter extends Pane implements IPlotter {
         ShapePainter shapePainter = new ShapePainter(ctx, shapes);
         painters.add(shapePainter);
 
+        GuidePainter guidePainter = new GuidePainter(ctx, guides);
+        painters.add(guidePainter);
+
         PointPainter pointPainter = new PointPainter(ctx, points, focusedPoint);
         painters.add(pointPainter);
+    }
+
+    private void addZeroGuides() {
+        guides.addAll(Arrays.asList(
+                new Guide(Guide.Orientation.HORIZONTAL, 0, Color.LIGHTGRAY),
+                new Guide(Guide.Orientation.VERTICAL, 0, Color.LIGHTGRAY)
+        ));
     }
 
     @Override
