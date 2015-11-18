@@ -14,200 +14,9 @@
     </center>
     <bottom>
         <VBox BorderPane.alignment="CENTER">
-            <children>
-                <ToolBar>
-                    <items>
-                        <Label fx:id="statusLabel"/>
-                    </items>
-                </ToolBar>
-                <ToolBar>
-                    <items>
-                        <Button mnemonicParsing="false" onAction="#importPointsClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/document-open.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Import"/>
-                            </tooltip>
-                        </Button>
-                        <Button fx:id="importAgainButton" disable="true" mnemonicParsing="false"
-                                onAction="#importAgainClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/view-refresh.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Import last file again"/>
-                            </tooltip>
-                        </Button>
-                        <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/document-save.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Save plot"/>
-                            </tooltip>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#saveAsClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/document-save-as.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Save as..."/>
-                            </tooltip>
-                        </Button>
-                        <Separator orientation="VERTICAL"/>
-                        <Button mnemonicParsing="false" onAction="#addPointClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/list-add.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Import"/>
-                            </tooltip>
-                        </Button>
-                        <MenuButton fx:id="featureButton" disable="true" mnemonicParsing="false">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/ac-adapter.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <items>
-                                <MenuItem mnemonicParsing="false" onAction="#pluginInfoClicked" text="Plugin info..."/>
-                                <SeparatorMenuItem mnemonicParsing="false"/>
-                            </items>
-                        </MenuButton>
-                        <Button mnemonicParsing="false" onAction="#clearPlotClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/edit-delete.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Clear"/>
-                            </tooltip>
-                        </Button>
-                        <Separator orientation="VERTICAL">
-                            <opaqueInsets>
-                                <Insets/>
-                            </opaqueInsets>
-                            <padding>
-                                <Insets left="3.0"/>
-                            </padding>
-                        </Separator>
-                        <Button mnemonicParsing="false" onAction="#snapshotClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/camera-photo.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Save as image"/>
-                            </tooltip>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#renderClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/applets-screenshooter.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Render file(s) to image(s)"/>
-                            </tooltip>
-                        </Button>
-                        <Separator orientation="VERTICAL">
-                            <opaqueInsets>
-                                <Insets/>
-                            </opaqueInsets>
-                            <padding>
-                                <Insets left="3.0"/>
-                            </padding>
-                        </Separator>
-                        <Button mnemonicParsing="false" onAction="#zoomFitClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/view-fullscreen.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Zoom to fit"/>
-                            </tooltip>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#zoomOneToOneClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/zoom-original.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Original scale"/>
-                            </tooltip>
-                        </Button>
-                        <Button mnemonicParsing="false" onAction="#centerClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/zoom-fit-best.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Center"/>
-                            </tooltip>
-                        </Button>
-                        <Separator orientation="VERTICAL">
-                            <opaqueInsets>
-                                <Insets/>
-                            </opaqueInsets>
-                            <padding>
-                                <Insets left="3.0"/>
-                            </padding>
-                        </Separator>
-                        <Button fx:id="summaryButton" disable="true" mnemonicParsing="false" onAction="#summaryClicked">
-                            <graphic>
-                                <ImageView>
-                                    <image>
-                                        <Image url="@icons/actions/document-page-setup.png"/>
-                                    </image>
-                                </ImageView>
-                            </graphic>
-                            <tooltip>
-                                <Tooltip text="Plot summary"/>
-                            </tooltip>
-                        </Button>
-                    </items>
-                </ToolBar>
-            </children>
+            <ToolBar>
+                <Label fx:id="statusLabel"/>
+            </ToolBar>
         </VBox>
     </bottom>
     <left>
@@ -215,9 +24,165 @@
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
-            <content>
-                <VBox fx:id="toolPane" spacing="5"/>
-            </content>
+            <VBox fx:id="toolPane" spacing="5"/>
         </ScrollPane>
     </left>
+    <top>
+        <ToolBar BorderPane.alignment="CENTER">
+            <Button mnemonicParsing="false" onAction="#newClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/document-new.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="New plot"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#openClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/document-open.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Open plot"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#importClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/document-revert.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Import into this plot"/>
+                </tooltip>
+            </Button>
+            <Button fx:id="saveButton" disable="true" mnemonicParsing="false" onAction="#saveClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/document-save.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Save plot"/>
+                </tooltip>
+            </Button>
+            <Button fx:id="saveAsButton" mnemonicParsing="false" onAction="#saveAsClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/document-save-as.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Save as..."/>
+                </tooltip>
+            </Button>
+            <Separator orientation="VERTICAL">
+                <padding>
+                    <Insets left="3.0"/>
+                </padding>
+            </Separator>
+            <Button mnemonicParsing="false" onAction="#addPointClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/list-add.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Add point"/>
+                </tooltip>
+            </Button>
+            <MenuButton fx:id="featureButton" disable="true" mnemonicParsing="false">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/ac-adapter.png"/>
+                    </ImageView>
+                </graphic>
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#pluginInfoClicked" text="Plugin info..."/>
+                    <SeparatorMenuItem mnemonicParsing="false"/>
+                </items>
+                <tooltip>
+                    <Tooltip text="Plugin features"/>
+                </tooltip>
+            </MenuButton>
+            <Separator orientation="VERTICAL">
+                <padding>
+                    <Insets left="3.0"/>
+                </padding>
+            </Separator>
+            <Button mnemonicParsing="false" onAction="#snapshotClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/camera-photo.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Save as image"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#renderClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/applets-screenshooter.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Render file(s) to image(s)"/>
+                </tooltip>
+            </Button>
+            <Separator orientation="VERTICAL">
+                <padding>
+                    <Insets left="3.0"/>
+                </padding>
+            </Separator>
+            <Button mnemonicParsing="false" onAction="#zoomFitClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/view-fullscreen.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Zoom to fit"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#zoomOneToOneClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/zoom-original.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Original scale"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#centerClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/zoom-fit-best.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Center"/>
+                </tooltip>
+            </Button>
+            <Separator orientation="VERTICAL">
+                <padding>
+                    <Insets left="3.0"/>
+                </padding>
+            </Separator>
+            <Button fx:id="summaryButton" disable="true" mnemonicParsing="false" onAction="#summaryClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/actions/document-page-setup.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Plot summary"/>
+                </tooltip>
+            </Button>
+        </ToolBar>
+    </top>
 </BorderPane>

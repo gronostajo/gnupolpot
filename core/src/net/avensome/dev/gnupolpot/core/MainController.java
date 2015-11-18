@@ -44,19 +44,20 @@ public class MainController implements Initializable {
     @FXML
     private Label statusLabel;
     @FXML
+    private VBox toolPane;
+
+    @FXML
     private Button saveButton;
     @FXML
-    private Button importAgainButton;
-    @FXML
-    private Button summaryButton;
+    private Button saveAsButton;
     @FXML
     private MenuButton featureButton;
     @FXML
-    private VBox toolPane;
+    private Button summaryButton;
 
     private Stage primaryStage;
 
-    private SimpleObjectProperty<File> lastTouchedFile = new SimpleObjectProperty<>();
+    private SimpleObjectProperty<File> currentFile = new SimpleObjectProperty<>(null);
 
     private SimpleObjectProperty<Tool> currentTool = new SimpleObjectProperty<>();
 
@@ -65,49 +66,85 @@ public class MainController implements Initializable {
     private ToolPaneAppender toolPaneAppender;
 
     @FXML
-    private void importPointsClicked() {
-        ButtonType replaceType = new ButtonType("Replace", ButtonBar.ButtonData.YES);
-        ButtonType addType = new ButtonType("Add", ButtonBar.ButtonData.NO);
-        ButtonType cancelType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-        Optional<ButtonType> result;
-        if (plotter.getPoints().size() > 0) {
-            Alert clearPrompt = new Alert(Alert.AlertType.NONE, "Replace current plot or add new points?");
-            clearPrompt.setTitle("gnupolpot");
-            clearPrompt.setHeaderText(null);
-            clearPrompt.getButtonTypes().setAll(replaceType, addType, cancelType);
-            result = clearPrompt.showAndWait();
-        } else {
-            result = Optional.of(replaceType);
-        }
-
-        if (result.get() == cancelType) {
+    private void newClicked() {
+        if (plotter.getPoints().size() == 0) {
             return;
         }
 
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Discard current plot?", ButtonType.OK, ButtonType.CANCEL);// TODO don't display if saved and unchanged
+        confirm.setHeaderText(null);
+        Optional<ButtonType> result = confirm.showAndWait();
+
+        if (result.get() == ButtonType.OK) {
+            plotter.clear();
+            summaryButton.setDisable(true);
+            pluginInterface.setStatus("");
+            currentFile.set(null);
+        }
+    }
+
+    @FXML
+    private void openClicked() {
+        Optional<ButtonType> result;
+        if (plotter.getPoints().size() > 0) {
+            Alert clearPrompt = new Alert(Alert.AlertType.CONFIRMATION, "Discard current plot and load new from file?");   // TODO don't display if saved and unchanged
+            clearPrompt.setTitle("gnupolpot");
+            clearPrompt.setHeaderText(null);
+            clearPrompt.getButtonTypes().setAll(ButtonType.OK, ButtonType.CANCEL);
+            result = clearPrompt.showAndWait();
+            if (result.get() != ButtonType.OK) {
+                return;
+            }
+        }
+
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Import plot");
+        fileChooser.setTitle("Open plot");
         File file = fileChooser.showOpenDialog(primaryStage);
         if (file == null) {
             return;
         }
 
-        importPointsFromFile(file, result.get() == replaceType);
-        lastTouchedFile.set(file);
+        importFile(file);
+        currentFile.set(file);
     }
 
     @FXML
-    private void importAgainClicked() {
-        importPointsFromFile(lastTouchedFile.get(), true);
+    private void importClicked() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import data from file");
+        File file = fileChooser.showOpenDialog(primaryStage);
+        if (file == null) {
+            return;
+        }
+
+        importFile(file);
+    }
+
+    private void importFile(File file) {
+        try {
+            PlotData importedPlot = Importer.fromStream(new FileInputStream(file));
+            plotter.importPlot(importedPlot);
+            pluginInterface.setStatus(String.format("Loaded %d points, %d shapes",
+                    importedPlot.getPoints().size(),
+                    importedPlot.getShapes().size()));
+            summaryButton.setDisable(plotter.getPoints().size() == 0);
+        } catch (FileNotFoundException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
+            error.showAndWait();
+        } catch (DataFormatException e) {
+            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
+            error.setHeaderText("Invalid line in data file");
+            error.showAndWait();
+        }
     }
 
     @FXML
     private void saveClicked() {
-        if (lastTouchedFile.get() == null) {
+        if (currentFile.get() == null) {    // shouldn't be possible, but let's ensure it works at least a little bit
             saveAsClicked();
             return;
         }
-        saveToFile(lastTouchedFile.get());
+        saveToFile(currentFile.get());
     }
 
     @FXML
@@ -118,8 +155,9 @@ public class MainController implements Initializable {
         if (file == null) {
             return;
         }
+
         saveToFile(file);
-        lastTouchedFile.set(file);
+        currentFile.set(file);
     }
 
     private void saveToFile(File file) {
@@ -147,23 +185,6 @@ public class MainController implements Initializable {
     @FXML
     private void pluginInfoClicked() {
         PluginInfo.showInfoWindow();
-    }
-
-    @FXML
-    private void clearPlotClicked() {
-        if (plotter.getPoints().size() == 0) {
-            return;
-        }
-
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION, "Clear plot?", ButtonType.OK, ButtonType.CANCEL);
-        confirm.setHeaderText(null);
-        Optional<ButtonType> result = confirm.showAndWait();
-
-        if (result.get() == ButtonType.OK) {
-            plotter.clear();
-            summaryButton.setDisable(true);
-            pluginInterface.setStatus("Plot cleared");
-        }
     }
 
     @FXML
@@ -221,7 +242,7 @@ public class MainController implements Initializable {
         }
 
         for (File inFile : files) {
-            importPointsFromFile(inFile, true);
+            importFile(inFile);
             plotter.zoomAll(true);
             plotter.requestLayout();
             File outFile = new File(inFile.getPath() + ".png");
@@ -244,9 +265,11 @@ public class MainController implements Initializable {
             }
         });
 
-        ListChangeListener<PlotPoint> pointsChange = listChange ->
-                summaryButton.setDisable(plotter.getPoints().size() == 0);
+        ListChangeListener<PlotPoint> pointsChange = listChange -> updateControlsDisabledState();
         plotter.getPoints().addListener(pointsChange);
+        updateControlsDisabledState();
+
+        currentFile.addListener((observable, oldValue, newValue) -> updateControlsDisabledState());
 
         pluginInterface = new PluginInterface(plotter, statusLabel, currentTool, toolPane);
         featureMenuAppender = new FeatureMenuAppender(featureButton, pluginInterface);
@@ -283,31 +306,13 @@ public class MainController implements Initializable {
                 currentTool.get().receiveScrollEvent(pluginInterface, event);
             }
         });
-
-        lastTouchedFile.addListener((observable, oldValue, newValue) ->
-                saveButton.setDisable(lastTouchedFile.get() == null));
     }
 
-    private void importPointsFromFile(File file, boolean replacePlot) {
-        try {
-            PlotData importedPlot = Importer.fromStream(new FileInputStream(file));
-            if (replacePlot) {
-                plotter.clear();
-            }
-            plotter.importPlot(importedPlot);
-            pluginInterface.setStatus(String.format("Imported %d points, %d shapes",
-                    importedPlot.getPoints().size(),
-                    importedPlot.getShapes().size()));
-            importAgainButton.setDisable(!replacePlot);
-            summaryButton.setDisable(plotter.getPoints().size() == 0);
-        } catch (FileNotFoundException e) {
-            Alert error = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
-            error.showAndWait();
-        } catch (DataFormatException e) {
-            Alert error = new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK);
-            error.setHeaderText("Invalid line in data file");
-            error.showAndWait();
-        }
+    private void updateControlsDisabledState() {
+        boolean plotEmpty = plotter.getPoints().size() == 0;
+        summaryButton.setDisable(plotEmpty);
+        saveButton.setDisable(plotEmpty || currentFile.isNull().get());
+        saveAsButton.setDisable(plotEmpty);
     }
 
     public void registerFeature(Feature feature) throws PluginException {
