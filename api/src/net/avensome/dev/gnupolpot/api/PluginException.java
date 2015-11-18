@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -32,10 +33,14 @@ public class PluginException extends Exception {
         error.setTitle("gnupolpot");
         error.setHeaderText("Plugin caused an error");
 
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(stringWriter);
-        e.printStackTrace(printWriter);
-        String stackTrace = stringWriter.toString();
+        String stackTrace = e.toString();
+        try (StringWriter stringWriter = new StringWriter();
+             PrintWriter printWriter = new PrintWriter(stringWriter)) {
+            e.printStackTrace(printWriter);
+            stackTrace = stringWriter.toString();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
 
         TextArea textArea = new TextArea(stackTrace);
         textArea.setEditable(false);
