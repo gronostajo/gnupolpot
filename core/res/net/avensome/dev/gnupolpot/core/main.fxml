@@ -24,7 +24,7 @@
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
-            <VBox fx:id="toolPane" spacing="5"/>
+            <VBox fx:id="toolPane" styleClass="tool-pane" spacing="5"/>
         </ScrollPane>
     </left>
     <top>

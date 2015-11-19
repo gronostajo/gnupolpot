@@ -4,7 +4,10 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.VBox;
@@ -34,9 +37,7 @@ import net.avensome.dev.gnupolpot.core.ui.ToolPaneAppender;
 
 import java.io.*;
 import java.net.URL;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class MainController implements Initializable {
     @FXML
@@ -56,6 +57,7 @@ public class MainController implements Initializable {
     private Button summaryButton;
 
     private Stage primaryStage;
+    private Scene scene;
 
     private SimpleObjectProperty<File> currentFile = new SimpleObjectProperty<>(null);
 
@@ -64,6 +66,13 @@ public class MainController implements Initializable {
     private PluginInterface pluginInterface;
     private FeatureMenuAppender featureMenuAppender;
     private ToolPaneAppender toolPaneAppender;
+
+    private static KeyCode[] toolKeyCodes = {
+            KeyCode.DIGIT1, KeyCode.DIGIT2, KeyCode.DIGIT3, KeyCode.DIGIT4, KeyCode.DIGIT5,
+            KeyCode.DIGIT6, KeyCode.DIGIT7, KeyCode.DIGIT8, KeyCode.DIGIT9, KeyCode.DIGIT0
+    };
+
+    private final List<Tool> tools = new ArrayList<>();
 
     @FXML
     private void newClicked() {
@@ -275,9 +284,9 @@ public class MainController implements Initializable {
         featureMenuAppender = new FeatureMenuAppender(featureButton, pluginInterface);
 
         toolPaneAppender = new ToolPaneAppender(pluginInterface, toolPane);
-        toolPaneAppender.addTool(PanningTool.getInstance());
-        toolPaneAppender.addTool(MovingTool.getInstance());
-        toolPaneAppender.addTool(PolygonTool.getInstance());
+        registerTool(PanningTool.getInstance());
+        registerTool(MovingTool.getInstance());
+        registerTool(PolygonTool.getInstance());
         pluginInterface.selectDefaultTool();
 
         plotter.registerEventHandler(new EventHandler() {
@@ -308,6 +317,17 @@ public class MainController implements Initializable {
         });
     }
 
+    private void handleKeyPressed(KeyEvent keyEvent) {
+        int toolIndex = Arrays.asList(toolKeyCodes).indexOf(keyEvent.getCode());
+        if (toolIndex == -1) {
+            return;
+        } else if (toolIndex >= tools.size()) {
+            return;
+        }
+        Tool tool = tools.get(toolIndex);
+        pluginInterface.selectTool(tool);
+    }
+
     private void updateControlsDisabledState() {
         boolean plotEmpty = plotter.getPoints().size() == 0;
         summaryButton.setDisable(plotEmpty);
@@ -321,13 +341,19 @@ public class MainController implements Initializable {
 
     public void registerTool(Tool tool) {
         toolPaneAppender.addTool(tool);
+        tools.add(tool);
     }
 
     public PluginInterface getPluginInterface() {
         return pluginInterface;
     }
 
-    public void setPrimaryStage(Stage primaryStage) {
+    public void configureExternalDependencies(Stage primaryStage, Scene scene) {
+        if (this.primaryStage != null) {
+            throw new AssertionError("Already configured");
+        }
         this.primaryStage = primaryStage;
+
+        scene.setOnKeyPressed(this::handleKeyPressed);
     }
 }

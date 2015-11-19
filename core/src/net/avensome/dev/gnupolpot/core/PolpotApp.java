@@ -19,11 +19,13 @@ public class PolpotApp extends Application {
         loader.setLocation(getClass().getResource("main.fxml"));
         Parent root = loader.load();
 
+        Scene scene = new Scene(root);
+
         MainController mainController = loader.getController();
-        mainController.setPrimaryStage(primaryStage);
+        mainController.configureExternalDependencies(primaryStage, scene);
 
         primaryStage.setTitle("gnupolpot");
-        primaryStage.setScene(new Scene(root));
+        primaryStage.setScene(scene);
         primaryStage.setMinWidth(720);
         primaryStage.setMinHeight(560);
         primaryStage.show();

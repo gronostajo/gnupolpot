@@ -14,7 +14,8 @@ public class ToolPaneAppender {
     }
 
     public void addTool(Tool tool) {
-        ToolButton button = new ToolButton(tool, pluginInterface);
+        int index = pane.getChildren().size() + 1;
+        ToolButton button = new ToolButton(tool, pluginInterface, index);
         pane.getChildren().add(button);
     }
 }

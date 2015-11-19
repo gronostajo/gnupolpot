@@ -9,8 +9,8 @@ import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
 public class ToolButton extends Button {
     private final Tool tool;
 
-    public ToolButton(Tool tool, PluginInterface pluginInterface) {
-        super("", new ImageView(tool.getButtonImage()));
+    public ToolButton(Tool tool, PluginInterface pluginInterface, Integer index) {
+        super(index.toString(), new ImageView(tool.getButtonImage()));
         this.tool = tool;
 
         Tooltip tooltip = new Tooltip(tool.getName());

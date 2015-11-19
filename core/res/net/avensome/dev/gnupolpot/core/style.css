@@ -2,3 +2,7 @@
     -fx-background-color: -fx-box-border, -fx-background;
     -fx-background-insets: 0, 1;
 }
+
+.tool-pane ToolButton {
+    -fx-padding: 0.333333em; /* 4 4 4 4 */
+}

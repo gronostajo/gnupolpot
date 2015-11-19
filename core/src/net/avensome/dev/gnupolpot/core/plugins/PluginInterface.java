@@ -12,8 +12,6 @@ import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.tools.PanningTool;
 import net.avensome.dev.gnupolpot.core.ui.ToolButton;
 
-import java.util.Optional;
-
 public class PluginInterface implements Api {
     private final Plotter plotter;
     private final Label statusLabel;
@@ -72,7 +70,12 @@ public class PluginInterface implements Api {
                     ToolButton button = ((ToolButton) node);
                     button.setDefaultButton(button.getTool() == tool);
                 });
-        Optional.ofNullable(currentTool.get()).ifPresent(cTool -> cTool.deactivated(this));
+
+        if (currentTool.isNotNull().get()) {
+            currentTool.get().deactivated(this);
+        }
+        plotter.requestRepaint();
+
         currentTool.set(tool);
         currentTool.get().activated(this);
     }
