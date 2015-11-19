@@ -74,4 +74,24 @@ public class Guide {
             ctx.strokeLine(point.getX() + 0.5, 0, point.getX() + 0.5, viewport.getHeight());
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Guide guide = (Guide) o;
+
+        return Double.compare(guide.coord, coord) == 0 && orientation == guide.orientation;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = orientation.hashCode();
+        temp = Double.doubleToLongBits(coord);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }
