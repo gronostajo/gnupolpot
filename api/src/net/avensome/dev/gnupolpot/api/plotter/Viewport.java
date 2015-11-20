@@ -26,11 +26,11 @@ public class Viewport {
     }
 
     public double getLeft() {
-        return centerX - width / 2;
+        return centerX - Math.floor(width / 2);
     }
 
     public double getBottom() {
-        return centerY - height / 2;
+        return centerY - Math.floor(height / 2);
     }
 
     public double getWidth() {
@@ -42,11 +42,11 @@ public class Viewport {
     }
 
     public double getRight() {
-        return centerX + width / 2;
+        return getLeft() + width;
     }
 
     public double getTop() {
-        return centerY + height / 2;
+        return getBottom() + height;
     }
 
     public void centerAt(double x, double y) {

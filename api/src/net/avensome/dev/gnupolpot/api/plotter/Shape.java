@@ -74,8 +74,8 @@ public class Shape implements Serializable {
         double[] y = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
             Point screenPoint = viewport.toScreenCoords(points.get(i));
-            x[i] = screenPoint.getX();
-            y[i] = screenPoint.getY();
+            x[i] = screenPoint.getX() - 0.5;
+            y[i] = screenPoint.getY() + 0.5;
         }
 
         if (type != Type.LINE) {

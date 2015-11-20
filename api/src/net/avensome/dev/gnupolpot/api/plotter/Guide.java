@@ -71,7 +71,7 @@ public class Guide {
 
             ctx.setStroke(color);
             ctx.setLineWidth(1);
-            ctx.strokeLine(point.getX() + 0.5, 0, point.getX() + 0.5, viewport.getHeight());
+            ctx.strokeLine(point.getX() - 0.5, 0, point.getX() - 0.5, viewport.getHeight());
         }
     }
 
