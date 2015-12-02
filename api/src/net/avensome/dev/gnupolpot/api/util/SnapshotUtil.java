@@ -10,7 +10,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public class SnapshotUtil {
+public final class SnapshotUtil {
+    private SnapshotUtil() {
+        throw new AssertionError("Utility class - do not instantiate!");
+    }
+
     public static void saveToFile(WritableImage image, File file) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         try {
