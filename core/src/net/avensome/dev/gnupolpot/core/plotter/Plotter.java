@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 import javafx.scene.canvas.Canvas;
@@ -48,17 +49,30 @@ public class Plotter extends Pane implements IPlotter {
 
         viewport = new Viewport(0, 0, getWidth(), getHeight(), 1);
 
+        registerResizeHandlers();
+        registerShapePointAdder();
+        createPaintingPipeline();
+        addZeroGuides();
+
+        requestRepaint();
+    }
+
+    private void registerResizeHandlers() {
         ChangeListener<Number> resizeListener = (observable, oldValue, newValue) -> {
             viewport.resize(getWidth(), getHeight());
             requestRepaint();
         };
         widthProperty().addListener(resizeListener);
         heightProperty().addListener(resizeListener);
+    }
 
-        createPaintingPipeline();
-        addZeroGuides();
-
-        requestRepaint();
+    private void registerShapePointAdder() {
+        ListChangeListener<Shape> shapesChangeListener = change -> {
+            for (Shape shape : change.getAddedSubList()) {
+                points.addAll(shape.getPoints());
+            }
+        };
+        shapes.addListener(shapesChangeListener);
     }
 
     private void createPaintingPipeline() {
