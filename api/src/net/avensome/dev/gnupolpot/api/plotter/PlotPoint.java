@@ -5,7 +5,16 @@ import net.avensome.dev.gnupolpot.api.util.FxUtils;
 
 import java.io.Serializable;
 
-public class PlotPoint implements Serializable {
+public final class PlotPoint implements Serializable {
+    /*
+    This class is final because extending it is prone to introducing bugs.
+    For example consider this case: you want to have some extra fields on PlotPoints. You create a class PointExt that
+    extends PlotPoint and adds some fields. Then you play with it a bit and finally you change color of the point. But
+    you accidentally change color the PointExt point instead of PlotPoint and it has no effect.
+    The solution is to add original PlotPoint as PointExt's field, but then what's the point of extending PlotPoint
+    if you can simply manipulate the underlying point?
+     */
+
     private double x;
     private double y;
     private Color color;
