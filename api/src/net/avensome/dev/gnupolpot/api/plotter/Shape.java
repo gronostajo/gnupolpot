@@ -89,7 +89,7 @@ public class Shape implements Serializable {
     private void paintLine(GraphicsContext ctx, Viewport viewport) {
         Point a = viewport.toScreenCoords(points.get(0));
         Point b = viewport.toScreenCoords(points.get(1));
-        ctx.strokeLine(a.getX(), a.getY(), b.getX(), b.getY());
+        ctx.strokeLine(a.getX() - 0.5, a.getY() + 0.5, b.getX() - 0.5, b.getY() + 0.5);
     }
 
     public enum Type {
