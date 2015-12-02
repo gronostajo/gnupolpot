@@ -20,7 +20,7 @@ public class SummaryDialog {
     }
 
     public void show() {
-        List<PlotPoint> points = plotter.getPoints();
+        List<PlotPoint> points = plotter.getActiveLayer().getPoints();
 
         double minX = points.stream().map(PlotPoint::getX).reduce(Math::min).get();
         double maxX = points.stream().map(PlotPoint::getX).reduce(Math::max).get();
@@ -38,7 +38,7 @@ public class SummaryDialog {
 
         NumberFormat formatter = new DecimalFormat("#0.0000000000");
         Label pointCountLabel = new Label(String.valueOf(points.size()));
-        Label shapeCountLabel = new Label(String.valueOf(plotter.getShapes().size()));
+        Label shapeCountLabel = new Label(String.valueOf(plotter.getActiveLayer().getShapes().size()));
         Label minXlabel = new Label(formatter.format(minX));
         Label maxXlabel = new Label(formatter.format(maxX));
         Label minYlabel = new Label(formatter.format(minY));

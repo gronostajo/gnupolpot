@@ -9,6 +9,8 @@ import java.util.List;
 public interface IPlotter {
     void requestRepaint();
 
+    boolean isPristine();
+
     void clear();
 
     void importPlot(PlotData data) throws DataFormatException;
@@ -17,9 +19,19 @@ public interface IPlotter {
 
     WritableImage snapshot();
 
-    List<PlotPoint> getPoints();
+    List<ILayer> getLayers();
 
-    List<Shape> getShapes();
+    ILayer getActiveLayer();
+
+    ILayer createLayerOnTop();
+
+    ILayer insertLayerAbove(ILayer refLayer);
+
+    ILayer insertLayerUnder(ILayer refLayer);
+
+    void deleteLayer(ILayer layer);
+
+    void selectActiveLayer(ILayer layer);
 
     Viewport getViewport();
 

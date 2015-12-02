@@ -25,8 +25,8 @@ public class DevPlotFeature implements Feature {
     public void execute(Api api) {
         IPlotter plotter = api.getPlotter();
 
-        List<PlotPoint> points = plotter.getPoints();
-        List<Shape> shapes = plotter.getShapes();
+        List<PlotPoint> points = plotter.getActiveLayer().getPoints();
+        List<Shape> shapes = plotter.getActiveLayer().getShapes();
 
         points.add(new PlotPoint(0, 0));
         points.add(new PlotPoint(5, 5, Color.RED));

@@ -1,7 +1,7 @@
 package net.avensome.dev.gnupolpot.core;
 
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ListChangeListener;
+import javafx.collections.SetChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -57,7 +57,6 @@ public class MainController implements Initializable {
     private Button summaryButton;
 
     private Stage primaryStage;
-    private Scene scene;
 
     private SimpleObjectProperty<File> currentFile = new SimpleObjectProperty<>(null);
 
@@ -76,7 +75,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void newClicked() {
-        if (plotter.getPoints().size() == 0) {
+        if (plotter.isPristine()) {
             return;
         }
 
@@ -86,7 +85,7 @@ public class MainController implements Initializable {
 
         if (result.get() == ButtonType.OK) {
             plotter.clear();
-            summaryButton.setDisable(true);
+            updateControlsDisabledState();
             pluginInterface.setStatus("");
             currentFile.set(null);
         }
@@ -95,7 +94,7 @@ public class MainController implements Initializable {
     @FXML
     private void openClicked() {
         Optional<ButtonType> result;
-        if (plotter.getPoints().size() > 0) {
+        if (!plotter.isPristine()) {
             Alert clearPrompt = new Alert(Alert.AlertType.CONFIRMATION, "Discard current plot and load new from file?");   // TODO don't display if saved and unchanged
             clearPrompt.setTitle("gnupolpot");
             clearPrompt.setHeaderText(null);
@@ -136,7 +135,7 @@ public class MainController implements Initializable {
             pluginInterface.setStatus(String.format("Loaded %d points, %d shapes",
                     importedPlot.getPoints().size(),
                     importedPlot.getShapes().size()));
-            summaryButton.setDisable(plotter.getPoints().size() == 0);
+            updateControlsDisabledState();
         } catch (FileNotFoundException e) {
             Alert error = new Alert(Alert.AlertType.ERROR, "Selected file doesn't exist", ButtonType.OK);
             error.showAndWait();
@@ -149,9 +148,8 @@ public class MainController implements Initializable {
 
     @FXML
     private void saveClicked() {
-        if (currentFile.get() == null) {    // shouldn't be possible, but let's ensure it works at least a little bit
-            saveAsClicked();
-            return;
+        if (currentFile.get() == null) {
+            throw new RuntimeException("Illegal state");
         }
         saveToFile(currentFile.get());
     }
@@ -170,8 +168,7 @@ public class MainController implements Initializable {
     }
 
     private void saveToFile(File file) {
-        PlotData plotData = new PlotData(plotter.getPoints(), plotter.getShapes());
-        String output = Exporter.toString(plotData);
+        String output = Exporter.toString(plotter.getViewDump());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(output);
             writer.close();
@@ -186,7 +183,8 @@ public class MainController implements Initializable {
     private void addPointClicked() {
         PlotPoint addedPoint = new AddPointsDialog().show();
         if (addedPoint != null) {
-            plotter.getPoints().add(addedPoint);
+            PlotData data = new PlotData(Collections.singletonList(addedPoint), Collections.emptyList());
+            plotter.importPlot(data);
             plotter.requestRepaint();
         }
     }
@@ -232,7 +230,7 @@ public class MainController implements Initializable {
 
     @FXML
     private void renderClicked() {
-        if (plotter.getPoints().size() > 0) {
+        if (!plotter.isPristine()) {
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("gnupolpot");
             confirm.setHeaderText(null);
@@ -274,8 +272,8 @@ public class MainController implements Initializable {
             }
         });
 
-        ListChangeListener<PlotPoint> pointsChange = listChange -> updateControlsDisabledState();
-        plotter.getPoints().addListener(pointsChange);
+        SetChangeListener<PlotPoint> pointsChange = void1 -> updateControlsDisabledState();
+        plotter.getPointsView().addListener(pointsChange);
         updateControlsDisabledState();
 
         currentFile.addListener((observable, oldValue, newValue) -> updateControlsDisabledState());
@@ -329,10 +327,10 @@ public class MainController implements Initializable {
     }
 
     private void updateControlsDisabledState() {
-        boolean plotEmpty = plotter.getPoints().size() == 0;
-        summaryButton.setDisable(plotEmpty);
-        saveButton.setDisable(plotEmpty || currentFile.isNull().get());
-        saveAsButton.setDisable(plotEmpty);
+        boolean plotIsPristine = plotter.isPristine();
+        summaryButton.setDisable(plotIsPristine);
+        saveButton.setDisable(plotIsPristine || currentFile.isNull().get());
+        saveAsButton.setDisable(plotIsPristine);
     }
 
     public void registerFeature(Feature feature) throws PluginException {

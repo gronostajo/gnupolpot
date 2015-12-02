@@ -18,9 +18,7 @@ import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.*;
 import net.avensome.dev.gnupolpot.core.plotter.painters.*;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Plotter extends Pane implements IPlotter {
 
@@ -29,15 +27,19 @@ public class Plotter extends Pane implements IPlotter {
     private final Canvas canvas = new Canvas();
     private boolean requiresRepaint;
 
-    private ObservableList<PlotPoint> points = FXCollections.observableArrayList();
-    private ObservableList<Shape> shapes = FXCollections.observableArrayList();
-    private ObservableSet<Guide> guides = FXCollections.observableSet();
+    private final ObservableSet<PlotPoint> pointsView = FXCollections.observableSet();
+    private final ObservableSet<Shape> shapesView = FXCollections.observableSet();
 
-    private Viewport viewport;
+    private final ObservableList<Layer> layers = FXCollections.observableArrayList();
+    private final SimpleObjectProperty<Layer> activeLayer = new SimpleObjectProperty<>();
 
-    private List<Painter> painters = new LinkedList<>();
+    private final ObservableSet<Guide> guides = FXCollections.observableSet();
 
-    private SimpleObjectProperty<PlotPoint> focusedPoint = new SimpleObjectProperty<>();
+    private final Viewport viewport;
+
+    private final List<Painter> painters = new LinkedList<>();
+
+    private final SimpleObjectProperty<PlotPoint> focusedPoint = new SimpleObjectProperty<>();
 
     public Plotter() {
         super();
@@ -49,12 +51,22 @@ public class Plotter extends Pane implements IPlotter {
 
         viewport = new Viewport(0, 0, getWidth(), getHeight(), 1);
 
+        selectActiveLayer(createLayerOnTop());
+        registerRemovedLayerInvalidator();
+
         registerResizeHandlers();
-        registerShapePointAdder();
         createPaintingPipeline();
         addZeroGuides();
 
         requestRepaint();
+    }
+
+    private void registerRemovedLayerInvalidator() {
+        ListChangeListener<Layer> layerListChangeListener = change -> {
+            change.next();
+            change.getRemoved().forEach(Layer::invalidate);
+        };
+        layers.addListener(layerListChangeListener);
     }
 
     private void registerResizeHandlers() {
@@ -66,28 +78,19 @@ public class Plotter extends Pane implements IPlotter {
         heightProperty().addListener(resizeListener);
     }
 
-    private void registerShapePointAdder() {
-        ListChangeListener<Shape> shapesChangeListener = change -> {
-            for (Shape shape : change.getAddedSubList()) {
-                points.addAll(shape.getPoints());
-            }
-        };
-        shapes.addListener(shapesChangeListener);
-    }
-
     private void createPaintingPipeline() {
         GraphicsContext ctx = canvas.getGraphicsContext2D();
 
         BackgroundPainter backgroundPainter = new BackgroundPainter(ctx, Color.WHITE);
         painters.add(backgroundPainter);
 
-        ShapePainter shapePainter = new ShapePainter(ctx, shapes);
+        ShapePainter shapePainter = new ShapePainter(ctx, shapesView);
         painters.add(shapePainter);
 
         GuidePainter guidePainter = new GuidePainter(ctx, guides);
         painters.add(guidePainter);
 
-        PointPainter pointPainter = new PointPainter(ctx, points, focusedPoint);
+        PointPainter pointPainter = new PointPainter(ctx, pointsView, focusedPoint);
         painters.add(pointPainter);
     }
 
@@ -96,6 +99,10 @@ public class Plotter extends Pane implements IPlotter {
                 new Guide(Guide.Orientation.HORIZONTAL, 0, Color.LIGHTGRAY),
                 new Guide(Guide.Orientation.VERTICAL, 0, Color.LIGHTGRAY)
         ));
+    }
+
+    public PlotData getViewDump() {
+        return new PlotData(pointsView, shapesView);
     }
 
     @Override
@@ -120,22 +127,26 @@ public class Plotter extends Pane implements IPlotter {
     }
 
     @Override
+    public boolean isPristine() {
+        return layers.size() == 1 && pointsView.isEmpty();
+    }
+
+    @Override
     public void clear() {
-        points.clear();
-        shapes.clear();
+        layers.clear();
         requestRepaint();
     }
 
     @Override
-    public void importPlot(PlotData data) throws DataFormatException {
-        points.addAll(data.getPoints());
-        shapes.addAll(data.getShapes());
+    public void importPlot(PlotData data) {
+        getActiveLayer().getPoints().addAll(data.getPoints());
+        getActiveLayer().getShapes().addAll(data.getShapes());
         requestRepaint();
     }
 
     @Override
     public void zoomAll(boolean instantRepaint) {
-        if (points.size() == 0) {
+        if (pointsView.size() == 0) {
             viewport.centerAt(0, 0);
             if (instantRepaint) {
                 repaint();
@@ -143,8 +154,8 @@ public class Plotter extends Pane implements IPlotter {
                 requestRepaint();
             }
             return;
-        } else if (points.size() == 1) {
-            PlotPoint point = points.get(0);
+        } else if (pointsView.size() == 1) {
+            PlotPoint point = pointsView.iterator().next();
             viewport.centerAt(point.getX(), point.getY());
             if (instantRepaint) {
                 repaint();
@@ -154,10 +165,10 @@ public class Plotter extends Pane implements IPlotter {
             return;
         }
 
-        double minX = points.stream().map(PlotPoint::getX).reduce(Math::min).get();
-        double maxX = points.stream().map(PlotPoint::getX).reduce(Math::max).get();
-        double minY = points.stream().map(PlotPoint::getY).reduce(Math::min).get();
-        double maxY = points.stream().map(PlotPoint::getY).reduce(Math::max).get();
+        double minX = pointsView.stream().map(PlotPoint::getX).reduce(Math::min).get();
+        double maxX = pointsView.stream().map(PlotPoint::getX).reduce(Math::max).get();
+        double minY = pointsView.stream().map(PlotPoint::getY).reduce(Math::min).get();
+        double maxY = pointsView.stream().map(PlotPoint::getY).reduce(Math::max).get();
 
         double spreadX = (maxX - minX);
         double spreadY = (maxY - minY);
@@ -182,14 +193,97 @@ public class Plotter extends Pane implements IPlotter {
         return canvas.snapshot(null, null);
     }
 
-    @Override
-    public ObservableList<PlotPoint> getPoints() {
-        return points;
+    public ObservableSet<PlotPoint> getPointsView() {
+        return pointsView;
+    }
+
+    public ObservableSet<Shape> getShapesView() {
+        return shapesView;
     }
 
     @Override
-    public ObservableList<Shape> getShapes() {
-        return shapes;
+    public List<ILayer> getLayers() {
+        return Collections.<ILayer>unmodifiableList(layers);
+    }
+
+    public List<Layer> getLayersInternal() {
+        return Collections.unmodifiableList(layers);
+    }
+
+    public ILayer getActiveLayer() {
+        return activeLayer.get();
+    }
+
+    private void rebuildViews() {
+        pointsView.clear();
+        shapesView.clear();
+        for (Layer layer : layers) {
+            pointsView.addAll(layer.getPoints());
+            shapesView.addAll(layer.getShapes());
+        }
+    }
+
+    @Override
+    public Layer createLayerOnTop() {
+        Layer newLayer = Layer.create(pointsView, shapesView, this::rebuildViews);
+        layers.add(newLayer);
+        return newLayer;
+    }
+
+    @Override
+    public Layer insertLayerAbove(ILayer refLayer) {
+        Layer newLayer = Layer.create(pointsView, shapesView, this::rebuildViews);
+        //noinspection SuspiciousMethodCalls
+        int refIndex = layers.indexOf(refLayer);
+        if (refIndex == -1) {
+            throw new NoSuchElementException("Reference layer doesn't exist");
+        }
+        layers.add(refIndex + 1, newLayer);
+        return newLayer;
+    }
+
+    @Override
+    public Layer insertLayerUnder(ILayer refLayer) {
+        Layer newLayer = Layer.create(pointsView, shapesView, this::rebuildViews);
+        //noinspection SuspiciousMethodCalls
+        int refIndex = layers.indexOf(refLayer);
+        if (refIndex == -1) {
+            throw new NoSuchElementException("Reference layer doesn't exist");
+        }
+        layers.add(refIndex, newLayer);
+        return newLayer;
+    }
+
+    @Override
+    public void deleteLayer(ILayer layer) {
+        //noinspection SuspiciousMethodCalls
+        int deletedIndex = layers.indexOf(layer);
+        if (deletedIndex == -1) {
+            throw new NoSuchElementException("Layer not on stack");
+        }
+        Layer layerImpl = (Layer) layer;
+
+        layers.remove(layerImpl);
+        layerImpl.invalidate();
+
+        if (layers.isEmpty()) {
+            Layer newLayer = createLayerOnTop();
+            selectActiveLayer(newLayer);
+        } else if (activeLayer.get() == layerImpl) {
+            Layer newActiveLayer = layers.get(Math.max(0, deletedIndex));
+            selectActiveLayer(newActiveLayer);
+        }
+    }
+
+    @Override
+    public void selectActiveLayer(ILayer layer) {
+        //noinspection SuspiciousMethodCalls
+        if (layers.indexOf(layer) == -1) {
+            throw new NoSuchElementException("Layer not on stack");
+        } else if (!(layer instanceof Layer)) {
+            throw new IllegalArgumentException("Layers must be created inside plotter");
+        }
+        activeLayer.set((Layer) layer);
     }
 
     @Override
@@ -220,7 +314,7 @@ public class Plotter extends Pane implements IPlotter {
         double x = plotCoords.getX();
         double y = plotCoords.getY();
 
-        PlotPoint currentFocusedPoint = viewport.pointAtPlotCoords(x, y, POINT_FOCUS_RADIUS, points);
+        PlotPoint currentFocusedPoint = viewport.pointAtPlotCoords(x, y, POINT_FOCUS_RADIUS, pointsView);
 
         boolean focusChanged = (focusedPoint.get() != currentFocusedPoint);
         focusedPoint.set(currentFocusedPoint);

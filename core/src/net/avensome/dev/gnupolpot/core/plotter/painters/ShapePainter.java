@@ -1,17 +1,16 @@
 package net.avensome.dev.gnupolpot.core.plotter.painters;
 
+import javafx.collections.ObservableSet;
 import javafx.scene.canvas.GraphicsContext;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
 import net.avensome.dev.gnupolpot.api.plotter.Viewport;
 
-import java.util.List;
-
 public class ShapePainter extends Painter {
-    private final List<Shape> shapes;
+    private final ObservableSet<Shape> shapes;
 
-    public ShapePainter(GraphicsContext ctx, List<Shape> shapes) {
+    public ShapePainter(GraphicsContext ctx, ObservableSet<Shape> layers) {
         super(ctx);
-        this.shapes = shapes;
+        this.shapes = layers;
     }
 
     @Override

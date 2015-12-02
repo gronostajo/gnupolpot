@@ -63,12 +63,12 @@ public class PolygonTool extends Tool {
     public void deactivated(Api api) {
         IPlotter plotter = api.getPlotter();
         if (shape != null) {
-            plotter.getShapes().remove(shape);
+            plotter.getActiveLayer().getShapes().remove(shape);
             plotter.requestRepaint();
             shape = null;
         }
         for (PlotPoint point : newPoints) {
-            plotter.getPoints().remove(point);
+            plotter.getActiveLayer().getPoints().remove(point);
         }
     }
 
@@ -103,7 +103,7 @@ public class PolygonTool extends Tool {
             Point pt = viewport.fromScreenCoords(x, y);
             clickedPoint = new PlotPoint(pt.getX(), pt.getY());
             newPoints.add(clickedPoint);
-            plotter.getPoints().add(clickedPoint);
+            plotter.getActiveLayer().getPoints().add(clickedPoint);
         } else if (chain.size() > 0 && clickedPoint.equals(chain.get(0))) {
             if (chain.size() <= 2) {
                 return;
@@ -123,10 +123,10 @@ public class PolygonTool extends Tool {
         chain.add(clickedPoint);
         if (chain.size() > 1) {
             if (shape != null) {
-                plotter.getShapes().remove(shape);
+                plotter.getActiveLayer().getShapes().remove(shape);
             }
             shape = new Shape(chain, COLOR_ADDED, Shape.Type.LINE);
-            plotter.getShapes().add(shape);
+            plotter.getActiveLayer().getShapes().add(shape);
         }
 
         plotter.requestRepaint();

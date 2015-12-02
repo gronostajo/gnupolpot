@@ -87,7 +87,7 @@ public class RectangleGeneratorFeature implements Feature {
             }
 
             IPlotter plotter = api.getPlotter();
-            plotter.getPoints().addAll(points);
+            plotter.getActiveLayer().getPoints().addAll(points);
             plotter.requestRepaint();
             
             api.setStatus(String.format("%d points generated", points.size()));
