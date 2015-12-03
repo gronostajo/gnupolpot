@@ -16,9 +16,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.*;
+import net.avensome.dev.gnupolpot.core.plotter.layers.LayerBinder;
 import net.avensome.dev.gnupolpot.core.plotter.painters.*;
+import net.avensome.dev.gnupolpot.core.plotter.layers.Layer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Plotter extends Pane implements IPlotter {
 
@@ -65,8 +68,23 @@ public class Plotter extends Pane implements IPlotter {
         ListChangeListener<Layer> layerListChangeListener = change -> {
             change.next();
             change.getRemoved().forEach(Layer::invalidate);
+            rebuildView();
         };
         layers.addListener(layerListChangeListener);
+    }
+
+    private void rebuildView() {
+        pointsView.clear();
+        shapesView.clear();
+
+        pointsView.addAll(layers.stream()
+                .flatMap(layer -> layer.getPoints().stream())
+                .collect(Collectors.toSet()));
+        shapesView.addAll(layers.stream()
+                .flatMap(layer -> layer.getShapes().stream())
+                .collect(Collectors.toSet()));
+
+        requestRepaint();
     }
 
     private void registerResizeHandlers() {
@@ -128,12 +146,14 @@ public class Plotter extends Pane implements IPlotter {
 
     @Override
     public boolean isPristine() {
-        return layers.size() == 1 && pointsView.isEmpty();
+        return layers.isEmpty() || layers.size() == 1 && pointsView.isEmpty();
     }
 
     @Override
     public void clear() {
         layers.clear();
+        Layer newLayer = createLayerOnTop();
+        selectActiveLayer(newLayer);
         requestRepaint();
     }
 
@@ -214,25 +234,16 @@ public class Plotter extends Pane implements IPlotter {
         return activeLayer.get();
     }
 
-    private void rebuildViews() {
-        pointsView.clear();
-        shapesView.clear();
-        for (Layer layer : layers) {
-            pointsView.addAll(layer.getPoints());
-            shapesView.addAll(layer.getShapes());
-        }
-    }
-
     @Override
     public Layer createLayerOnTop() {
-        Layer newLayer = Layer.create(pointsView, shapesView, this::rebuildViews);
+        Layer newLayer = LayerBinder.createAndBindLayer(pointsView, shapesView, layers);
         layers.add(newLayer);
         return newLayer;
     }
 
     @Override
     public Layer insertLayerAbove(ILayer refLayer) {
-        Layer newLayer = Layer.create(pointsView, shapesView, this::rebuildViews);
+        Layer newLayer = LayerBinder.createAndBindLayer(pointsView, shapesView, layers);
         //noinspection SuspiciousMethodCalls
         int refIndex = layers.indexOf(refLayer);
         if (refIndex == -1) {
@@ -244,7 +255,7 @@ public class Plotter extends Pane implements IPlotter {
 
     @Override
     public Layer insertLayerUnder(ILayer refLayer) {
-        Layer newLayer = Layer.create(pointsView, shapesView, this::rebuildViews);
+        Layer newLayer = LayerBinder.createAndBindLayer(pointsView, shapesView, layers);
         //noinspection SuspiciousMethodCalls
         int refIndex = layers.indexOf(refLayer);
         if (refIndex == -1) {

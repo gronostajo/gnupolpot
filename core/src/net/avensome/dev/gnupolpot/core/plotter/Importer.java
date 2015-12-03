@@ -5,7 +5,7 @@ import net.avensome.dev.gnupolpot.api.plotter.DataFormatException;
 import net.avensome.dev.gnupolpot.api.plotter.PlotData;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
-import net.avensome.dev.gnupolpot.core.plotter.util.Pair;
+import net.avensome.dev.gnupolpot.core.util.Pair;
 
 import java.io.InputStream;
 import java.util.*;

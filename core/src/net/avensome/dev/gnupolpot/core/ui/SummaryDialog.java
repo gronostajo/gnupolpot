@@ -10,7 +10,7 @@ import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.List;
+import java.util.Collection;
 
 public class SummaryDialog {
     private final Plotter plotter;
@@ -20,7 +20,7 @@ public class SummaryDialog {
     }
 
     public void show() {
-        List<PlotPoint> points = plotter.getActiveLayer().getPoints();
+        Collection<PlotPoint> points = plotter.getActiveLayer().getPoints();
 
         double minX = points.stream().map(PlotPoint::getX).reduce(Math::min).get();
         double maxX = points.stream().map(PlotPoint::getX).reduce(Math::max).get();

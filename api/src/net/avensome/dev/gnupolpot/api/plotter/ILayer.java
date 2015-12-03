@@ -1,9 +1,9 @@
 package net.avensome.dev.gnupolpot.api.plotter;
 
-import java.util.List;
+import java.util.Set;
 
 public interface ILayer {
-    List<PlotPoint> getPoints();
+    Set<PlotPoint> getPoints();
 
-    List<Shape> getShapes();
+    Set<Shape> getShapes();
 }

@@ -1,4 +1,4 @@
-package net.avensome.dev.gnupolpot.core.plotter.util;
+package net.avensome.dev.gnupolpot.core.util;
 
 // http://stackoverflow.com/a/677248/1937994
 public class Pair<A, B> {

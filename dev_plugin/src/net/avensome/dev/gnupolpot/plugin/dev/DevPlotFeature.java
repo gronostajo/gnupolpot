@@ -8,6 +8,7 @@ import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class DevPlotFeature implements Feature {
@@ -25,8 +26,8 @@ public class DevPlotFeature implements Feature {
     public void execute(Api api) {
         IPlotter plotter = api.getPlotter();
 
-        List<PlotPoint> points = plotter.getActiveLayer().getPoints();
-        List<Shape> shapes = plotter.getActiveLayer().getShapes();
+        Collection<PlotPoint> points = plotter.getActiveLayer().getPoints();
+        Collection<Shape> shapes = plotter.getActiveLayer().getShapes();
 
         points.add(new PlotPoint(0, 0));
         points.add(new PlotPoint(5, 5, Color.RED));
