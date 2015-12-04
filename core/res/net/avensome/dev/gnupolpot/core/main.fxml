@@ -6,8 +6,8 @@
 <?import javafx.scene.control.*?>
 <?import net.avensome.dev.gnupolpot.core.plotter.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="400.0"
-            prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="560.0"
+            prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="net.avensome.dev.gnupolpot.core.MainController">
     <center>
         <Plotter fx:id="plotter"/>
@@ -24,7 +24,7 @@
             <padding>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
             </padding>
-            <VBox fx:id="toolPane" styleClass="tool-pane" spacing="5"/>
+            <VBox fx:id="toolPane" spacing="5" styleClass="tool-pane"/>
         </ScrollPane>
     </left>
     <top>
@@ -185,4 +185,8 @@
             </Button>
         </ToolBar>
     </top>
+    <right>
+        <!--suppress JavaFxUnresolvedFxIdReference -->
+        <fx:include fx:id="layersUi" source="layers_ui.fxml"/>
+    </right>
 </BorderPane>

@@ -16,16 +16,23 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.*;
-import net.avensome.dev.gnupolpot.core.plotter.layers.LayerBinder;
-import net.avensome.dev.gnupolpot.core.plotter.painters.*;
+import net.avensome.dev.gnupolpot.api.plotter.LayerException;
 import net.avensome.dev.gnupolpot.core.plotter.layers.Layer;
+import net.avensome.dev.gnupolpot.core.plotter.layers.LayerBinder;
+import net.avensome.dev.gnupolpot.core.plotter.layers.LayersOps;
+import net.avensome.dev.gnupolpot.core.plotter.painters.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO Reorder methods to match interface order
 public class Plotter extends Pane implements IPlotter {
 
     public static final int POINT_FOCUS_RADIUS = 3;
+
+    public static final String MAIN_LAYER_LABEL = "Main layer";
+    public static final String LAYER_EXCEPTION_UNKNOWN_IMPLEMENTATION = "Layers must be created inside plotter";
+    public static final String LAYER_EXCEPTION_NOT_ON_STACK = "Layer not on stack";
 
     private final Canvas canvas = new Canvas();
     private boolean requiresRepaint;
@@ -54,8 +61,8 @@ public class Plotter extends Pane implements IPlotter {
 
         viewport = new Viewport(0, 0, getWidth(), getHeight(), 1);
 
-        selectActiveLayer(createLayerOnTop());
-        registerRemovedLayerInvalidator();
+        selectActiveLayer(createLayerOnTop(MAIN_LAYER_LABEL));
+        registerLayerValidator();
 
         registerResizeHandlers();
         createPaintingPipeline();
@@ -64,10 +71,15 @@ public class Plotter extends Pane implements IPlotter {
         requestRepaint();
     }
 
-    private void registerRemovedLayerInvalidator() {
+    private void registerLayerValidator() {
         ListChangeListener<Layer> layerListChangeListener = change -> {
             change.next();
-            change.getRemoved().forEach(Layer::invalidate);
+            for (Layer removedLayer : change.getRemoved()) {
+                removedLayer.setInvalid(true);
+            }
+            for (Layer addedLayer : change.getAddedSubList()) {
+                addedLayer.setInvalid(false);
+            }
             rebuildView();
         };
         layers.addListener(layerListChangeListener);
@@ -78,9 +90,11 @@ public class Plotter extends Pane implements IPlotter {
         shapesView.clear();
 
         pointsView.addAll(layers.stream()
+                .filter(layer -> !layer.isInvalid())
                 .flatMap(layer -> layer.getPoints().stream())
                 .collect(Collectors.toSet()));
         shapesView.addAll(layers.stream()
+                .filter(layer -> !layer.isInvalid())
                 .flatMap(layer -> layer.getShapes().stream())
                 .collect(Collectors.toSet()));
 
@@ -152,7 +166,7 @@ public class Plotter extends Pane implements IPlotter {
     @Override
     public void clear() {
         layers.clear();
-        Layer newLayer = createLayerOnTop();
+        Layer newLayer = createLayerOnTop(MAIN_LAYER_LABEL);
         selectActiveLayer(newLayer);
         requestRepaint();
     }
@@ -209,7 +223,7 @@ public class Plotter extends Pane implements IPlotter {
     }
 
     @Override
-    public WritableImage snapshot() {
+    public WritableImage getSnapshot() {
         return canvas.snapshot(null, null);
     }
 
@@ -221,6 +235,10 @@ public class Plotter extends Pane implements IPlotter {
         return shapesView;
     }
 
+    public void addLayersListener(ListChangeListener<Layer> listener) {
+        layers.addListener(listener);
+    }
+
     @Override
     public List<ILayer> getLayers() {
         return Collections.<ILayer>unmodifiableList(layers);
@@ -230,36 +248,41 @@ public class Plotter extends Pane implements IPlotter {
         return Collections.unmodifiableList(layers);
     }
 
-    public ILayer getActiveLayer() {
+    @Override
+    public Layer getActiveLayer() {
         return activeLayer.get();
     }
 
+    public void addActiveLayerListener(ChangeListener<Layer> listener) {
+        activeLayer.addListener(listener);
+    }
+
     @Override
-    public Layer createLayerOnTop() {
-        Layer newLayer = LayerBinder.createAndBindLayer(pointsView, shapesView, layers);
+    public Layer createLayerOnTop(String label) {
+        Layer newLayer = LayerBinder.createAndBindLayer(label, pointsView, shapesView, layers);
         layers.add(newLayer);
         return newLayer;
     }
 
     @Override
-    public Layer insertLayerAbove(ILayer refLayer) {
-        Layer newLayer = LayerBinder.createAndBindLayer(pointsView, shapesView, layers);
+    public Layer createLayerAbove(ILayer refLayer, String label) {
+        Layer newLayer = LayerBinder.createAndBindLayer(label, pointsView, shapesView, layers);
         //noinspection SuspiciousMethodCalls
         int refIndex = layers.indexOf(refLayer);
         if (refIndex == -1) {
-            throw new NoSuchElementException("Reference layer doesn't exist");
+            throw new NoSuchElementException(LAYER_EXCEPTION_NOT_ON_STACK);
         }
         layers.add(refIndex + 1, newLayer);
         return newLayer;
     }
 
     @Override
-    public Layer insertLayerUnder(ILayer refLayer) {
-        Layer newLayer = LayerBinder.createAndBindLayer(pointsView, shapesView, layers);
+    public Layer createLayerUnder(ILayer refLayer, String label) {
+        Layer newLayer = LayerBinder.createAndBindLayer(label, pointsView, shapesView, layers);
         //noinspection SuspiciousMethodCalls
         int refIndex = layers.indexOf(refLayer);
         if (refIndex == -1) {
-            throw new NoSuchElementException("Reference layer doesn't exist");
+            throw new NoSuchElementException(LAYER_EXCEPTION_NOT_ON_STACK);
         }
         layers.add(refIndex, newLayer);
         return newLayer;
@@ -270,31 +293,85 @@ public class Plotter extends Pane implements IPlotter {
         //noinspection SuspiciousMethodCalls
         int deletedIndex = layers.indexOf(layer);
         if (deletedIndex == -1) {
-            throw new NoSuchElementException("Layer not on stack");
+            throw new NoSuchElementException(LAYER_EXCEPTION_NOT_ON_STACK);
         }
         Layer layerImpl = (Layer) layer;
 
         layers.remove(layerImpl);
-        layerImpl.invalidate();
 
         if (layers.isEmpty()) {
-            Layer newLayer = createLayerOnTop();
+            Layer newLayer = createLayerOnTop(MAIN_LAYER_LABEL);
             selectActiveLayer(newLayer);
         } else if (activeLayer.get() == layerImpl) {
-            Layer newActiveLayer = layers.get(Math.max(0, deletedIndex));
+            Layer newActiveLayer = layers.get(Math.max(0, deletedIndex - 1));
             selectActiveLayer(newActiveLayer);
         }
+    }
+
+    public void readdLayerAtIndex(Layer layer, int index) {
+        if (!layer.isInvalid()) {
+            throw new RuntimeException("Can't add a layer that wasn't deleted");
+        }
+        layers.add(index, layer);
     }
 
     @Override
     public void selectActiveLayer(ILayer layer) {
         //noinspection SuspiciousMethodCalls
         if (layers.indexOf(layer) == -1) {
-            throw new NoSuchElementException("Layer not on stack");
+            throw new NoSuchElementException(LAYER_EXCEPTION_NOT_ON_STACK);
         } else if (!(layer instanceof Layer)) {
-            throw new IllegalArgumentException("Layers must be created inside plotter");
+            throw new IllegalArgumentException(LAYER_EXCEPTION_UNKNOWN_IMPLEMENTATION);
         }
         activeLayer.set((Layer) layer);
+    }
+
+    @Override
+    public void moveLayer(ILayer layer, LayerMove move) throws LayerException {
+        if (!(layer instanceof Layer)) {
+            throw new IllegalArgumentException(LAYER_EXCEPTION_UNKNOWN_IMPLEMENTATION);
+        }
+        Layer layerImpl = (Layer) layer;
+        if (layerImpl.isInvalid()) {
+            throw new IllegalArgumentException("Layer was deleted");
+        }
+
+        switch (move) {
+            case UP:
+                LayersOps.moveUp(layers, layerImpl);
+                break;
+            case DOWN:
+                LayersOps.moveDown(layers, layerImpl);
+                break;
+            case TOP:
+                LayersOps.moveToTop(layers, layerImpl);
+                break;
+            case BOTTOM:
+                LayersOps.moveToBottom(layers, layerImpl);
+                break;
+        }
+    }
+
+    @Override
+    public void duplicateLayer(ILayer layer) {
+        LayersOps.duplicate(layers, (Layer) layer);
+    }
+
+    @Override
+    public void mergeLayers(ILayer mergeInto, ILayer... toBeMerged) {
+        List<ILayer> iLayers = new ArrayList<>(toBeMerged.length + 1);
+        iLayers.add(mergeInto);
+        iLayers.addAll(Arrays.asList(toBeMerged));
+
+        Layer[] layers = new Layer[iLayers.size()];
+        for (int i = 0; i < iLayers.size(); i++) {
+            ILayer iLayer = iLayers.get(i);
+            if (!(iLayer instanceof Layer)) {
+                throw new IllegalArgumentException(LAYER_EXCEPTION_UNKNOWN_IMPLEMENTATION);
+            }
+            layers[i] = (Layer) iLayer;
+        }
+        LayersOps.merge(this.layers, layers);
     }
 
     @Override

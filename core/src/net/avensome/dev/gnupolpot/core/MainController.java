@@ -25,6 +25,7 @@ import net.avensome.dev.gnupolpot.core.plotter.EventHandler;
 import net.avensome.dev.gnupolpot.core.plotter.Exporter;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
+import net.avensome.dev.gnupolpot.core.plotter.layers.LayersUiController;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
 import net.avensome.dev.gnupolpot.core.tools.MovingTool;
@@ -46,6 +47,9 @@ public class MainController implements Initializable {
     private Label statusLabel;
     @FXML
     private VBox toolPane;
+
+    @FXML
+    private LayersUiController layersUiController;
 
     @FXML
     private Button saveButton;
@@ -225,7 +229,7 @@ public class MainController implements Initializable {
             return;
         }
 
-        SnapshotUtil.saveToFile(plotter.snapshot(), file);
+        SnapshotUtil.saveToFile(plotter.getSnapshot(), file);
     }
 
     @FXML
@@ -253,7 +257,7 @@ public class MainController implements Initializable {
             plotter.zoomAll(true);
             plotter.requestLayout();
             File outFile = new File(inFile.getPath() + ".png");
-            SnapshotUtil.saveToFile(plotter.snapshot(), outFile);
+            SnapshotUtil.saveToFile(plotter.getSnapshot(), outFile);
         }
     }
 
@@ -313,6 +317,8 @@ public class MainController implements Initializable {
                 currentTool.get().receiveScrollEvent(pluginInterface, event);
             }
         });
+
+        layersUiController.configure(plotter);
     }
 
     private void handleKeyPressed(KeyEvent keyEvent) {

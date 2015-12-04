@@ -26,7 +26,7 @@ public class PolpotApp extends Application {
 
         primaryStage.setTitle("gnupolpot");
         primaryStage.setScene(scene);
-        primaryStage.setMinWidth(720);
+        primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(560);
         primaryStage.show();
 

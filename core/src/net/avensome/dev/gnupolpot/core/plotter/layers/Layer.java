@@ -8,12 +8,15 @@ import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.api.plotter.Shape;
 
 public final class Layer implements ILayer {
-    private ObservableSet<PlotPoint> points = FXCollections.observableSet();
-    private ObservableSet<Shape> shapes = FXCollections.observableSet();
-
+    private String label;
     private boolean invalid = false;
 
-    Layer() {
+    private final ObservableSet<PlotPoint> points = FXCollections.observableSet();
+    private final ObservableSet<Shape> shapes = FXCollections.observableSet();
+
+    Layer(String label) {
+        this.label = label;
+
         SetChangeListener<Shape> shapesChangeListener = change -> {
             if (change.wasAdded()) {
                 points.addAll(change.getElementAdded().getPoints());
@@ -22,8 +25,22 @@ public final class Layer implements ILayer {
         shapes.addListener(shapesChangeListener);
     }
 
-    public void invalidate() {
-        this.invalid = true;
+    @Override
+    public String getLabel() {
+        return label;
+    }
+
+    @Override
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public boolean isInvalid() {
+        return invalid;
+    }
+
+    public void setInvalid(boolean invalid) {
+        this.invalid = invalid;
     }
 
     @Override

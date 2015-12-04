@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefWidth="200.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.40"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="net.avensome.dev.gnupolpot.core.plotter.layers.LayersUiController">
+    <center>
+        <ListView fx:id="layersList"/>
+    </center>
+    <right>
+        <VBox spacing="5.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </padding>
+            <Button mnemonicParsing="false" onAction="#addClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/layers/list-add.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Add layer"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#removeClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/layers/list-remove.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Delete layer"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#duplicateClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/layers/edit-copy.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Duplicate layer"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#mergeClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/layers/view-sort-ascending.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Merge into lower layer"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#toTopClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/layers/go-top.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Move to top"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#upClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/layers/go-up.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Move up"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#downClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/layers/go-down.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Move down"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#toBottomClicked">
+                <graphic>
+                    <ImageView>
+                        <Image url="@icons/layers/go-bottom.png"/>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="Move to bottom"/>
+                </tooltip>
+            </Button>
+        </VBox>
+    </right>
+</BorderPane>
