@@ -25,7 +25,7 @@ import net.avensome.dev.gnupolpot.core.plotter.EventHandler;
 import net.avensome.dev.gnupolpot.core.plotter.Exporter;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
-import net.avensome.dev.gnupolpot.core.plotter.layers.LayersUiController;
+import net.avensome.dev.gnupolpot.core.plotter.layers.LayersController;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
 import net.avensome.dev.gnupolpot.core.tools.MovingTool;
@@ -49,7 +49,7 @@ public class MainController implements Initializable {
     private VBox toolPane;
 
     @FXML
-    private LayersUiController layersUiController;
+    private LayersController layersController;
 
     @FXML
     private Button saveButton;
@@ -318,7 +318,7 @@ public class MainController implements Initializable {
             }
         });
 
-        layersUiController.configure(plotter);
+        layersController.configure(plotter);
     }
 
     private void handleKeyPressed(KeyEvent keyEvent) {

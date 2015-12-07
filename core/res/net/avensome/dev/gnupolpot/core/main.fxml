@@ -187,6 +187,6 @@
     </top>
     <right>
         <!--suppress JavaFxUnresolvedFxIdReference -->
-        <fx:include fx:id="layersUi" source="layers_ui.fxml"/>
+        <fx:include fx:id="layers" source="layers.fxml"/>
     </right>
 </BorderPane>

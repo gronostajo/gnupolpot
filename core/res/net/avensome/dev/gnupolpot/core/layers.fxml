@@ -7,7 +7,7 @@
 
 <BorderPane prefWidth="200.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.40"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="net.avensome.dev.gnupolpot.core.plotter.layers.LayersUiController">
+            fx:controller="net.avensome.dev.gnupolpot.core.plotter.layers.LayersController">
     <center>
         <ListView fx:id="layersList"/>
     </center>

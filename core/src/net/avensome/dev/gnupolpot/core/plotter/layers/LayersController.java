@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class LayersUiController {
+public final class LayersController {
     public static final String LAYER_NAME_PLACEHOLDER = "TODO";
 
     @FXML
