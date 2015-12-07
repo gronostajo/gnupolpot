@@ -156,7 +156,8 @@ public final class ToolbarController {
     }
 
     private void saveToFile(File file) {
-        String output = Exporter.toString(plotter.getViewDump());
+        PlotData viewDump = new PlotData(plotter.getPointsView(), plotter.getShapesView());
+        String output = Exporter.toString(viewDump);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(output);
             writer.close();

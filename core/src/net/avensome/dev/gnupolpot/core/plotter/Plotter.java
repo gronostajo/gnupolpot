@@ -25,7 +25,6 @@ import net.avensome.dev.gnupolpot.core.plotter.painters.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// TODO Reorder methods to match interface order
 public class Plotter extends Pane implements IPlotter {
 
     public static final int POINT_FOCUS_RADIUS = 3;
@@ -65,8 +64,8 @@ public class Plotter extends Pane implements IPlotter {
         registerLayerValidator();
 
         registerResizeHandlers();
-        createPaintingPipeline();
         addZeroGuides();
+        createPaintingPipeline();
 
         requestRepaint();
     }
@@ -110,6 +109,13 @@ public class Plotter extends Pane implements IPlotter {
         heightProperty().addListener(resizeListener);
     }
 
+    private void addZeroGuides() {
+        guides.addAll(Arrays.asList(
+                new Guide(Guide.Orientation.HORIZONTAL, 0, Color.LIGHTGRAY),
+                new Guide(Guide.Orientation.VERTICAL, 0, Color.LIGHTGRAY)
+        ));
+    }
+
     private void createPaintingPipeline() {
         GraphicsContext ctx = canvas.getGraphicsContext2D();
 
@@ -126,36 +132,57 @@ public class Plotter extends Pane implements IPlotter {
         painters.add(pointPainter);
     }
 
-    private void addZeroGuides() {
-        guides.addAll(Arrays.asList(
-                new Guide(Guide.Orientation.HORIZONTAL, 0, Color.LIGHTGRAY),
-                new Guide(Guide.Orientation.VERTICAL, 0, Color.LIGHTGRAY)
-        ));
-    }
-
-    public PlotData getViewDump() {
-        return new PlotData(pointsView, shapesView);
-    }
-
-    @Override
-    public void requestRepaint() {
-        synchronized (canvas) {
-            requiresRepaint = true;
-        }
-        Platform.runLater(() -> {
-            synchronized (canvas) {
-                if (requiresRepaint) {
-                    requiresRepaint = false;
-                    repaint();
-                }
-            }
-        });
-    }
-
     private void repaint() {
         for (Painter painter : painters) {
             painter.paint(viewport);
         }
+    }
+
+    public void registerEventHandler(EventHandler eventHandler) {
+        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, (event) -> {
+            boolean focusChanged = updateFocusedPoint(event);
+            eventHandler.mouseMoved(event, focusChanged);
+            if (focusChanged) {
+                requestRepaint();
+            }
+        });
+        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, eventHandler::mousePressed);
+        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandler::mouseDragged);
+        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, eventHandler::mouseReleased);
+        canvas.addEventHandler(ScrollEvent.SCROLL, eventHandler::scrolled);
+    }
+
+    private boolean updateFocusedPoint(MouseEvent event) {
+        Point plotCoords = viewport.fromScreenCoords(event.getX(), event.getY());
+        double x = plotCoords.getX();
+        double y = plotCoords.getY();
+
+        PlotPoint currentFocusedPoint = viewport.pointAtPlotCoords(x, y, POINT_FOCUS_RADIUS, pointsView);
+
+        boolean focusChanged = (focusedPoint.get() != currentFocusedPoint);
+        focusedPoint.set(currentFocusedPoint);
+
+        return focusChanged;
+    }
+
+    public ObservableSet<PlotPoint> getPointsView() {
+        return pointsView;
+    }
+
+    public ObservableSet<Shape> getShapesView() {
+        return shapesView;
+    }
+
+    public List<Layer> getLayersInternal() {
+        return Collections.unmodifiableList(layers);
+    }
+
+    public void addLayersListener(ListChangeListener<Layer> listener) {
+        layers.addListener(listener);
+    }
+
+    public void addActiveLayerListener(ChangeListener<Layer> listener) {
+        activeLayer.addListener(listener);
     }
 
     @Override
@@ -179,82 +206,13 @@ public class Plotter extends Pane implements IPlotter {
     }
 
     @Override
-    public void zoomAll(boolean instantRepaint) {
-        if (pointsView.size() == 0) {
-            viewport.centerAt(0, 0);
-            if (instantRepaint) {
-                repaint();
-            } else {
-                requestRepaint();
-            }
-            return;
-        } else if (pointsView.size() == 1) {
-            PlotPoint point = pointsView.iterator().next();
-            viewport.centerAt(point.getX(), point.getY());
-            if (instantRepaint) {
-                repaint();
-            } else {
-                requestRepaint();
-            }
-            return;
-        }
-
-        double minX = pointsView.stream().map(PlotPoint::getX).reduce(Math::min).get();
-        double maxX = pointsView.stream().map(PlotPoint::getX).reduce(Math::max).get();
-        double minY = pointsView.stream().map(PlotPoint::getY).reduce(Math::min).get();
-        double maxY = pointsView.stream().map(PlotPoint::getY).reduce(Math::max).get();
-
-        double spreadX = (maxX - minX);
-        double spreadY = (maxY - minY);
-
-        double viewportSpread = Math.max(spreadX / viewport.getWidth(), spreadY / viewport.getHeight());
-        double scale = Math.log(viewportSpread) / Math.log(2);  // log_e(x) / log_e(2) == log_2(x)
-
-        double centerX = (minX + maxX) / 2;
-        double centerY = (minY + maxY) / 2;
-
-        viewport.setScalePower((int) -Math.ceil(scale));
-        viewport.centerAt(centerX, centerY);
-        if (instantRepaint) {
-            repaint();
-        } else {
-            requestRepaint();
-        }
-    }
-
-    @Override
-    public WritableImage getSnapshot() {
-        return canvas.snapshot(null, null);
-    }
-
-    public ObservableSet<PlotPoint> getPointsView() {
-        return pointsView;
-    }
-
-    public ObservableSet<Shape> getShapesView() {
-        return shapesView;
-    }
-
-    public void addLayersListener(ListChangeListener<Layer> listener) {
-        layers.addListener(listener);
-    }
-
-    @Override
     public List<ILayer> getLayers() {
         return Collections.<ILayer>unmodifiableList(layers);
-    }
-
-    public List<Layer> getLayersInternal() {
-        return Collections.unmodifiableList(layers);
     }
 
     @Override
     public Layer getActiveLayer() {
         return activeLayer.get();
-    }
-
-    public void addActiveLayerListener(ChangeListener<Layer> listener) {
-        activeLayer.addListener(listener);
     }
 
     @Override
@@ -306,13 +264,6 @@ public class Plotter extends Pane implements IPlotter {
             Layer newActiveLayer = layers.get(Math.max(0, deletedIndex - 1));
             selectActiveLayer(newActiveLayer);
         }
-    }
-
-    public void readdLayerAtIndex(Layer layer, int index) {
-        if (!layer.isInvalid()) {
-            throw new RuntimeException("Can't add a layer that wasn't deleted");
-        }
-        layers.add(index, layer);
     }
 
     @Override
@@ -379,34 +330,71 @@ public class Plotter extends Pane implements IPlotter {
         return viewport;
     }
 
-    public SimpleObjectProperty<PlotPoint> focusedPointProperty() {
-        return focusedPoint;
-    }
-
-    public void registerEventHandler(EventHandler eventHandler) {
-        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, (event) -> {
-            boolean focusChanged = updateFocusedPoint(event);
-            eventHandler.mouseMoved(event, focusChanged);
-            if (focusChanged) {
+    @Override
+    public void zoomAll(boolean instantRepaint) {
+        if (pointsView.size() == 0) {
+            viewport.centerAt(0, 0);
+            if (instantRepaint) {
+                repaint();
+            } else {
                 requestRepaint();
             }
-        });
-        canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, eventHandler::mousePressed);
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, eventHandler::mouseDragged);
-        canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, eventHandler::mouseReleased);
-        canvas.addEventHandler(ScrollEvent.SCROLL, eventHandler::scrolled);
+            return;
+        } else if (pointsView.size() == 1) {
+            PlotPoint point = pointsView.iterator().next();
+            viewport.centerAt(point.getX(), point.getY());
+            if (instantRepaint) {
+                repaint();
+            } else {
+                requestRepaint();
+            }
+            return;
+        }
+
+        double minX = pointsView.stream().map(PlotPoint::getX).reduce(Math::min).get();
+        double maxX = pointsView.stream().map(PlotPoint::getX).reduce(Math::max).get();
+        double minY = pointsView.stream().map(PlotPoint::getY).reduce(Math::min).get();
+        double maxY = pointsView.stream().map(PlotPoint::getY).reduce(Math::max).get();
+
+        double spreadX = (maxX - minX);
+        double spreadY = (maxY - minY);
+
+        double viewportSpread = Math.max(spreadX / viewport.getWidth(), spreadY / viewport.getHeight());
+        double scale = Math.log(viewportSpread) / Math.log(2);  // log_e(x) / log_e(2) == log_2(x)
+
+        double centerX = (minX + maxX) / 2;
+        double centerY = (minY + maxY) / 2;
+
+        viewport.setScalePower((int) -Math.ceil(scale));
+        viewport.centerAt(centerX, centerY);
+        if (instantRepaint) {
+            repaint();
+        } else {
+            requestRepaint();
+        }
     }
 
-    private boolean updateFocusedPoint(MouseEvent event) {
-        Point plotCoords = viewport.fromScreenCoords(event.getX(), event.getY());
-        double x = plotCoords.getX();
-        double y = plotCoords.getY();
+    @Override
+    public void requestRepaint() {
+        synchronized (canvas) {
+            requiresRepaint = true;
+        }
+        Platform.runLater(() -> {
+            synchronized (canvas) {
+                if (requiresRepaint) {
+                    requiresRepaint = false;
+                    repaint();
+                }
+            }
+        });
+    }
 
-        PlotPoint currentFocusedPoint = viewport.pointAtPlotCoords(x, y, POINT_FOCUS_RADIUS, pointsView);
+    @Override
+    public WritableImage getSnapshot() {
+        return canvas.snapshot(null, null);
+    }
 
-        boolean focusChanged = (focusedPoint.get() != currentFocusedPoint);
-        focusedPoint.set(currentFocusedPoint);
-
-        return focusChanged;
+    public SimpleObjectProperty<PlotPoint> focusedPointProperty() {
+        return focusedPoint;
     }
 }

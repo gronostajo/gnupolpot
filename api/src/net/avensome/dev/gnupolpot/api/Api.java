@@ -2,6 +2,7 @@ package net.avensome.dev.gnupolpot.api;
 
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 
+// TODO Javadocs
 public interface Api {
     IPlotter getPlotter();
 
