@@ -16,6 +16,7 @@ import net.avensome.dev.gnupolpot.api.util.SnapshotUtil;
 import net.avensome.dev.gnupolpot.core.plotter.Exporter;
 import net.avensome.dev.gnupolpot.core.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
+import net.avensome.dev.gnupolpot.core.plotter.layers.Layer;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
 
@@ -98,7 +99,6 @@ public final class ToolbarController {
 
     @FXML
     private void importClicked() {
-        // TODO use layers
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Import data from file");
         File file = fileChooser.showOpenDialog(primaryStage);
@@ -106,6 +106,13 @@ public final class ToolbarController {
             return;
         }
 
+        boolean wasPristine = plotter.isPristine();
+        Layer previouslyActiveLayer = plotter.getActiveLayer();
+        Layer newLayer = plotter.createLayerAbove(previouslyActiveLayer, "Imported layer");
+        if (wasPristine) {
+            plotter.deleteLayer(previouslyActiveLayer);
+        }
+        plotter.selectActiveLayer(newLayer);
         importFile(file);
     }
 
