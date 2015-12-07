@@ -10,10 +10,7 @@ import net.avensome.dev.gnupolpot.api.action.Panning;
 import net.avensome.dev.gnupolpot.api.mouse.Buttons;
 import net.avensome.dev.gnupolpot.api.mouse.MouseEventType;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
-import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
-import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
-import net.avensome.dev.gnupolpot.api.plotter.Shape;
-import net.avensome.dev.gnupolpot.api.plotter.Viewport;
+import net.avensome.dev.gnupolpot.api.plotter.*;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -32,6 +29,7 @@ public class PolygonTool extends Tool {
     private Shape shape;
     private List<PlotPoint> chain;
     private Collection<PlotPoint> newPoints;
+    private ILayer activeLayer;
 
     private PolygonTool() {
     }
@@ -55,6 +53,7 @@ public class PolygonTool extends Tool {
         shape = null;
         chain = new LinkedList<>();
         newPoints = new LinkedList<>();
+        activeLayer = null;
 
         api.getPlotter().setCursor(Cursor.CROSSHAIR);
     }
@@ -98,12 +97,15 @@ public class PolygonTool extends Tool {
         double y = event.getY();
 
         PlotPoint clickedPoint = plotter.focusedPointProperty().get();
+        if (activeLayer == null) {
+            activeLayer = plotter.getActiveLayer();
+        }
 
         if (clickedPoint == null) {
             Point pt = viewport.fromScreenCoords(x, y);
             clickedPoint = new PlotPoint(pt.getX(), pt.getY());
             newPoints.add(clickedPoint);
-            plotter.getActiveLayer().getPoints().add(clickedPoint);
+            activeLayer.getPoints().add(clickedPoint);
         } else if (chain.size() > 0 && clickedPoint.equals(chain.get(0))) {
             if (chain.size() <= 2) {
                 return;
@@ -115,6 +117,7 @@ public class PolygonTool extends Tool {
                 shape = null;
                 chain = new LinkedList<>();
                 newPoints.clear();
+                activeLayer = null;
 
                 return;
             }
@@ -123,10 +126,10 @@ public class PolygonTool extends Tool {
         chain.add(clickedPoint);
         if (chain.size() > 1) {
             if (shape != null) {
-                plotter.getActiveLayer().getShapes().remove(shape);
+                activeLayer.getShapes().remove(shape);
             }
             shape = new Shape(chain, COLOR_ADDED, Shape.Type.LINE);
-            plotter.getActiveLayer().getShapes().add(shape);
+            activeLayer.getShapes().add(shape);
         }
 
         plotter.requestRepaint();
