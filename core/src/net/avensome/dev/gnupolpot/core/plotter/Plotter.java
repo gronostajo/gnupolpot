@@ -336,24 +336,25 @@ public class Plotter extends Pane implements IPlotter {
 
     @Override
     public void duplicateLayer(ILayer layer) {
-        LayersOps.duplicate(layers, (Layer) layer);
+        Layer targetLayer = createLayerAbove(layer, layer.getLabel());
+        LayersOps.duplicate((Layer) layer, targetLayer);
     }
 
     @Override
     public void mergeLayers(ILayer mergeInto, ILayer... toBeMerged) {
-        List<ILayer> iLayers = new ArrayList<>(toBeMerged.length + 1);
-        iLayers.add(mergeInto);
-        iLayers.addAll(Arrays.asList(toBeMerged));
+        if (!(mergeInto instanceof Layer)) {
+            throw new IllegalArgumentException(LAYER_EXCEPTION_UNKNOWN_IMPLEMENTATION);
+        }
 
-        Layer[] layers = new Layer[iLayers.size()];
-        for (int i = 0; i < iLayers.size(); i++) {
-            ILayer iLayer = iLayers.get(i);
+        Layer[] layers = new Layer[toBeMerged.length];
+        for (int i = 0; i < toBeMerged.length; i++) {
+            ILayer iLayer = toBeMerged[i];
             if (!(iLayer instanceof Layer)) {
                 throw new IllegalArgumentException(LAYER_EXCEPTION_UNKNOWN_IMPLEMENTATION);
             }
             layers[i] = (Layer) iLayer;
         }
-        LayersOps.merge(this.layers, layers);
+        LayersOps.merge(this.layers, (Layer) mergeInto, layers);
     }
 
     @Override
