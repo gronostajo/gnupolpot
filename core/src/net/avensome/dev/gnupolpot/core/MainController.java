@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -43,6 +44,9 @@ public class MainController implements Initializable {
 
     @FXML
     private ToolbarController toolbarController;
+
+    @FXML
+    private TitledPane layers;
     @FXML
     private LayersController layersController;
 
@@ -110,6 +114,8 @@ public class MainController implements Initializable {
 
         layersController.configure(plotter);
         toolbarController.configure(primaryStage, plotter, pluginInterface);
+
+        layers.prefHeightProperty().bind(plotter.heightProperty());
     }
 
     private void handleKeyPressed(KeyEvent keyEvent) {

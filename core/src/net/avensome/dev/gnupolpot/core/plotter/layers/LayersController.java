@@ -3,6 +3,7 @@ package net.avensome.dev.gnupolpot.core.plotter.layers;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TitledPane;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter.LayerMove;
 import net.avensome.dev.gnupolpot.api.plotter.LayerException;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
@@ -12,8 +13,10 @@ import java.util.Collections;
 import java.util.List;
 
 public final class LayersController {
-    public static final String LAYER_NAME_PLACEHOLDER = "TODO";
+    public static final String LAYER_NAME_PLACEHOLDER = "TODO"; // TODO
 
+    @FXML
+    private TitledPane outerPane;
     @FXML
     private ListView<Layer> layersList;
 
@@ -22,7 +25,7 @@ public final class LayersController {
     public void configure(Plotter plotter) {
         this.plotter = plotter;
 
-        layersList.setCellFactory(lv -> new LayerListCell());
+        layersList.setCellFactory(lv -> new LayerListCell(plotter));
         updateContents();
 
         plotter.addActiveLayerListener((observable, oldValue, newValue) -> {
@@ -47,6 +50,7 @@ public final class LayersController {
         Collections.reverse(reversedLayers);
         layersList.getItems().setAll(reversedLayers);
         layersList.getSelectionModel().select(plotter.getActiveLayer());
+        outerPane.setText(String.format("Layers (%s)", reversedLayers.size()));
     }
 
     private void updateButtonsDisabled() {
@@ -100,13 +104,20 @@ public final class LayersController {
     }
 
     private class LayerListCell extends ListCell<Layer> {
+        private final Plotter plotter;
+
+        public LayerListCell(Plotter plotter) {
+            this.plotter = plotter;
+        }
+
         @Override
         protected void updateItem(Layer item, boolean empty) {
             super.updateItem(item, empty);
             if (empty) {
                 setText(null);
             } else if (item != null) {
-                setText(item.getLabel());
+                int index = plotter.getLayersInternal().indexOf(item);
+                setText(String.format("%d. %s", index + 1, item.getLabel()));
             }
         }
     }
