@@ -1,6 +1,7 @@
 package net.avensome.dev.gnupolpot.core.plotter.layers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
@@ -13,12 +14,21 @@ import java.util.Collections;
 import java.util.List;
 
 public final class LayersController {
-    public static final String NEW_LAYER_NAME = "New layer";
-
     @FXML
     private TitledPane outerPane;
     @FXML
     private ListView<Layer> layersList;
+
+    @FXML
+    private Button mergeButton;
+    @FXML
+    private Button toTopButton;
+    @FXML
+    private Button upButton;
+    @FXML
+    private Button downButton;
+    @FXML
+    private Button toBottomButton;
 
     private Plotter plotter;
 
@@ -42,6 +52,7 @@ public final class LayersController {
                             && newValue != plotter.getActiveLayer()) {
                         plotter.selectActiveLayer(newValue);
                     }
+                    updateButtonsDisabled();
                 });
     }
 
@@ -51,16 +62,26 @@ public final class LayersController {
         layersList.getItems().setAll(reversedLayers);
         layersList.getSelectionModel().select(plotter.getActiveLayer());
         outerPane.setText(String.format("Layers (%s)", reversedLayers.size()));
+        updateButtonsDisabled();
     }
 
     private void updateButtonsDisabled() {
-        // TODO Implement
+        List<Layer> layers = plotter.getLayersInternal();
+        int activeIndex = layers.indexOf(plotter.getActiveLayer());
+        boolean isBottomLayer = (activeIndex == 0);
+        boolean isTopLayer = (activeIndex == layers.size() - 1);
+
+        mergeButton.setDisable(isBottomLayer);
+        toTopButton.setDisable(isTopLayer);
+        upButton.setDisable(isTopLayer);
+        downButton.setDisable(isBottomLayer);
+        toBottomButton.setDisable(isBottomLayer);
     }
 
     @FXML
     private void addClicked() {
         Layer activeLayer = plotter.getActiveLayer();
-        Layer createdLayer = plotter.createLayerAbove(activeLayer, NEW_LAYER_NAME);
+        Layer createdLayer = plotter.createLayerAbove(activeLayer, "New layer");
         plotter.selectActiveLayer(createdLayer);
     }
 

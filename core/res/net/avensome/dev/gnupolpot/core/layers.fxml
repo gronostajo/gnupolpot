@@ -50,7 +50,7 @@
                         <Tooltip text="Duplicate layer"/>
                     </tooltip>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#mergeClicked">
+                <Button fx:id="mergeButton" mnemonicParsing="false" onAction="#mergeClicked">
                     <graphic>
                         <ImageView>
                             <Image url="@icons/layers/view-sort-ascending.png"/>
@@ -60,7 +60,7 @@
                         <Tooltip text="Merge into lower layer"/>
                     </tooltip>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#toTopClicked">
+                <Button fx:id="toTopButton" mnemonicParsing="false" onAction="#toTopClicked">
                     <graphic>
                         <ImageView>
                             <Image url="@icons/layers/go-top.png"/>
@@ -70,7 +70,7 @@
                         <Tooltip text="Move to top"/>
                     </tooltip>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#upClicked">
+                <Button fx:id="upButton" mnemonicParsing="false" onAction="#upClicked">
                     <graphic>
                         <ImageView>
                             <Image url="@icons/layers/go-up.png"/>
@@ -80,7 +80,7 @@
                         <Tooltip text="Move up"/>
                     </tooltip>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#downClicked">
+                <Button fx:id="downButton" mnemonicParsing="false" onAction="#downClicked">
                     <graphic>
                         <ImageView>
                             <Image url="@icons/layers/go-down.png"/>
@@ -90,7 +90,7 @@
                         <Tooltip text="Move down"/>
                     </tooltip>
                 </Button>
-                <Button mnemonicParsing="false" onAction="#toBottomClicked">
+                <Button fx:id="toBottomButton" mnemonicParsing="false" onAction="#toBottomClicked">
                     <graphic>
                         <ImageView>
                             <Image url="@icons/layers/go-bottom.png"/>
