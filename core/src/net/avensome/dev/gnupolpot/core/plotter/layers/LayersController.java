@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class LayersController {
-    public static final String LAYER_NAME_PLACEHOLDER = "TODO"; // TODO
+    public static final String NEW_LAYER_NAME = "New layer";
 
     @FXML
     private TitledPane outerPane;
@@ -60,7 +60,7 @@ public final class LayersController {
     @FXML
     private void addClicked() {
         Layer activeLayer = plotter.getActiveLayer();
-        Layer createdLayer = plotter.createLayerAbove(activeLayer, LAYER_NAME_PLACEHOLDER);
+        Layer createdLayer = plotter.createLayerAbove(activeLayer, NEW_LAYER_NAME);
         plotter.selectActiveLayer(createdLayer);
     }
 

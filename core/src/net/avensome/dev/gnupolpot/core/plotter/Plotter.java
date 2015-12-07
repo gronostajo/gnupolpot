@@ -16,13 +16,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.*;
-import net.avensome.dev.gnupolpot.api.plotter.LayerException;
 import net.avensome.dev.gnupolpot.core.plotter.layers.Layer;
 import net.avensome.dev.gnupolpot.core.plotter.layers.LayerBinder;
 import net.avensome.dev.gnupolpot.core.plotter.layers.LayersOps;
 import net.avensome.dev.gnupolpot.core.plotter.painters.*;
+import net.avensome.dev.gnupolpot.core.util.Pair;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Plotter extends Pane implements IPlotter {
@@ -165,6 +166,33 @@ public class Plotter extends Pane implements IPlotter {
         return focusChanged;
     }
 
+    private String getUniqueLayerLabel(String baseLabel) {
+        String proposedLabel = baseLabel.trim();
+        Pattern pattern = Pattern.compile(Pattern.quote(proposedLabel) + "\\s+\\((\\d+)\\)");
+
+        for (Layer layer : layers) {
+            if (layer.getLabel().equals(proposedLabel)) {
+                List<Integer> matchingIndices = layers.stream()
+                        .map(layer1 -> new Pair<>(layer1, pattern.matcher(layer1.getLabel())))
+                        .filter(pair -> pair.getSecond().matches())
+                        .map(pair -> Integer.valueOf(pair.getSecond().group(1)))
+                        .sorted(Integer::compare)
+                        .collect(Collectors.toList());
+                int index = 1;
+                for (Integer layerIndex : matchingIndices) {
+                    if (!layerIndex.equals(index)) {
+                        break;
+                    } else {
+                        index++;
+                    }
+                }
+                return String.format("%s (%d)", proposedLabel, index);
+            }
+        }
+
+        return proposedLabel;
+    }
+
     public ObservableSet<PlotPoint> getPointsView() {
         return pointsView;
     }
@@ -217,6 +245,7 @@ public class Plotter extends Pane implements IPlotter {
 
     @Override
     public Layer createLayerOnTop(String label) {
+        label = getUniqueLayerLabel(label);
         Layer newLayer = LayerBinder.createAndBindLayer(label, pointsView, shapesView, layers);
         layers.add(newLayer);
         return newLayer;
@@ -224,6 +253,7 @@ public class Plotter extends Pane implements IPlotter {
 
     @Override
     public Layer createLayerAbove(ILayer refLayer, String label) {
+        label = getUniqueLayerLabel(label);
         Layer newLayer = LayerBinder.createAndBindLayer(label, pointsView, shapesView, layers);
         //noinspection SuspiciousMethodCalls
         int refIndex = layers.indexOf(refLayer);
@@ -236,6 +266,7 @@ public class Plotter extends Pane implements IPlotter {
 
     @Override
     public Layer createLayerUnder(ILayer refLayer, String label) {
+        label = getUniqueLayerLabel(label);
         Layer newLayer = LayerBinder.createAndBindLayer(label, pointsView, shapesView, layers);
         //noinspection SuspiciousMethodCalls
         int refIndex = layers.indexOf(refLayer);

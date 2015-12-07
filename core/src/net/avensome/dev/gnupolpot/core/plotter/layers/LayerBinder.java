@@ -14,7 +14,7 @@ public final class LayerBinder {
     }
 
     public static Layer createAndBindLayer(String label, Set<PlotPoint> pointsView, Set<Shape> shapesView, List<Layer> layers) {
-        Layer instance = new Layer(label);
+        Layer instance = new Layer(label.trim());
 
         // TODO Add batch manipulation, with single rebuild after more complex operation (eg. removing multiple items one by one will result in multiple rebuilds)
         instance.getPoints().addListener(new ViewChangeListener<>(pointsView, point -> layers.stream()
