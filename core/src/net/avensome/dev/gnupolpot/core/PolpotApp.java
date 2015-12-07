@@ -22,7 +22,7 @@ public class PolpotApp extends Application {
         Scene scene = new Scene(root);
 
         MainController mainController = loader.getController();
-        mainController.configureExternalDependencies(primaryStage, scene);
+        mainController.configure(primaryStage, scene);
 
         primaryStage.setTitle("gnupolpot");
         primaryStage.setScene(scene);
