@@ -74,7 +74,7 @@ public class Shape implements Serializable {
         double[] y = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
             Point screenPoint = viewport.toScreenCoords(points.get(i));
-            x[i] = screenPoint.getX() - 0.5;
+            x[i] = screenPoint.getX() + 0.5;
             y[i] = screenPoint.getY() + 0.5;
         }
 
@@ -89,7 +89,7 @@ public class Shape implements Serializable {
     private void paintLine(GraphicsContext ctx, Viewport viewport) {
         Point a = viewport.toScreenCoords(points.get(0));
         Point b = viewport.toScreenCoords(points.get(1));
-        ctx.strokeLine(a.getX() - 0.5, a.getY() + 0.5, b.getX() - 0.5, b.getY() + 0.5);
+        ctx.strokeLine(a.getX() + 0.5, a.getY() + 0.5, b.getX() + 0.5, b.getY() + 0.5);
     }
 
     public enum Type {
