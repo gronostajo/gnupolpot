@@ -42,4 +42,3 @@ Gradle-based plugin stub coming soon (maybe).
 gnupolpot uses parts of other open source projects:
 
   - [Gnome icon theme](http://ftp.gnome.org/pub/GNOME/sources/gnome-icon-theme/3.12/) (LGPL v3).
-  - [Inkscape tool icons](https://inkscape.org/en/) (GPL v2)
