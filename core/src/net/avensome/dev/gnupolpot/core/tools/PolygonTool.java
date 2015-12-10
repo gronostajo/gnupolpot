@@ -40,7 +40,7 @@ public class PolygonTool extends Tool {
 
     @Override
     public String getName() {
-        return "Create polygon";
+        return "Create polygons";
     }
 
     @Override
@@ -69,6 +69,8 @@ public class PolygonTool extends Tool {
         for (PlotPoint point : newPoints) {
             plotter.getActiveLayer().getPoints().remove(point);
         }
+
+        Panning.stop();
     }
 
     @Override

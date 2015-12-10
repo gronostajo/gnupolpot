@@ -24,6 +24,7 @@ import net.avensome.dev.gnupolpot.core.plotter.layers.LayersController;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
 import net.avensome.dev.gnupolpot.core.tools.MovingTool;
 import net.avensome.dev.gnupolpot.core.tools.PanningTool;
+import net.avensome.dev.gnupolpot.core.tools.PointsTool;
 import net.avensome.dev.gnupolpot.core.tools.PolygonTool;
 import net.avensome.dev.gnupolpot.core.ui.ToolPaneAppender;
 import net.avensome.dev.gnupolpot.core.ui.ToolbarController;
@@ -81,6 +82,7 @@ public class MainController implements Initializable {
 
         toolPaneAppender = new ToolPaneAppender(pluginInterface, toolPane);
         registerTool(PanningTool.getInstance());
+        registerTool(PointsTool.getInstance());
         registerTool(MovingTool.getInstance());
         registerTool(PolygonTool.getInstance());
         pluginInterface.selectDefaultTool();

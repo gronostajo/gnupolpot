@@ -48,6 +48,8 @@ public class MovingTool extends Tool {
     @Override
     public void deactivated(Api api) {
         api.getPlotter().focusedPointProperty().removeListener(focusedPointChangeListener);
+        Panning.stop();
+        Moving.stop();
     }
 
     @Override
