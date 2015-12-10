@@ -1,5 +1,8 @@
 package net.avensome.dev.gnupolpot.api.mouse;
 
+/**
+ * A 2-dimensional point with basic operations.
+ */
 public final class Point {
     private final double x;
     private final double y;
@@ -22,6 +25,11 @@ public final class Point {
         return String.format("%f : %f", x, y);
     }
 
+    /**
+     * Subtracts another point from this one.
+     * @param point a point to subtract
+     * @return A point representing delta vector between this point and provided one.
+     */
     public Point minus(Point point) {
         return new Point(x - point.getX(), y - point.getY());
     }

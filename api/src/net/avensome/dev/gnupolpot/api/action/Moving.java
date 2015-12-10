@@ -6,16 +6,28 @@ import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 
-public class Moving {
-
+/**
+ * Helper class for implementing moving points in custom tools.
+ */
+public final class Moving {
     private static Point mouseAnchor;
     private static PlotPoint movingPoint = null;
 
+    /**
+     * Should be called when moving starts.
+     * @param api API object
+     * @param event associated mouse event
+     */
     public static void start(Api api, MouseEvent event) {
         movingPoint = api.getPlotter().focusedPointProperty().get();
         mouseAnchor = new Point(event.getX(), event.getY());
     }
 
+    /**
+     * Should be called when mouse pointer is moved.
+     * @param api API object
+     * @param event associated mouse event
+     */
     public static void update(Api api, MouseEvent event) {
         if (movingPoint == null) {
             return;
@@ -34,6 +46,9 @@ public class Moving {
         mouseAnchor = newAnchor;
     }
 
+    /**
+     * Should be called when moving ends.
+     */
     public static void stop() {
         if (movingPoint != null) {
             movingPoint = null;
@@ -41,6 +56,9 @@ public class Moving {
         }
     }
 
+    /**
+     * @return Whether moving is in progress.
+     */
     public static boolean isMoving() {
         return movingPoint != null;
     }

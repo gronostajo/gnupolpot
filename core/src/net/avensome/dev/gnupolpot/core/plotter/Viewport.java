@@ -1,18 +1,32 @@
-package net.avensome.dev.gnupolpot.api.plotter;
+package net.avensome.dev.gnupolpot.core.plotter;
 
 import net.avensome.dev.gnupolpot.api.mouse.Point;
+import net.avensome.dev.gnupolpot.api.plotter.IViewport;
+import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class Viewport {
-
+/**
+ * <p>Represents plot viewport. Determines which part of the plot is painted.
+ *
+ * <p>Viewport is a rectangle in scale. When scale equals 1, distances between plot points exactly match screen distance
+ * measured in pixels. Increasing scale makes stuff appear bigger.
+ */
+public class Viewport implements IViewport {
     private double centerX;
     private double centerY;
     private double width;
     private double height;
     private double scale;
 
+    /**
+     * @param centerX X coordinate of center point
+     * @param centerY Y coordinate of center point
+     * @param width actual width of the viewport
+     * @param height actual height of the viewport
+     * @param scale plot scale
+     */
     public Viewport(double centerX, double centerY, double width, double height, double scale) {
         this.centerX = centerX;
         this.centerY = centerY;
@@ -21,39 +35,48 @@ public class Viewport {
         this.scale = scale;
     }
 
+    @Override
     public double getScale() {
         return scale;
     }
 
+    @Override
     public double getLeft() {
         return centerX - Math.floor(width / 2);
     }
 
+    @Override
     public double getBottom() {
         return centerY - Math.floor(height / 2);
     }
 
+    @Override
     public double getWidth() {
         return width;
     }
 
+    @Override
     public double getHeight() {
         return height;
     }
 
+    @Override
     public double getRight() {
         return getLeft() + width;
     }
 
+    @Override
     public double getTop() {
         return getBottom() + height;
     }
 
+    @Override
     public void centerAt(double x, double y) {
         centerX = x;
         centerY = y;
     }
 
+    @Override
     public void moveBy(double deltaX, double deltaY) {
         centerX += deltaX / scale;
         centerY += deltaY / scale;
@@ -64,32 +87,38 @@ public class Viewport {
         this.height = height;
     }
 
+    @Override
     public void zoom(double factor) {
         scale *= factor;
     }
 
+    @Override
     public void setScalePower(int power) {
         scale = Math.pow(2, power);
     }
 
-    public Viewport applyScale() {
+    private Viewport applyScale() {
         return new Viewport(centerX, centerY, width / scale, height / scale, 1);
     }
 
-    public boolean containsHorizontalCoord(double plotCoord) {
-        return getLeft() <= plotCoord
-                && getRight() >= plotCoord;
+    @Override
+    public boolean containsHorizontalCoord(double xCoord) {
+        return getLeft() <= xCoord
+                && getRight() >= xCoord;
     }
 
-    public boolean containsVerticalCoord(double plotCoord) {
-        return getBottom() <= plotCoord
-                && getTop() >= plotCoord;
+    @Override
+    public boolean containsVerticalCoord(double yCoord) {
+        return getBottom() <= yCoord
+                && getTop() >= yCoord;
     }
 
+    @Override
     public boolean contains(double plotX, double plotY) {
         return containsHorizontalCoord(plotX) && containsVerticalCoord(plotY);
     }
 
+    @Override
     public Point fromScreenCoords(double screenX, double screenY) {
         Viewport scaledViewport = applyScale();
         double x = scaledViewport.getLeft() + screenX / scale;
@@ -97,6 +126,7 @@ public class Viewport {
         return new Point(x, y);
     }
 
+    @Override
     public Point toScreenCoords(double plotX, double plotY) {
         Viewport scaledViewport = applyScale();
         double x = (plotX - scaledViewport.getLeft()) * scale;
@@ -104,6 +134,12 @@ public class Viewport {
         return new Point(x, y);
     }
 
+    @Override
+    public Point toScreenCoords(PlotPoint point) {
+        return toScreenCoords(point.getX(), point.getY());
+    }
+
+    @Override
     public Collection<PlotPoint> visiblePoints(Collection<PlotPoint> points) {
         Viewport scaledViewpoint = applyScale();
         return points.stream()
@@ -111,13 +147,10 @@ public class Viewport {
                 .collect(Collectors.toList());
     }
 
-    public Point toScreenCoords(PlotPoint point) {
-        return toScreenCoords(point.getX(), point.getY());
-    }
-
-    public PlotPoint pointAtPlotCoords(double x, double y, double tolerance, Collection<PlotPoint> points) {
+    @Override
+    public PlotPoint pointAtPlotCoords(double x, double y, double radius, Collection<PlotPoint> points) {
         return visiblePoints(points).stream()
-                .filter(point -> point.distanceFrom(x, y) * scale < tolerance)
+                .filter(point -> point.distanceFrom(x, y) * scale < radius)
                 .sorted((o1, o2) -> Double.compare(o1.distanceFrom(x, y), o2.distanceFrom(x, y)))
                 .reduce(null, (point1, point2) -> point1 == null ? point2 : point1);
     }

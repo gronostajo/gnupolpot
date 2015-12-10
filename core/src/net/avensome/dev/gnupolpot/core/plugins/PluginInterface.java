@@ -4,8 +4,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import net.avensome.dev.gnupolpot.api.Api;
-import net.avensome.dev.gnupolpot.api.Feature;
-import net.avensome.dev.gnupolpot.api.PluginException;
 import net.avensome.dev.gnupolpot.api.Tool;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
@@ -50,11 +48,6 @@ public class PluginInterface implements Api {
         if (lastPermanentStatus != null) {
             statusLabel.setText(lastPermanentStatus);
         }
-    }
-
-    @Override
-    public void executeFeature(Feature feature) throws PluginException {
-        feature.execute(this);
     }
 
     @Override

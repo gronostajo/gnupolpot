@@ -2,7 +2,7 @@ package net.avensome.dev.gnupolpot.core.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
 import net.avensome.dev.gnupolpot.api.plotter.Guide;
-import net.avensome.dev.gnupolpot.api.plotter.Viewport;
+import net.avensome.dev.gnupolpot.core.plotter.Viewport;
 
 import java.util.Set;
 

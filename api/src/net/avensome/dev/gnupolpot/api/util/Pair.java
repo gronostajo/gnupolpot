@@ -1,6 +1,13 @@
-package net.avensome.dev.gnupolpot.core.util;
+package net.avensome.dev.gnupolpot.api.util;
 
 // http://stackoverflow.com/a/677248/1937994
+
+/**
+ * A generic tuple of two objects.
+ *
+ * @param <A> type of first object
+ * @param <B> type of second object
+ */
 public class Pair<A, B> {
     private A first;
     private B second;

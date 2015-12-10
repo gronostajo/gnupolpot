@@ -47,14 +47,14 @@ public class SummaryDialog {
         Label spreadYlabel = new Label(formatter.format(spreadY));
 
         GridPane grid = new LabeledControlGridBuilder(100, 160)
-                .add("Point count", pointCountLabel)
-                .add("Shape count", shapeCountLabel)
-                .add("Min X", minXlabel)
-                .add("Max X", maxXlabel)
-                .add("Min Y", minYlabel)
-                .add("Max Y", maxYlabel)
-                .add("X spread", spreadXlabel)
-                .add("Y spread", spreadYlabel)
+                .append("Point count", pointCountLabel)
+                .append("Shape count", shapeCountLabel)
+                .append("Min X", minXlabel)
+                .append("Max X", maxXlabel)
+                .append("Min Y", minYlabel)
+                .append("Max Y", maxYlabel)
+                .append("X spread", spreadXlabel)
+                .append("Y spread", spreadYlabel)
                 .build();
 
         dialog.getDialogPane().setContent(grid);

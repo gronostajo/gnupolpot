@@ -12,9 +12,9 @@ import net.avensome.dev.gnupolpot.api.Feature;
 import net.avensome.dev.gnupolpot.api.PluginException;
 import net.avensome.dev.gnupolpot.api.plotter.DataFormatException;
 import net.avensome.dev.gnupolpot.api.plotter.PlotData;
-import net.avensome.dev.gnupolpot.api.util.SnapshotUtil;
+import net.avensome.dev.gnupolpot.api.util.ImageUtil;
 import net.avensome.dev.gnupolpot.core.plotter.Exporter;
-import net.avensome.dev.gnupolpot.core.plotter.Importer;
+import net.avensome.dev.gnupolpot.api.plotter.Importer;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.plotter.layers.Layer;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInfo;
@@ -119,7 +119,10 @@ public final class ToolbarController {
     private void importFile(File file) {
         try {
             PlotData importedPlot = Importer.fromStream(new FileInputStream(file));
-            plotter.importPlot(importedPlot);
+            plotter.getActiveLayer().getPoints().addAll(importedPlot.getPoints());
+            plotter.getActiveLayer().getShapes().addAll(importedPlot.getShapes());
+            plotter.requestRepaint();
+
             pluginInterface.setStatus(String.format("Loaded %d points, %d shapes",
                     importedPlot.getPoints().size(),
                     importedPlot.getShapes().size()));
@@ -178,7 +181,7 @@ public final class ToolbarController {
 
     @FXML
     private void zoomFitClicked() {
-        plotter.zoomAll(false);
+        plotter.zoomAll();
     }
 
     @FXML
@@ -207,7 +210,7 @@ public final class ToolbarController {
             return;
         }
 
-        SnapshotUtil.saveToFile(plotter.getSnapshot(), file);
+        ImageUtil.saveToFile(plotter.getSnapshot(), file);
     }
 
     @FXML
@@ -232,10 +235,10 @@ public final class ToolbarController {
 
         for (File inFile : files) {
             importFile(inFile);
-            plotter.zoomAll(true);
+            plotter.zoomAll();
             plotter.requestLayout();
             File outFile = new File(inFile.getPath() + ".png");
-            SnapshotUtil.saveToFile(plotter.getSnapshot(), outFile);
+            ImageUtil.saveToFile(plotter.getSnapshot(), outFile);
         }
     }
 

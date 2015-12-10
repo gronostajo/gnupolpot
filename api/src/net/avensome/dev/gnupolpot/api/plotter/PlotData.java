@@ -4,6 +4,10 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * A structure containing some points and shapes. Internal integrity isn't guaranteed. (Shapes may reference points
+ * that aren't contained in this structure.)
+ */
 public class PlotData {
     private Collection<PlotPoint> points;
     private Collection<Shape> shapes;

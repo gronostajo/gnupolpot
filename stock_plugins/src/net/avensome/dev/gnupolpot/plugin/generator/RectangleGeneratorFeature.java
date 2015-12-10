@@ -46,13 +46,13 @@ public class RectangleGeneratorFeature implements Feature {
         IntTextField seedField = new IntTextField(lastParams.getSeed());
 
         GridPane grid = new LabeledControlGridBuilder(120, 160)
-                .add("Count", countField)
-                .add("Left", leftField)
-                .add("Top", topField)
-                .add("Right", rightField)
-                .add("Bottom", bottomField)
-                .add("Color", colorPicker)
-                .add("Seed (0 = random)", seedField)
+                .append("Count", countField)
+                .append("Left", leftField)
+                .append("Top", topField)
+                .append("Right", rightField)
+                .append("Bottom", bottomField)
+                .append("Color", colorPicker)
+                .append("Seed (0 = random)", seedField)
                 .build();
 
         dialog.getDialogPane().setContent(grid);

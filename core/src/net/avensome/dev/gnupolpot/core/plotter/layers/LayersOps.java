@@ -70,7 +70,7 @@ public final class LayersOps {
                     List<PlotPoint> shapePoints = shape.getPoints().stream()
                             .map(newPoints::get)
                             .collect(Collectors.toList());
-                    return new Shape(shapePoints, shape.getColor(), shape.getType());
+                    return new Shape(shapePoints, shape.getColor(), shape.getStyle());
                 })
                 .collect(Collectors.toList());
 

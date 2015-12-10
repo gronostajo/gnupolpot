@@ -40,7 +40,7 @@ public class DevPlotFeature implements Feature {
                 new PlotPoint(15, 40)
         );
         points.addAll(filledShapePoints);
-        shapes.add(new Shape(filledShapePoints, Color.GREEN, Shape.Type.FILLED));
+        shapes.add(new Shape(filledShapePoints, Color.GREEN, Shape.Style.FILLED));
 
         List<PlotPoint> emptyShapePoints = Arrays.asList(
                 new PlotPoint(60, 20),
@@ -49,7 +49,7 @@ public class DevPlotFeature implements Feature {
                 new PlotPoint(40, 60)
         );
         points.addAll(emptyShapePoints);
-        shapes.add(new Shape(emptyShapePoints, Color.BLUE, Shape.Type.EMPTY));
+        shapes.add(new Shape(emptyShapePoints, Color.BLUE, Shape.Style.EMPTY));
 
         List<PlotPoint> lineShapePoints = Arrays.asList(
                 new PlotPoint(140, 20),
@@ -57,14 +57,14 @@ public class DevPlotFeature implements Feature {
                 new PlotPoint(150, 80)
         );
         points.addAll(lineShapePoints);
-        shapes.add(new Shape(lineShapePoints, Color.HOTPINK, Shape.Type.LINE));
+        shapes.add(new Shape(lineShapePoints, Color.HOTPINK, Shape.Style.LINE));
 
         List<PlotPoint> linePoints = Arrays.asList(
                 new PlotPoint(80, 70),
                 new PlotPoint(90, 90)
         );
         points.addAll(linePoints);
-        shapes.add(new Shape(linePoints, Color.PINK, Shape.Type.FILLED));
+        shapes.add(new Shape(linePoints, Color.PINK, Shape.Style.FILLED));
 
         plotter.requestRepaint();
     }

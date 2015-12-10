@@ -2,7 +2,7 @@ package net.avensome.dev.gnupolpot.core.plotter.painters;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
-import net.avensome.dev.gnupolpot.api.plotter.Viewport;
+import net.avensome.dev.gnupolpot.core.plotter.Viewport;
 
 public class BackgroundPainter extends Painter {
     private final Paint backgroundColor;

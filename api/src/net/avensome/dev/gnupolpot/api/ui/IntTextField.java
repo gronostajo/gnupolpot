@@ -3,7 +3,9 @@ package net.avensome.dev.gnupolpot.api.ui;
 import javafx.scene.control.TextField;
 import net.avensome.dev.gnupolpot.api.util.Validator;
 
-public class IntTextField extends TextField {
+/**
+ * A JavaFX text field that accepts only integer number input.
+ */public class IntTextField extends TextField {
     private final Validator<Integer> validator;
     private String lastValidValue;
 

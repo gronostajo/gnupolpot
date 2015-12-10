@@ -86,7 +86,7 @@ public class FeatureMenuAppender {
         MenuItem item = new MenuItem(menuItemName);
         item.setOnAction(event -> {
             try {
-                pluginInterface.executeFeature(feature);
+                feature.execute(pluginInterface);
             } catch (Exception e) {
                 PluginException.showAlert(e);
             }

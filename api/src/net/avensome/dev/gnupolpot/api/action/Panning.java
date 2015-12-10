@@ -5,17 +5,27 @@ import net.avensome.dev.gnupolpot.api.Api;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.IPlotter;
 
-public class Panning {
-
+/**
+ * Helper class for implementing panning the viewport.
+ */
+public final class Panning {
     private static Point mouseAnchor;
-
     private static boolean panning = false;
 
+    /**
+     * Should be called when panning starts.
+     * @param event associated mouse event
+     */
     public static void start(MouseEvent event) {
         panning = true;
         mouseAnchor = new Point(event.getX(), event.getY());
     }
 
+    /**
+     * Should be called when mouse pointer is moved.
+     * @param api API object
+     * @param event associated mouse event
+     */
     public static void update(Api api, MouseEvent event) {
         if (!panning) {
             return;
@@ -31,6 +41,9 @@ public class Panning {
         mouseAnchor = newAnchor;
     }
 
+    /**
+     * Should be called when panning ends.
+     */
     public static void stop() {
         if (panning) {
             panning = false;
@@ -38,6 +51,9 @@ public class Panning {
         }
     }
 
+    /**
+     * @return Whether panning is in progress.
+     */
     public static boolean isPanning() {
         return panning;
     }

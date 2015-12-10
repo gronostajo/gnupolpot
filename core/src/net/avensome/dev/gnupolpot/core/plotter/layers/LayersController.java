@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+// TODO Renaming layers
 public final class LayersController {
     @FXML
     private TitledPane outerPane;

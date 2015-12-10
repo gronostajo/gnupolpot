@@ -9,32 +9,53 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Makes building multiple row label-field pairs easier. First prepare labels and fields, then add them. Builder takes
+ * care of the rest and returns a single control containing all labels and fields nicely laid out.
+ */
 public class LabeledControlGridBuilder {
     private final Integer labelWidth;
     private final Integer controlWidth;
     private final List<Pair<String, Control>> pairs;
 
+    /**
+     * Initialize the builder with automatic column widths.
+     */
     public LabeledControlGridBuilder() {
         this(null, null);
     }
 
+    /**
+     * Initialize the builder with defined column widths.
+     * @param labelWidth first column's width
+     * @param controlWidth second column's width
+     */
     public LabeledControlGridBuilder(Integer labelWidth, Integer controlWidth) {
         this(labelWidth, controlWidth, new LinkedList<>());
     }
 
-    public LabeledControlGridBuilder(Integer labelWidth, Integer controlWidth, List<Pair<String, Control>> pairs) {
+    private LabeledControlGridBuilder(Integer labelWidth, Integer controlWidth, List<Pair<String, Control>> pairs) {
         this.labelWidth = labelWidth;
         this.controlWidth = controlWidth;
         this.pairs = pairs;
     }
 
-    public LabeledControlGridBuilder add(String fieldLabel, Control control) {
+    /**
+     * Add a next row.
+     * @param label a control in the first column (usually a label)
+     * @param field a control in the second column (usually a field)
+     * @return This builder object. (for chaining)
+     */
+    public LabeledControlGridBuilder append(String label, Control field) {
         List<Pair<String, Control>> newPairs = new ArrayList<>(pairs.size() + 1);
         newPairs.addAll(pairs);
-        newPairs.add(new Pair<>(fieldLabel, control));
+        newPairs.add(new Pair<>(label, field));
         return new LabeledControlGridBuilder(labelWidth, controlWidth, newPairs);
     }
 
+    /**
+     * @return A pane containing all appended labels and fields.
+     */
     public GridPane build() {
         GridPane grid = new GridPane();
         grid.setHgap(10);

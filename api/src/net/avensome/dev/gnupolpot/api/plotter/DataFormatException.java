@@ -1,5 +1,8 @@
 package net.avensome.dev.gnupolpot.api.plotter;
 
+/**
+ * Thrown when data from external source has unknown or invalid format.
+ */
 public class DataFormatException extends Exception {
     public DataFormatException() {
     }

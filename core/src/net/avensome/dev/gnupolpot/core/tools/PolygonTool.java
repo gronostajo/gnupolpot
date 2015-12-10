@@ -91,7 +91,7 @@ public class PolygonTool extends Tool {
 
     private void addPoint(Api api, MouseEvent event) {
         IPlotter plotter = api.getPlotter();
-        Viewport viewport = plotter.getViewport();
+        IViewport viewport = plotter.getViewport();
 
         double x = event.getX();
         double y = event.getY();
@@ -111,7 +111,7 @@ public class PolygonTool extends Tool {
                 return;
             } else {
                 shape.setColor(COLOR_FINAL);
-                shape.setType(Shape.Type.FILLED);
+                shape.setStyle(Shape.Style.FILLED);
                 plotter.requestRepaint();
 
                 shape = null;
@@ -128,7 +128,7 @@ public class PolygonTool extends Tool {
             if (shape != null) {
                 activeLayer.getShapes().remove(shape);
             }
-            shape = new Shape(chain, COLOR_ADDED, Shape.Type.LINE);
+            shape = new Shape(chain, COLOR_ADDED, Shape.Style.LINE);
             activeLayer.getShapes().add(shape);
         }
 

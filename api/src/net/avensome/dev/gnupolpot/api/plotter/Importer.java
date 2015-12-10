@@ -1,11 +1,7 @@
-package net.avensome.dev.gnupolpot.core.plotter;
+package net.avensome.dev.gnupolpot.api.plotter;
 
 import javafx.scene.paint.Color;
-import net.avensome.dev.gnupolpot.api.plotter.DataFormatException;
-import net.avensome.dev.gnupolpot.api.plotter.PlotData;
-import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
-import net.avensome.dev.gnupolpot.api.plotter.Shape;
-import net.avensome.dev.gnupolpot.core.util.Pair;
+import net.avensome.dev.gnupolpot.api.util.Pair;
 
 import java.io.InputStream;
 import java.util.*;
@@ -107,11 +103,11 @@ public class Importer {
             color = parts[1];
         }
 
-        Shape.Type type = Shape.Type.FILLED;
+        Shape.Style style = Shape.Style.FILLED;
         Matcher typeMatcher = TYPE_PATTERN.matcher(parts[index]);
         if (typeMatcher.matches()) {
             index++;
-            type = parseType(typeMatcher.group(1).toUpperCase());
+            style = parseType(typeMatcher.group(1).toUpperCase());
         }
 
         List<String> partsList = Arrays.asList(parts);
@@ -130,12 +126,12 @@ public class Importer {
                 })
                 .collect(Collectors.toList());
 
-        return new ShapeStub(color, type, ids);
+        return new ShapeStub(color, style, ids);
     }
 
-    private static Shape.Type parseType(String typeString) {
+    private static Shape.Style parseType(String typeString) {
         try {
-            return Shape.Type.valueOf(typeString);
+            return Shape.Style.valueOf(typeString);
         } catch (IllegalArgumentException e) {
             return null;
         }
@@ -143,12 +139,12 @@ public class Importer {
 
     private static class ShapeStub {
         private final Color color;
-        private final Shape.Type type;
+        private final Shape.Style style;
         private final List<String> expectedPointIds;
 
-        public ShapeStub(String color, Shape.Type type, List<String> expectedPointIds) {
+        public ShapeStub(String color, Shape.Style style, List<String> expectedPointIds) {
             this.color = (color != null) ? Color.web(color) : null;
-            this.type = type;
+            this.style = style;
             this.expectedPointIds = expectedPointIds;
         }
 
@@ -156,7 +152,7 @@ public class Importer {
             List<PlotPoint> points = expectedPointIds.stream()
                     .map(pointIds::get)
                     .collect(Collectors.toList());
-            return new Shape(points, color, type);
+            return new Shape(points, color, style);
         }
     }
 }

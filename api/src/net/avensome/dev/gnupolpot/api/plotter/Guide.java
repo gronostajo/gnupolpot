@@ -4,12 +4,21 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 
+/**
+ * An orthonormal guide that is visible at any coordinates.
+ */
 public class Guide {
     private final Orientation orientation;
     private final double coord;
     private final Color color;
     private final OrientedGuidePainter painter;
 
+    /**
+     * <p>Creates a guide.
+     * @param orientation guide orientation
+     * @param coord X coordinate for vertical guides, or Y coordinate for horizontal guides
+     * @param color guide color
+     */
     public Guide(Orientation orientation, double coord, Color color) {
         this.orientation = orientation;
         this.coord = coord;
@@ -32,22 +41,30 @@ public class Guide {
         return color;
     }
 
-    public void paint(GraphicsContext ctx, Viewport viewport) {
+    /**
+     * Paints guide on a canvas. Intended for internal use.
+     * @param ctx graphics context to paint on
+     * @param viewport current viewport
+     */
+    public void paint(GraphicsContext ctx, IViewport viewport) {
         painter.paint(ctx, viewport, coord, color);
     }
 
+    /**
+     * Guide orientation.
+     */
     public enum Orientation {
         HORIZONTAL,
         VERTICAL
     }
 
     private interface OrientedGuidePainter {
-        void paint(GraphicsContext ctx, Viewport viewport, double coord, Color color);
+        void paint(GraphicsContext ctx, IViewport viewport, double coord, Color color);
     }
 
     private class HorizontalGuidePainter implements OrientedGuidePainter {
         @Override
-        public void paint(GraphicsContext ctx, Viewport viewport, double coord, Color color) {
+        public void paint(GraphicsContext ctx, IViewport viewport, double coord, Color color) {
             if (!viewport.containsVerticalCoord(coord)) {
                 return;
             }
@@ -62,7 +79,7 @@ public class Guide {
 
     private class VerticalGuidePainter implements OrientedGuidePainter {
         @Override
-        public void paint(GraphicsContext ctx, Viewport viewport, double coord, Color color) {
+        public void paint(GraphicsContext ctx, IViewport viewport, double coord, Color color) {
             if (!viewport.containsHorizontalCoord(coord)) {
                 return;
             }

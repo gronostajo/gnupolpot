@@ -5,7 +5,7 @@ import javafx.collections.ObservableSet;
 import javafx.scene.canvas.GraphicsContext;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
-import net.avensome.dev.gnupolpot.api.plotter.Viewport;
+import net.avensome.dev.gnupolpot.core.plotter.Viewport;
 
 import java.util.Collection;
 

@@ -10,8 +10,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-public final class SnapshotUtil {
-    private SnapshotUtil() {
+/**
+ * An utility class for dealing with images.
+ */
+public final class ImageUtil {
+    private ImageUtil() {
         throw new AssertionError("Utility class - do not instantiate!");
     }
 

@@ -28,7 +28,7 @@ public class Exporter {
 
         for (Shape shape : plotData.getShapes()) {
             String color = FxUtils.colorToHex(shape.getColor());
-            String type = shape.getType().toString().toLowerCase();
+            String type = shape.getStyle().toString().toLowerCase();
             String stub = String.format("$ %s _%s", color, type);
 
             StringBuilder builder = new StringBuilder(stub);

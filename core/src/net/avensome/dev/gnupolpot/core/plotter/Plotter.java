@@ -20,7 +20,7 @@ import net.avensome.dev.gnupolpot.core.plotter.layers.Layer;
 import net.avensome.dev.gnupolpot.core.plotter.layers.LayerBinder;
 import net.avensome.dev.gnupolpot.core.plotter.layers.LayersOps;
 import net.avensome.dev.gnupolpot.core.plotter.painters.*;
-import net.avensome.dev.gnupolpot.core.util.Pair;
+import net.avensome.dev.gnupolpot.api.util.Pair;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -227,13 +227,6 @@ public class Plotter extends Pane implements IPlotter {
     }
 
     @Override
-    public void importPlot(PlotData data) {
-        getActiveLayer().getPoints().addAll(data.getPoints());
-        getActiveLayer().getShapes().addAll(data.getShapes());
-        requestRepaint();
-    }
-
-    @Override
     public List<ILayer> getLayers() {
         return Collections.<ILayer>unmodifiableList(layers);
     }
@@ -363,23 +356,15 @@ public class Plotter extends Pane implements IPlotter {
     }
 
     @Override
-    public void zoomAll(boolean instantRepaint) {
+    public void zoomAll() {
         if (pointsView.size() == 0) {
             viewport.centerAt(0, 0);
-            if (instantRepaint) {
-                repaint();
-            } else {
-                requestRepaint();
-            }
+            requestRepaint();
             return;
         } else if (pointsView.size() == 1) {
             PlotPoint point = pointsView.iterator().next();
             viewport.centerAt(point.getX(), point.getY());
-            if (instantRepaint) {
-                repaint();
-            } else {
-                requestRepaint();
-            }
+            requestRepaint();
             return;
         }
 
@@ -399,11 +384,7 @@ public class Plotter extends Pane implements IPlotter {
 
         viewport.setScalePower((int) -Math.ceil(scale));
         viewport.centerAt(centerX, centerY);
-        if (instantRepaint) {
-            repaint();
-        } else {
-            requestRepaint();
-        }
+        requestRepaint();
     }
 
     @Override

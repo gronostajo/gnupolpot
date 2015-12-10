@@ -3,6 +3,9 @@ package net.avensome.dev.gnupolpot.api.ui;
 import javafx.scene.control.TextField;
 import net.avensome.dev.gnupolpot.api.util.Validator;
 
+/**
+ * A JavaFX text field that accepts only floating point number input.
+ */
 public class DoubleTextField extends TextField {
     private final Validator<Double> validator;
     private String lastValidValue;
