@@ -16,11 +16,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import net.avensome.dev.gnupolpot.api.mouse.Point;
 import net.avensome.dev.gnupolpot.api.plotter.*;
+import net.avensome.dev.gnupolpot.api.util.Pair;
 import net.avensome.dev.gnupolpot.core.plotter.layers.Layer;
 import net.avensome.dev.gnupolpot.core.plotter.layers.LayerBinder;
 import net.avensome.dev.gnupolpot.core.plotter.layers.LayersOps;
 import net.avensome.dev.gnupolpot.core.plotter.painters.*;
-import net.avensome.dev.gnupolpot.api.util.Pair;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -131,6 +131,11 @@ public class Plotter extends Pane implements IPlotter {
 
         PointPainter pointPainter = new PointPainter(ctx, pointsView, focusedPoint);
         painters.add(pointPainter);
+    }
+
+    public void addPainter(RebindablePainter painter) {
+        painter.setContext(canvas.getGraphicsContext2D());
+        painters.add(painter);
     }
 
     private void repaint() {

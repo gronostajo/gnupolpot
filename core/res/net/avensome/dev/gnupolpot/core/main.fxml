@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
@@ -12,11 +13,33 @@
         <Plotter fx:id="plotter"/>
     </center>
     <bottom>
-        <VBox BorderPane.alignment="CENTER">
-            <ToolBar>
-                <Label fx:id="statusLabel"/>
-            </ToolBar>
-        </VBox>
+        <ToolBar fx:id="statusBar">
+            <GridPane fx:id="statusGrid">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0"/>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints/>
+                </rowConstraints>
+                <Label fx:id="statusLabel" text="It's like gnuplot, but wrong."/>
+                <CheckBox fx:id="centerCheckBox" mnemonicParsing="false" text="Center" GridPane.columnIndex="1">
+                    <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                            <Image url="@icons/statusbar/center.png"/>
+                        </ImageView>
+                    </graphic>
+                </CheckBox>
+                <Label fx:id="zoomLabel" text="Zoom" GridPane.columnIndex="2">
+                    <graphic>
+                        <ImageView pickOnBounds="true" preserveRatio="true">
+                            <Image url="@icons/statusbar/zoom.png"/>
+                        </ImageView>
+                    </graphic>
+                </Label>
+            </GridPane>
+        </ToolBar>
     </bottom>
     <left>
         <ScrollPane focusTraversable="false" hbarPolicy="NEVER" stylesheets="@style.css">

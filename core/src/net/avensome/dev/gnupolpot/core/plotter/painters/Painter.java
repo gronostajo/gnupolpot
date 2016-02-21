@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import net.avensome.dev.gnupolpot.core.plotter.Viewport;
 
 public abstract class Painter {
-    protected final GraphicsContext ctx;
+    protected GraphicsContext ctx;
 
     protected Painter(GraphicsContext ctx) {
         this.ctx = ctx;

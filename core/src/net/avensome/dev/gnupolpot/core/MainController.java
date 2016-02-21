@@ -4,13 +4,18 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.SetChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.avensome.dev.gnupolpot.api.Feature;
@@ -21,6 +26,7 @@ import net.avensome.dev.gnupolpot.api.plotter.PlotPoint;
 import net.avensome.dev.gnupolpot.core.plotter.EventHandler;
 import net.avensome.dev.gnupolpot.core.plotter.Plotter;
 import net.avensome.dev.gnupolpot.core.plotter.layers.LayersController;
+import net.avensome.dev.gnupolpot.core.plotter.painters.ViewportCenterPainter;
 import net.avensome.dev.gnupolpot.core.plugins.PluginInterface;
 import net.avensome.dev.gnupolpot.core.tools.MovingTool;
 import net.avensome.dev.gnupolpot.core.tools.PanningTool;
@@ -30,18 +36,31 @@ import net.avensome.dev.gnupolpot.core.ui.ToolPaneAppender;
 import net.avensome.dev.gnupolpot.core.ui.ToolbarController;
 
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
+// TODO Point labels
+// TODO On-canvas coordinates and scale
 public class MainController implements Initializable {
     @FXML
     private Plotter plotter;
     @FXML
+    private VBox toolPane;
+
+    @FXML
+    private ToolBar statusBar;
+    @FXML
+    private GridPane statusGrid;
+    @FXML
     private Label statusLabel;
     @FXML
-    private VBox toolPane;
+    private CheckBox centerCheckBox;
+    @FXML
+    private Label zoomLabel;
 
     @FXML
     private ToolbarController toolbarController;
@@ -77,6 +96,24 @@ public class MainController implements Initializable {
 
         SetChangeListener<PlotPoint> pointsChange = void1 -> toolbarController.updateControlsDisabledState();
         plotter.getPointsView().addListener(pointsChange);
+
+        Consumer<Point2D> viewportCenterUpdater = (center) -> {
+            DecimalFormat df = new DecimalFormat("0.0#########");
+            String x = df.format(center.getX());
+            String y = df.format(center.getY());
+            centerCheckBox.setText(String.format("%s; %s", x, y));
+        };
+        plotter.getViewport().centerProperty().addListener((observable, oldValue, newValue) ->
+            viewportCenterUpdater.accept(newValue));
+        viewportCenterUpdater.accept(plotter.getViewport().getCenter());
+
+        Consumer<Double> viewportScaleUpdater = (scale) -> {
+            DecimalFormat df = new DecimalFormat("0.####################");
+            zoomLabel.setText(df.format(scale * 100) + "%");
+        };
+        plotter.getViewport().scaleProperty().addListener((observable1, oldValue, newValue) ->
+            viewportScaleUpdater.accept(newValue.doubleValue()));
+        viewportScaleUpdater.accept(plotter.getViewport().getScale());
 
         pluginInterface = new PluginInterface(plotter, statusLabel, currentTool, toolPane);
 
@@ -114,10 +151,19 @@ public class MainController implements Initializable {
             }
         });
 
+        plotter.addPainter(new ViewportCenterPainter(centerCheckBox.selectedProperty()));
+        centerCheckBox.selectedProperty().addListener((void1, void2, void3) -> plotter.requestRepaint());
+
         layersController.configure(plotter);
         toolbarController.configure(primaryStage, plotter, pluginInterface);
 
         layers.prefHeightProperty().bind(plotter.heightProperty());
+
+        statusBar.widthProperty().addListener((observable, oldWidth, newWidth) -> {
+            Insets padding = statusBar.getPadding();
+            double horizontalPadding = padding.getLeft() + padding.getRight();
+            statusGrid.setPrefWidth(newWidth.doubleValue() - horizontalPadding);
+        });
     }
 
     private void handleKeyPressed(KeyEvent keyEvent) {
