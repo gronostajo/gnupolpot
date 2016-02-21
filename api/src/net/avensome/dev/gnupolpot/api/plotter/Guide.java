@@ -1,8 +1,8 @@
 package net.avensome.dev.gnupolpot.api.plotter;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import net.avensome.dev.gnupolpot.api.mouse.Point;
+
+import java.util.Arrays;
 
 /**
  * An orthonormal guide that is visible at any coordinates.
@@ -11,22 +11,33 @@ public class Guide {
     private final Orientation orientation;
     private final double coord;
     private final Color color;
-    private final OrientedGuidePainter painter;
+    private final double[] dashesStyle;
 
     /**
      * <p>Creates a guide.
+     *
      * @param orientation guide orientation
-     * @param coord X coordinate for vertical guides, or Y coordinate for horizontal guides
-     * @param color guide color
+     * @param coord       X coordinate for vertical guides, or Y coordinate for horizontal guides
+     * @param color       guide color
      */
     public Guide(Orientation orientation, double coord, Color color) {
+        this(orientation, coord, color, null);
+    }
+
+    /**
+     * <p>Creates a guide.
+     *
+     * @param orientation guide orientation
+     * @param coord       X coordinate for vertical guides, or Y coordinate for horizontal guides
+     * @param color       guide color
+     * @param dashesStyle dashes style, identical as for GraphicsContext:setLineDashes()
+     */
+    public Guide(Orientation orientation, double coord, Color color, double[] dashesStyle) {
         this.orientation = orientation;
         this.coord = coord;
         this.color = color;
+        this.dashesStyle = dashesStyle;
 
-        this.painter = (orientation == Orientation.HORIZONTAL)
-                ? new HorizontalGuidePainter()
-                : new VerticalGuidePainter();
     }
 
     public Orientation getOrientation() {
@@ -41,13 +52,8 @@ public class Guide {
         return color;
     }
 
-    /**
-     * Paints guide on a canvas. Intended for internal use.
-     * @param ctx graphics context to paint on
-     * @param viewport current viewport
-     */
-    public void paint(GraphicsContext ctx, IViewport viewport) {
-        painter.paint(ctx, viewport, coord, color);
+    public double[] getDashesStyle() {
+        return dashesStyle;
     }
 
     /**
@@ -58,40 +64,6 @@ public class Guide {
         VERTICAL
     }
 
-    private interface OrientedGuidePainter {
-        void paint(GraphicsContext ctx, IViewport viewport, double coord, Color color);
-    }
-
-    private class HorizontalGuidePainter implements OrientedGuidePainter {
-        @Override
-        public void paint(GraphicsContext ctx, IViewport viewport, double coord, Color color) {
-            if (!viewport.containsVerticalCoord(coord)) {
-                return;
-            }
-
-            Point point = viewport.toScreenCoords(0, coord);
-
-            ctx.setStroke(color);
-            ctx.setLineWidth(1);
-            ctx.strokeLine(0, point.getY() + 0.5, viewport.getWidth(), point.getY() + 0.5);
-        }
-    }
-
-    private class VerticalGuidePainter implements OrientedGuidePainter {
-        @Override
-        public void paint(GraphicsContext ctx, IViewport viewport, double coord, Color color) {
-            if (!viewport.containsHorizontalCoord(coord)) {
-                return;
-            }
-
-            Point point = viewport.toScreenCoords(coord, 0);
-
-            ctx.setStroke(color);
-            ctx.setLineWidth(1);
-            ctx.strokeLine(point.getX() + 0.5, 0, point.getX() + 0.5, viewport.getHeight());
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -99,7 +71,9 @@ public class Guide {
 
         Guide guide = (Guide) o;
 
-        return Double.compare(guide.coord, coord) == 0 && orientation == guide.orientation;
+        return Double.compare(guide.coord, coord) == 0 && orientation == guide.orientation
+                && color.equals(guide.color) && Arrays.equals(dashesStyle, guide.dashesStyle);
+
     }
 
     @Override
@@ -109,6 +83,8 @@ public class Guide {
         result = orientation.hashCode();
         temp = Double.doubleToLongBits(coord);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + color.hashCode();
+        result = 31 * result + Arrays.hashCode(dashesStyle);
         return result;
     }
 }
